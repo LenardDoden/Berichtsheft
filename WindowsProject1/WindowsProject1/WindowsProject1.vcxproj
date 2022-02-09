@@ -26,6 +26,14 @@
   <ItemGroup>
     <ClInclude Include="src\Berichtsheft.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BerichtsheftStructs\BerichtsheftStructs.vcxproj">
+      <Project>{99fa13a9-89fa-4f07-bfc8-26b7865a1b71}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\mk_sqlite\mk_sqlite.vcxproj">
+      <Project>{cecb9bdb-086a-43f4-b337-0c99b060adcd}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{91725464-5271-471C-87CA-31FC06AE3081}</ProjectGuid>
@@ -100,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Sqlite3Lib\; $(wxwin)\include;  $(wxwin)\include\msvc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(wxwin)\include;  $(wxwin)\include\msvc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -117,7 +125,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Sqlite3Lib\; $(wxwin)\include;  $(wxwin)\include\msvc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(wxwin)\include;  $(wxwin)\include\msvc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -136,7 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Sqlite3Lib\; $(wxwin)\include;  $(wxwin)\include\msvc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(wxwin)\include;  $(wxwin)\include\msvc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -157,7 +165,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Sqlite3Lib\; $(wxwin)\include;  $(wxwin)\include\msvc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(wxwin)\include;  $(wxwin)\include\msvc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.1684
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsProject1", "WindowsProject1\WindowsProject1.vcxproj", "{91725464-5271-471C-87CA-31FC06AE3081}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Berichtsheft", "WindowsProject1\WindowsProject1.vcxproj", "{91725464-5271-471C-87CA-31FC06AE3081}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sqlite3Lib", "Sqlite3Lib\Sqlite3Lib.vcxproj", "{E3674C57-2329-4534-BF15-282511AD12FE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mk_sqlite", "mk_sqlite\mk_sqlite.vcxproj", "{CECB9BDB-086A-43F4-B337-0C99B060ADCD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mk_sqlite_test", "mk_sqlite_test\mk_sqlite_test.vcxproj", "{DD4437A1-FB47-4512-BDB0-AA29C0971F23}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BerichtsheftStructs", "BerichtsheftStructs\BerichtsheftStructs.vcxproj", "{99FA13A9-89FA-4F07-BFC8-26B7865A1B71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +29,38 @@ Global
 		{91725464-5271-471C-87CA-31FC06AE3081}.Release|x64.Build.0 = Release|x64
 		{91725464-5271-471C-87CA-31FC06AE3081}.Release|x86.ActiveCfg = Release|Win32
 		{91725464-5271-471C-87CA-31FC06AE3081}.Release|x86.Build.0 = Release|Win32
+		{E3674C57-2329-4534-BF15-282511AD12FE}.Debug|x64.ActiveCfg = Debug|x64
+		{E3674C57-2329-4534-BF15-282511AD12FE}.Debug|x64.Build.0 = Debug|x64
+		{E3674C57-2329-4534-BF15-282511AD12FE}.Debug|x86.ActiveCfg = Debug|Win32
+		{E3674C57-2329-4534-BF15-282511AD12FE}.Debug|x86.Build.0 = Debug|Win32
+		{E3674C57-2329-4534-BF15-282511AD12FE}.Release|x64.ActiveCfg = Release|x64
+		{E3674C57-2329-4534-BF15-282511AD12FE}.Release|x64.Build.0 = Release|x64
+		{E3674C57-2329-4534-BF15-282511AD12FE}.Release|x86.ActiveCfg = Release|Win32
+		{E3674C57-2329-4534-BF15-282511AD12FE}.Release|x86.Build.0 = Release|Win32
+		{CECB9BDB-086A-43F4-B337-0C99B060ADCD}.Debug|x64.ActiveCfg = Debug|x64
+		{CECB9BDB-086A-43F4-B337-0C99B060ADCD}.Debug|x64.Build.0 = Debug|x64
+		{CECB9BDB-086A-43F4-B337-0C99B060ADCD}.Debug|x86.ActiveCfg = Debug|Win32
+		{CECB9BDB-086A-43F4-B337-0C99B060ADCD}.Debug|x86.Build.0 = Debug|Win32
+		{CECB9BDB-086A-43F4-B337-0C99B060ADCD}.Release|x64.ActiveCfg = Release|x64
+		{CECB9BDB-086A-43F4-B337-0C99B060ADCD}.Release|x64.Build.0 = Release|x64
+		{CECB9BDB-086A-43F4-B337-0C99B060ADCD}.Release|x86.ActiveCfg = Release|Win32
+		{CECB9BDB-086A-43F4-B337-0C99B060ADCD}.Release|x86.Build.0 = Release|Win32
+		{DD4437A1-FB47-4512-BDB0-AA29C0971F23}.Debug|x64.ActiveCfg = Debug|x64
+		{DD4437A1-FB47-4512-BDB0-AA29C0971F23}.Debug|x64.Build.0 = Debug|x64
+		{DD4437A1-FB47-4512-BDB0-AA29C0971F23}.Debug|x86.ActiveCfg = Debug|Win32
+		{DD4437A1-FB47-4512-BDB0-AA29C0971F23}.Debug|x86.Build.0 = Debug|Win32
+		{DD4437A1-FB47-4512-BDB0-AA29C0971F23}.Release|x64.ActiveCfg = Release|x64
+		{DD4437A1-FB47-4512-BDB0-AA29C0971F23}.Release|x64.Build.0 = Release|x64
+		{DD4437A1-FB47-4512-BDB0-AA29C0971F23}.Release|x86.ActiveCfg = Release|Win32
+		{DD4437A1-FB47-4512-BDB0-AA29C0971F23}.Release|x86.Build.0 = Release|Win32
+		{99FA13A9-89FA-4F07-BFC8-26B7865A1B71}.Debug|x64.ActiveCfg = Debug|x64
+		{99FA13A9-89FA-4F07-BFC8-26B7865A1B71}.Debug|x64.Build.0 = Debug|x64
+		{99FA13A9-89FA-4F07-BFC8-26B7865A1B71}.Debug|x86.ActiveCfg = Debug|Win32
+		{99FA13A9-89FA-4F07-BFC8-26B7865A1B71}.Debug|x86.Build.0 = Debug|Win32
+		{99FA13A9-89FA-4F07-BFC8-26B7865A1B71}.Release|x64.ActiveCfg = Release|x64
+		{99FA13A9-89FA-4F07-BFC8-26B7865A1B71}.Release|x64.Build.0 = Release|x64
+		{99FA13A9-89FA-4F07-BFC8-26B7865A1B71}.Release|x86.ActiveCfg = Release|Win32
+		{99FA13A9-89FA-4F07-BFC8-26B7865A1B71}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
