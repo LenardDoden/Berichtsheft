@@ -1,0 +1,90 @@
+
+
+ CREATE TABLE berichtsheft (
+    berichtsheft_id INTEGER PRIMARY KEY AUTOINCREMENT
+    , minuten INTEGER
+    , woche_fk INTEGER
+    , taetigkeit_fk INTEGER
+    , abteilung_fk INTEGER
+    , azubi_fk INTEGER
+
+	, FOREIGN KEY(woche_fk) REFERENCES woche(woche_id)
+	, FOREIGN KEY(taetigkeit_fk) REFERENCES taetigkeit(taetigkeit_id)
+	, FOREIGN KEY(abteilung_fk) REFERENCES abteilung(abteilung_id)
+	, FOREIGN KEY(azubi_fk) REFERENCES azubi(azubi_id)
+ );
+
+
+CREATE TABLE woche (
+    woche_id INTEGER PRIMARY KEY AUTOINCREMENT
+    , beginn DATE
+    , ende DATE
+    , ausbildungsjahr INTEGER
+    , abteilung_fk INTEGER, FOREIGN KEY(abteilung_fk) REFERENCES abteilung(abteilung_id)
+ );
+
+ CREATE TABLE abteilung (
+   abteilung_id INTEGER PRIMARY KEY AUTOINCREMENT
+    , name VARCHAR
+    
+ );
+
+ CREATE TABLE azubi (
+   azubi_id INTEGER PRIMARY KEY AUTOINCREMENT
+    , vorname VARCHAR
+    , nachname VARCHAR
+    
+ );
+
+ CREATE TABLE taetigkeit (
+    taetigkeit_id INTEGER PRIMARY KEY AUTOINCREMENT
+    , beschreibung VARCHAR
+    , art_fk INTEGER, FOREIGN KEY(art_fk) REFERENCES art(art_id)
+ );
+ 
+ 
+
+ 
+ 
+ CREATE TABLE art (
+    art_id INTEGER PRIMARY KEY AUTOINCREMENT
+    , name VARCHAR
+ );
+
+ INSERT INTO art (name) VALUES('Schule'), ('Betrieb');
+
+
+
+
+
+
+
+
+ SELECT 
+    berichtsheft.minuten / 60 AS stunden
+    , woche.beginn
+    , woche.ende
+    , abteilung.name AS abteilung_name
+    , taetigkeit.beschreibung
+    , art.name AS art_name
+    , azubi.vorname || ' ' || azubi.nachname AS azubi_name
+    
+    
+
+
+FROM 
+    berichtsheft
+    INNER JOIN woche ON woche.woche_id = berichtsheft.woche_fk
+    INNER JOIN abteilung ON abteilung.abteilung_id = berichtsheft.abteilung_fk
+    INNER JOIN taetigkeit ON taetigkeit.taetigkeit_id = berichtsheft.taetigkeit_fk
+    INNER JOIN azubi ON azubi.azubi_id = berichtsheft.azubi_fk
+    INNER JOIN art ON art.art_id = taetigkeit.art_fk
+
+    
+
+ WHERE
+    woche.beginn = '2022-01-31'
+    
+ORDER BY
+    art.art_id DESC
+    , berichtsheft.berichtsheft_id
