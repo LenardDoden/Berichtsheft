@@ -137,7 +137,7 @@ PanelBerichtshefteintrag::PanelBerichtshefteintrag( wxWindow* parent, wxWindowID
 	wxGridSizer* gSizer2;
 	gSizer2 = new wxGridSizer( 0, 2, 0, 0 );
 
-	m_staticText5 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Betriebliche TÃ¤tigkeiten:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Betriebliche Tätigkeiten:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
 	m_staticText5->SetFont( wxFont( 14, wxFONTFAMILY_ROMAN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, wxT("Caladea") ) );
 
@@ -158,7 +158,7 @@ PanelBerichtshefteintrag::PanelBerichtshefteintrag( wxWindow* parent, wxWindowID
 	wxGridSizer* gSizer3;
 	gSizer3 = new wxGridSizer( 0, 2, 0, 0 );
 
-	m_staticText6 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Schulische TÃ¤tigkeiten"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Schulische Tätigkeiten"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
 	m_staticText6->SetFont( wxFont( 14, wxFONTFAMILY_ROMAN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, wxT("Caladea") ) );
 
@@ -320,47 +320,6 @@ PanelTaetigkeit::~PanelTaetigkeit()
 
 }
 
-PanelListe::PanelListe( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name ) : wxPanel( parent, id, pos, size, style, name )
-{
-	wxBoxSizer* bSizer17;
-	bSizer17 = new wxBoxSizer( wxHORIZONTAL );
-
-	wxBoxSizer* bSizer18;
-	bSizer18 = new wxBoxSizer( wxVERTICAL );
-
-	m_staticText9 = new wxStaticText( this, wxID_ANY, wxT("Vorhandene Berichte"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText9->Wrap( -1 );
-	m_staticText9->SetFont( wxFont( 14, wxFONTFAMILY_ROMAN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, wxT("Caladea") ) );
-
-	bSizer18->Add( m_staticText9, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
-
-	m_listBox1 = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-	bSizer18->Add( m_listBox1, 1, wxALL|wxEXPAND, 5 );
-
-	wxBoxSizer* bSizer19;
-	bSizer19 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_button1 = new wxButton( this, wxID_ANY, wxT("Neu"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer19->Add( m_button1, 0, wxALL, 5 );
-
-	m_button2 = new wxButton( this, wxID_ANY, wxT("Ã–ffnen"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer19->Add( m_button2, 0, wxALL, 5 );
-
-
-	bSizer18->Add( bSizer19, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
-
-
-	bSizer17->Add( bSizer18, 1, wxEXPAND, 5 );
-
-
-	this->SetSizer( bSizer17 );
-	this->Layout();
-}
-
-PanelListe::~PanelListe()
-{
-}
-
 DialogAbteilungAnlegen::DialogAbteilungAnlegen( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
@@ -402,5 +361,60 @@ DialogAbteilungAnlegen::DialogAbteilungAnlegen( wxWindow* parent, wxWindowID id,
 }
 
 DialogAbteilungAnlegen::~DialogAbteilungAnlegen()
+{
+}
+
+Mainframebase::Mainframebase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+
+	wxBoxSizer* bSizer23;
+	bSizer23 = new wxBoxSizer( wxVERTICAL );
+
+	m_panel3 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer17;
+	bSizer17 = new wxBoxSizer( wxHORIZONTAL );
+
+	wxBoxSizer* bSizer18;
+	bSizer18 = new wxBoxSizer( wxVERTICAL );
+
+	m_staticText9 = new wxStaticText( m_panel3, wxID_ANY, wxT("Vorhandene Berichte"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText9->Wrap( -1 );
+	m_staticText9->SetFont( wxFont( 14, wxFONTFAMILY_ROMAN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, wxT("Caladea") ) );
+
+	bSizer18->Add( m_staticText9, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_listBox1 = new wxListBox( m_panel3, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	bSizer18->Add( m_listBox1, 1, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer* bSizer19;
+	bSizer19 = new wxBoxSizer( wxHORIZONTAL );
+
+	m_button1 = new wxButton( m_panel3, wxID_ANY, wxT("Neu"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer19->Add( m_button1, 0, wxALL, 5 );
+
+	m_button2 = new wxButton( m_panel3, wxID_ANY, wxT("Öffnen"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer19->Add( m_button2, 0, wxALL, 5 );
+
+
+	bSizer18->Add( bSizer19, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+
+
+	bSizer17->Add( bSizer18, 1, wxEXPAND, 5 );
+
+
+	m_panel3->SetSizer( bSizer17 );
+	m_panel3->Layout();
+	bSizer17->Fit( m_panel3 );
+	bSizer23->Add( m_panel3, 1, wxEXPAND | wxALL, 5 );
+
+
+	this->SetSizer( bSizer23 );
+	this->Layout();
+
+	this->Centre( wxBOTH );
+}
+
+Mainframebase::~Mainframebase()
 {
 }

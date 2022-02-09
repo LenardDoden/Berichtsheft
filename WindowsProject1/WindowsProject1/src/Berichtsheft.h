@@ -30,6 +30,7 @@
 #include <wx/dialog.h>
 #include <wx/combobox.h>
 #include <wx/listbox.h>
+#include <wx/frame.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -129,27 +130,6 @@ class PanelTaetigkeit : public wxPanel
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class PanelListe
-///////////////////////////////////////////////////////////////////////////////
-class PanelListe : public wxPanel
-{
-	private:
-
-	protected:
-		wxStaticText* m_staticText9;
-		wxListBox* m_listBox1;
-		wxButton* m_button1;
-		wxButton* m_button2;
-
-	public:
-
-		PanelListe( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,500 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
-
-		~PanelListe();
-
-};
-
-///////////////////////////////////////////////////////////////////////////////
 /// Class DialogAbteilungAnlegen
 ///////////////////////////////////////////////////////////////////////////////
 class DialogAbteilungAnlegen : public wxDialog
@@ -167,6 +147,28 @@ class DialogAbteilungAnlegen : public wxDialog
 		DialogAbteilungAnlegen( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Abteilung eintragen"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
 
 		~DialogAbteilungAnlegen();
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class Mainframebase
+///////////////////////////////////////////////////////////////////////////////
+class Mainframebase : public wxFrame
+{
+	private:
+
+	protected:
+		wxPanel* m_panel3;
+		wxStaticText* m_staticText9;
+		wxListBox* m_listBox1;
+		wxButton* m_button1;
+		wxButton* m_button2;
+
+	public:
+
+		Mainframebase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+
+		~Mainframebase();
 
 };
 
