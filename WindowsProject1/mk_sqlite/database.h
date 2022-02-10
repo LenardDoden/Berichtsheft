@@ -23,6 +23,7 @@ namespace sqlite {
    public:
       explicit database (std::string _path);
       const std::string& path () const;
+	  int64_t last_autoincrement() const;
       operator sqlite3* () const;
    };
 

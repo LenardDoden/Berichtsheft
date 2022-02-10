@@ -23,6 +23,11 @@ const std::string& database::path () const
    return path_;
 }
 
+int64_t database::last_autoincrement() const
+{
+	return sqlite3_last_insert_rowid(handle_.get());
+}
+
 database::operator sqlite3*() const
 {
    return handle_.get();

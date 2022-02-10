@@ -21,7 +21,7 @@ statement::statement (database _db, std::string _sql)
    , sql_{std::move(_sql)}
 {
    sqlite3_stmt* raw{};
-   const auto rc = sqlite3_prepare_v2(db_, sql_.c_str(), sql_.size(), &raw, nullptr);
+   const auto rc = sqlite3_prepare_v2(db_, sql_.c_str(), (int)sql_.size(), &raw, nullptr);
    handle_ = {raw, &sqlite3_finalize};
    if (rc) {
       throw statement_exception{rc, sqlite3_errmsg(db_), sql_};
@@ -32,7 +32,7 @@ statement::statement (database _db, std::string _sql)
 
 statement& statement::bind_at (int _pos, const std::string& _val)
 {
-   const auto rc = sqlite3_bind_text(*this, _pos, _val.c_str(), _val.size(), SQLITE_TRANSIENT);
+   const auto rc = sqlite3_bind_text(*this, _pos, _val.c_str(), (int)_val.size(), SQLITE_TRANSIENT);
    if (rc) {
       throw bind_exception{rc, sqlite3_errmsg(db_), _pos, "text", sql_};
    }
@@ -60,7 +60,7 @@ statement& statement::bind_at (int _pos, int64_t _val)
 
 statement& statement::bind_at (int _pos, const std::vector<unsigned char> _val) 
 {
-   const auto rc = sqlite3_bind_blob(*this, _pos, _val.data(), _val.size(), SQLITE_TRANSIENT);
+   const auto rc = sqlite3_bind_blob(*this, _pos, _val.data(), (int)_val.size(), SQLITE_TRANSIENT);
    if (rc) {
       throw bind_exception{rc, sqlite3_errmsg(db_), _pos, "blob", sql_};
    }

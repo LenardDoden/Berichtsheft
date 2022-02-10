@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mk_sqlite_test", "mk_sqlite
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BerichtsheftStructs", "BerichtsheftStructs\BerichtsheftStructs.vcxproj", "{99FA13A9-89FA-4F07-BFC8-26B7865A1B71}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BerichtsheftStructs_Test", "BerichtsheftStructs_Test\BerichtsheftStructs_Test.vcxproj", "{BC178126-42E3-4367-8B06-4BE383A0CC1D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -61,6 +63,14 @@ Global
 		{99FA13A9-89FA-4F07-BFC8-26B7865A1B71}.Release|x64.Build.0 = Release|x64
 		{99FA13A9-89FA-4F07-BFC8-26B7865A1B71}.Release|x86.ActiveCfg = Release|Win32
 		{99FA13A9-89FA-4F07-BFC8-26B7865A1B71}.Release|x86.Build.0 = Release|Win32
+		{BC178126-42E3-4367-8B06-4BE383A0CC1D}.Debug|x64.ActiveCfg = Debug|x64
+		{BC178126-42E3-4367-8B06-4BE383A0CC1D}.Debug|x64.Build.0 = Debug|x64
+		{BC178126-42E3-4367-8B06-4BE383A0CC1D}.Debug|x86.ActiveCfg = Debug|Win32
+		{BC178126-42E3-4367-8B06-4BE383A0CC1D}.Debug|x86.Build.0 = Debug|Win32
+		{BC178126-42E3-4367-8B06-4BE383A0CC1D}.Release|x64.ActiveCfg = Release|x64
+		{BC178126-42E3-4367-8B06-4BE383A0CC1D}.Release|x64.Build.0 = Release|x64
+		{BC178126-42E3-4367-8B06-4BE383A0CC1D}.Release|x86.ActiveCfg = Release|Win32
+		{BC178126-42E3-4367-8B06-4BE383A0CC1D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
