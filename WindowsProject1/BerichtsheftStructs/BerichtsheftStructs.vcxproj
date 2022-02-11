@@ -25,9 +25,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Abteilung.h" />
+    <ClInclude Include="Azubi.h" />
+    <ClInclude Include="Berichtsheft.h" />
+    <ClInclude Include="Tätigkeit.h" />
+    <ClInclude Include="Woche.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Abteilung.cpp" />
+    <ClCompile Include="Azubi.cpp" />
+    <ClCompile Include="Berichtsheft.cpp" />
+    <ClCompile Include="Tätigkeit.cpp" />
+    <ClCompile Include="Woche.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

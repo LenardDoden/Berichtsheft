@@ -18,9 +18,33 @@
     <ClInclude Include="Abteilung.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Azubi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Woche.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tätigkeit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Berichtsheft.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Abteilung.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Azubi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Woche.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tätigkeit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Berichtsheft.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
