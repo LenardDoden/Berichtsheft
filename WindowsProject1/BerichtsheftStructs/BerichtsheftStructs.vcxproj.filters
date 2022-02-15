@@ -30,6 +30,9 @@
     <ClInclude Include="Berichtsheft.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Art.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Abteilung.cpp">
@@ -45,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Berichtsheft.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Art.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

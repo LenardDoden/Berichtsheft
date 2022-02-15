@@ -25,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Abteilung.h" />
+    <ClInclude Include="Art.h" />
     <ClInclude Include="Azubi.h" />
     <ClInclude Include="Berichtsheft.h" />
     <ClInclude Include="Tätigkeit.h" />
@@ -32,6 +33,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Abteilung.cpp" />
+    <ClCompile Include="Art.cpp" />
     <ClCompile Include="Azubi.cpp" />
     <ClCompile Include="Berichtsheft.cpp" />
     <ClCompile Include="Tätigkeit.cpp" />

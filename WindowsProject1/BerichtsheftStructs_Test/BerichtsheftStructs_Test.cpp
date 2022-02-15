@@ -6,6 +6,7 @@
 #include "../BerichtsheftStructs/Tätigkeit.h"
 #include "../BerichtsheftStructs/Woche.h"
 #include "../BerichtsheftStructs/Berichtsheft.h"
+#include "../BerichtsheftStructs/Art.h"
 
 
 
@@ -22,6 +23,7 @@ namespace Microsoft {
 			template<> inline std::wstring ToString<Taetigkeit>(const Taetigkeit& t) { return ToString(t.id) + L" " + ToString(t.beschreibung); }
 			template<> inline std::wstring ToString<Woche>(const Woche& t) { return ToString(t.id) + L" " + ToString(t.beginn) + L" " + ToString(t.ende) + L" " + ToString(t.ausbildungsjahr) + L" " + ToString(t.abteilung_fk); }
 			template<> inline std::wstring ToString<Berichtsheft>(const Berichtsheft& t) { return ToString(t.id) + L" " + ToString(t.minuten) + L" " + ToString(t.woche_fk) + L" " + ToString(t.taetigkeit_fk) + L" " + ToString(t.abteilung_fk) + L" " + ToString(t.azubi_fk); }
+			template<> inline std::wstring ToString<Art>(const Art& t) { return ToString(t.id) + L" " + ToString(t.name); }
 	}
 }}
 
@@ -242,21 +244,21 @@ namespace BerichtsheftStructsTest
 		{
 			auto woche_tabelle = Create();
 
-			Woche wocheEntwicklung;
-			wocheEntwicklung.beginn = "2022-02-07";
-			wocheEntwicklung.id = woche_tabelle.Save(wocheEntwicklung);
+			Woche woche1;
+			woche1.beginn = "2022-02-07";
+			woche1.id = woche_tabelle.Save(woche1);
 
-			Woche wocheSupport;
-			wocheSupport.beginn = "2022-09-09";
-			wocheSupport.id = woche_tabelle.Save(wocheSupport);
+			Woche woche2;
+			woche2.beginn = "2022-09-09";
+			woche2.id = woche_tabelle.Save(woche2);
 
-			wocheSupport.beginn = "2022-02-07";
-			woche_tabelle.Save(wocheSupport);
+			woche2.beginn = "2022-02-07";
+			woche_tabelle.Save(woche2);
 
 			const auto liste = woche_tabelle.List();
 			Assert::AreEqual(size_t{ 2 }, liste.size());
-			Assert::AreEqual(wocheEntwicklung, liste.at(0));
-			Assert::AreEqual(wocheSupport, liste.at(1));
+			Assert::AreEqual(woche1, liste.at(0));
+			Assert::AreEqual(woche2, liste.at(1));
 		}
 
 
@@ -301,23 +303,80 @@ namespace BerichtsheftStructsTest
 		{
 			auto berichtsheft_tabelle = Create();
 
-			Berichtsheft berichtsheftEntwicklung;
-			berichtsheftEntwicklung.minuten = 22;
-			berichtsheftEntwicklung.id = berichtsheft_tabelle.Save(berichtsheftEntwicklung);
+			Berichtsheft berichtsheft1;
+			berichtsheft1.minuten = 22;
+			berichtsheft1.id = berichtsheft_tabelle.Save(berichtsheft1);
 
-			Berichtsheft berichtsheftSupport;
-			berichtsheftSupport.minuten = 9;
-			berichtsheftSupport.id = berichtsheft_tabelle.Save(berichtsheftSupport);
+			Berichtsheft berichtsheft2;
+			berichtsheft2.minuten = 9;
+			berichtsheft2.id = berichtsheft_tabelle.Save(berichtsheft2);
 
-			berichtsheftSupport.minuten = 2022;
-			berichtsheft_tabelle.Save(berichtsheftSupport);
+			berichtsheft2.minuten = 2022;
+			berichtsheft_tabelle.Save(berichtsheft2);
 
 			const auto liste = berichtsheft_tabelle.List();
 			Assert::AreEqual(size_t{ 2 }, liste.size());
-			Assert::AreEqual(berichtsheftEntwicklung, liste.at(0));
-			Assert::AreEqual(berichtsheftSupport, liste.at(1));
+			Assert::AreEqual(berichtsheft1, liste.at(0));
+			Assert::AreEqual(berichtsheft2, liste.at(1));
 		}
 
+
+	};
+
+	TEST_CLASS(ArtTest)
+	{
+	public:
+
+		ArtTabelle Create() {
+			auto db = mk::sqlite::database{ ":memory:" };
+			ArtTabelle art_tabelle(db);
+			art_tabelle.provision();
+			return art_tabelle;
+		}
+
+
+		TEST_METHOD(List_empty)
+		{
+			auto art_tabelle = Create();
+			Assert::AreEqual(size_t{ 0 }, art_tabelle.List().size());
+		}
+
+		TEST_METHOD(Insert)
+		{
+			auto art_tabelle = Create();
+
+			Art art;
+			art.name = "Entwicklung";
+			Assert::AreEqual(0LL, art.id); // keine id markierung
+
+			art.id = art_tabelle.Save(art);
+
+			Assert::AreNotEqual(0LL, art.id);
+			const auto liste = art_tabelle.List();
+			Assert::AreEqual(size_t{ 1 }, liste.size());
+			Assert::AreEqual(art, liste.at(0));
+		}
+
+		TEST_METHOD(Update)
+		{
+			auto art_tabelle = Create();
+
+			Art artSchule;
+			artSchule.name = "Entwicklung";
+			artSchule.id = art_tabelle.Save(artSchule);
+
+			Art artBetrieb;
+			artBetrieb.name = "Süppört";
+			artBetrieb.id = art_tabelle.Save(artBetrieb);
+
+			artBetrieb.name = "Support";
+			art_tabelle.Save(artBetrieb);
+
+			const auto liste = art_tabelle.List();
+			Assert::AreEqual(size_t{ 2 }, liste.size());
+			Assert::AreEqual(artSchule, liste.at(0));
+			Assert::AreEqual(artBetrieb, liste.at(1));
+		}
 
 	};
 
