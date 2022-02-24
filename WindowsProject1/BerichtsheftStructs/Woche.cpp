@@ -1,4 +1,6 @@
 #include "Woche.h"
+#include "ValidationUtility.h"
+#include <regex>
 
 int64_t WocheTabelle::Insert(const Woche & val)
 {
@@ -20,10 +22,31 @@ WocheTabelle::WocheTabelle(mk::sqlite::database db) : m_db(db) { }
 
 int64_t WocheTabelle::Save(const Woche & val)
 {
-	if (val.id == 0) {
-		return Insert(val);
+
+	if (validationUtility::isValid(val.beginn) == true && (validationUtility::isValid(val.ende) == true))
+	{
+		if (val.id == 0) {
+			return Insert(val);
+		}
+		return Update(val);
+		
 	}
-	return Update(val);
+
+	/*
+	if (!val.beginn.size() == 10 && val.beginn[4] == '-' && val.beginn[7] == '-')
+	{
+		throw std::runtime_error{ "Falsches Datenformat. Bitte im Format 'YYYY-MM-DD' eingeben" };
+	}
+
+	else
+	{
+		if (val.id == 0) {
+			return Insert(val);
+		}
+		return Update(val);
+	}
+	*/
+	
 }
 
 Woche WocheTabelle::Load(int64_t id)
@@ -58,6 +81,8 @@ SELECT Woche_id FROM Woche ORDER BY beginn
 
 	return vec;
 }
+
+
 
 void WocheTabelle::provision()
 {

@@ -33,6 +33,9 @@
     <ClInclude Include="Art.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ValidationUtility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Abteilung.cpp">
@@ -51,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Art.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ValidationUtility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

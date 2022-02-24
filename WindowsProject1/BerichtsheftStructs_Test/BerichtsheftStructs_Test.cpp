@@ -9,7 +9,6 @@
 #include "../BerichtsheftStructs/Art.h"
 
 
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace Microsoft {
 	namespace VisualStudio {
@@ -83,9 +82,7 @@ namespace BerichtsheftStructsTest
 			Assert::AreEqual(abteilungEntwicklung, liste.at(0));
 			Assert::AreEqual(abteilungSupport, liste.at(1));
 		}
-
 	};
-
 
 	TEST_CLASS(TaetigkeitTest)
 	{
@@ -200,8 +197,6 @@ namespace BerichtsheftStructsTest
 			Assert::AreEqual(azubiEntwicklung, liste.at(0));
 			Assert::AreEqual(azubiSupport, liste.at(1));
 		}
-
-
 	};
 
 
@@ -260,8 +255,6 @@ namespace BerichtsheftStructsTest
 			Assert::AreEqual(woche1, liste.at(0));
 			Assert::AreEqual(woche2, liste.at(1));
 		}
-
-
 	};
 
 	TEST_CLASS(BerichtsheftTest)
@@ -274,7 +267,6 @@ namespace BerichtsheftStructsTest
 			berichtsheft_tabelle.provision();
 			return berichtsheft_tabelle;
 		}
-
 
 		TEST_METHOD(List_empty)
 		{
@@ -319,8 +311,6 @@ namespace BerichtsheftStructsTest
 			Assert::AreEqual(berichtsheft1, liste.at(0));
 			Assert::AreEqual(berichtsheft2, liste.at(1));
 		}
-
-
 	};
 
 	TEST_CLASS(ArtTest)
@@ -376,9 +366,7 @@ namespace BerichtsheftStructsTest
 			Assert::AreEqual(size_t{ 2 }, liste.size());
 			Assert::AreEqual(artSchule, liste.at(0));
 			Assert::AreEqual(artBetrieb, liste.at(1));
+
 		}
-
 	};
-
-
 }

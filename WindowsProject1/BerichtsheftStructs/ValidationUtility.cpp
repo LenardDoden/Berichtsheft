@@ -1,0 +1,187 @@
+#include "ValidationUtility.h"
+#include <regex>
+#include <iostream>
+
+enum FailureState
+{
+	empty,
+	valid,
+	parser_invalid_format,
+	out_of_range
+};
+
+
+std::regex regex_date("(\\d{4})-(\\d{2})-(\\d{2})");
+std::smatch match;
+
+std::time_t t = std::time(0);
+std::tm* now = std::localtime(&t);
+int datumaktuell = now->tm_year + 1900;
+
+//IsLeapYear
+static bool validationUtility::isLeapYear(const std::string & datestring)
+{
+	if (std::stoi(match[1]) % 400 == 0 || std::stoi(match[1]) % 4 == 0 && std::stoi(match[1]) % 100 != 0)
+	{
+		return true;
+		std::cout << "Schaltjahr!" << std::endl;
+	}
+
+}
+
+//GetFailureState
+FailureState GetFailureState()
+{
+	return FailureState::empty;
+	return FailureState::out_of_range;
+	return FailureState::parser_invalid_format;
+	return FailureState::valid;
+}
+
+
+//isValid
+bool validationUtility::isValid(const std::string & datestring)
+{
+
+	const auto failurestate = FailureState();
+
+	//if alle gegeben
+}
+
+//isEmpty
+bool validationUtility::IsEmpty(const std::string& datestring)
+{
+	if (datestring.length() == 0)
+	{
+		return FailureState::empty;
+	}
+}
+
+
+//isFormatInvalid
+bool validationUtility::isFormatInvalid(const std::string& datestring)
+{
+	std::string input = datestring;
+
+	if (!std::regex_match(input, match, regex_date))
+	{
+		std::cout << "Falsches Format! Bitte nochmal in folgendem Format eingeben: (YYYY-MM-DD)";
+		return FailureState::parser_invalid_format;
+	}
+}
+
+//isOutofrange
+bool validationUtility::isOutofRange(const std::string& datestring)
+{
+	int minimalertag = 28;
+
+	std::string input = datestring;
+	//dict für anzahl tage dazu passende und monate
+
+
+	//Schaltjahr
+	if (isLeapYear(datestring) == true)
+	{
+		minimalertag = 29;
+	}
+
+	if (std::stoi(match[2]) > 0 && std::stoi(match[2]) < 13)
+	{
+		std::cout << "Monat passt nicht, nicht zwischen 01 und 12" << std::endl;
+		return FailureState::out_of_range;
+	}
+
+	else if (std::stoi(match[3]) > 0 && std::stoi(match[3]) < 32)
+	{
+		std::cout << "Tag passt nicht, nicht zwischen 01 und 31" << std::endl;
+		return FailureState::out_of_range;
+	}
+
+	else if (std::stoi(match[1]) >= 2020 && (std::stoi(match[1]) <= datumaktuell))
+	{
+		std::cout << "Jahrezahl passt nicht, nicht zwischen 2020 und " + datumaktuell << std::endl;
+		return FailureState::out_of_range;
+	}
+}
+
+
+//bool validationUtility::isValid(const std::string& datestring)
+//{
+//	std::regex regex_date("(\\d{4})-(\\d{2})-(\\d{2})");
+//
+//	std::string input = datestring;
+//	std::smatch match;
+//
+//	std::time_t t = std::time(0);
+//	std::tm* now = std::localtime(&t);
+//	int datumaktuell = now->tm_year + 1900;
+//	bool format;
+//
+//
+//	if (std::regex_match(input, match, regex_date)) {
+//		std::cout << match[1] << " " << match[2] << " " << match[3] << "\n" << "\n";
+//		if (std::stoi(match[1]) % 400 == 0 || std::stoi(match[1]) % 4 == 0 && std::stoi(match[1]) % 100 != 0)
+//
+//
+//		{
+//			std::cout << "Schaltjahr!" << std::endl;
+//			format = true;
+//		}
+//		else
+//		{
+//			std::cout << "kein Schaltjahr" << std::endl;
+//			format = false;
+//		}
+//
+//		if (std::stoi(match[2]) > 0 && std::stoi(match[2]) < 13)
+//		{
+//			std::cout << "Monat passt" << std::endl;
+//			format = true;
+//		}
+//		else
+//		{
+//			std::cout << "Monat passt nicht, nicht zwischen 01 und 12" << std::endl;
+//			format = false;
+//		}
+//
+//		if (std::stoi(match[3]) > 0 && std::stoi(match[3]) < 32)
+//		{
+//			std::cout << "Tag passt" << std::endl;
+//			format = true;
+//		}
+//		else
+//		{
+//			std::cout << "Tag passt nicht, nicht zwischen 01 und 31" << std::endl;
+//			format = false;
+//		}
+//
+//		if (std::stoi(match[1]) >= 2020 && (std::stoi(match[1]) <= datumaktuell))
+//		{
+//			std::cout << "Datum passt" << std::endl;
+//			format = true;
+//		}
+//		else
+//		{
+//			std::cout << "Jahrezahl passt nicht, nicht zwischen 2020 und " + datumaktuell << std::endl;
+//			format = false;
+//		}
+//	}
+//
+//	else
+//	{
+//		std::cout << "Falsches Format! Bitte nochmal in folgendem Format eingeben: (YYYY-MM-DD)";
+//		format = false;
+//	}
+//
+//	if (format = false)
+//	{
+//		return true;
+//	}
+//
+//
+//
+//	else
+//	{
+//		return false;
+//	}
+//}
