@@ -22,7 +22,7 @@ WocheTabelle::WocheTabelle(mk::sqlite::database db) : m_db(db) { }
 
 int64_t WocheTabelle::Save(const Woche & val)
 {
-
+	/*
 	if (validationUtility::isValid(val.beginn) == true && (validationUtility::isValid(val.ende) == true))
 	{
 		if (val.id == 0) {
@@ -31,6 +31,14 @@ int64_t WocheTabelle::Save(const Woche & val)
 		return Update(val);
 		
 	}
+
+	throw std::runtime_error{ "Beginn/Ende falsch" };
+	*/
+
+	if (val.id == 0) {
+		return Insert(val);
+	}
+	return Update(val);
 
 	/*
 	if (!val.beginn.size() == 10 && val.beginn[4] == '-' && val.beginn[7] == '-')

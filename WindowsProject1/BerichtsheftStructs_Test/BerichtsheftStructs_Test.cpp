@@ -7,6 +7,7 @@
 #include "../BerichtsheftStructs/Woche.h"
 #include "../BerichtsheftStructs/Berichtsheft.h"
 #include "../BerichtsheftStructs/Art.h"
+#include "../BerichtsheftStructs/ValidationUtility.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -28,6 +29,45 @@ namespace Microsoft {
 
 namespace BerichtsheftStructsTest 
 {
+	/*
+	TEST_CLASS(TestValidationUtility)
+	{
+	public:
+
+		
+
+
+		TEST_METHOD(ISODate_Valid)
+		{
+			Assert::AreEqual()
+		}
+
+		TEST_METHOD(ISODate_InvalidDay_LeapYear)
+		{
+			
+		}
+
+		TEST_METHOD(ISODate_InvalidDay_WayToLarge)
+		{
+			
+		}
+
+		TEST_METHOD(ISODate_InvalidMonth_WayToLarge)
+		{
+
+		}
+
+		TEST_METHOD(Random_Invalid)
+		{
+
+		}
+
+	};
+
+	*/
+
+
+
 	TEST_CLASS(AbteilungTest)
 	{
 	public:

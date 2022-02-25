@@ -25,17 +25,27 @@ static bool validationUtility::isLeapYear(const std::string & datestring)
 	{
 		return true;
 		std::cout << "Schaltjahr!" << std::endl;
+		
 	}
-
+	return  false;
 }
 
 //GetFailureState
-FailureState GetFailureState()
+FailureState GetFailureState(const std::string & datestring)
 {
 	return FailureState::empty;
 	return FailureState::out_of_range;
 	return FailureState::parser_invalid_format;
-	return FailureState::valid;
+
+	std::string input = datestring;
+
+	if (std::regex_match(input, match, regex_date))
+	{
+		return FailureState::valid;
+	}
+
+	std::runtime_error{ "Falsches Format! Bitte nochmal in folgendem Format eingeben: (YYYY-MM-DD)" };
+	
 }
 
 
@@ -44,8 +54,9 @@ bool validationUtility::isValid(const std::string & datestring)
 {
 
 	const auto failurestate = FailureState();
+	
+	return GetFailureState(datestring) == valid;
 
-	//if alle gegeben
 }
 
 //isEmpty
@@ -53,21 +64,25 @@ bool validationUtility::IsEmpty(const std::string& datestring)
 {
 	if (datestring.length() == 0)
 	{
-		return FailureState::empty;
+		return true;
 	}
+
+	return false;
 }
 
 
 //isFormatInvalid
-bool validationUtility::isFormatInvalid(const std::string& datestring)
+bool validationUtility::isFormatValid(const std::string& datestring)
 {
 	std::string input = datestring;
 
-	if (!std::regex_match(input, match, regex_date))
+	if (std::regex_match(input, match, regex_date))
 	{
-		std::cout << "Falsches Format! Bitte nochmal in folgendem Format eingeben: (YYYY-MM-DD)";
-		return FailureState::parser_invalid_format;
+		return true;
 	}
+
+	throw std::runtime_error{ "Falsches Format! Bitte nochmal in folgendem Format eingeben: (YYYY-MM-DD)" };
+	
 }
 
 //isOutofrange
@@ -88,20 +103,22 @@ bool validationUtility::isOutofRange(const std::string& datestring)
 	if (std::stoi(match[2]) > 0 && std::stoi(match[2]) < 13)
 	{
 		std::cout << "Monat passt nicht, nicht zwischen 01 und 12" << std::endl;
-		return FailureState::out_of_range;
+		return true;
 	}
 
-	else if (std::stoi(match[3]) > 0 && std::stoi(match[3]) < 32)
+	if (std::stoi(match[3]) > 0 && std::stoi(match[3]) < 32)
 	{
 		std::cout << "Tag passt nicht, nicht zwischen 01 und 31" << std::endl;
-		return FailureState::out_of_range;
+		return true;
 	}
 
-	else if (std::stoi(match[1]) >= 2020 && (std::stoi(match[1]) <= datumaktuell))
+	if (std::stoi(match[1]) >= 2020 && (std::stoi(match[1]) <= datumaktuell))
 	{
 		std::cout << "Jahrezahl passt nicht, nicht zwischen 2020 und " + datumaktuell << std::endl;
-		return FailureState::out_of_range;
+		return true;
 	}
+
+	return false;
 }
 
 
