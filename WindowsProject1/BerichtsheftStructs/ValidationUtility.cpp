@@ -3,12 +3,13 @@
 #include <iostream>
 
 enum FailureState
-{
-	empty,
-	valid,
-	parser_invalid_format,
-	out_of_range
-};
+	{
+		empty,
+		valid,
+		parser_invalid_format,
+		out_of_range
+	};
+
 
 std::regex regex_date("(\\d{4})-(\\d{2})-(\\d{2})");
 std::smatch match;
@@ -71,13 +72,13 @@ bool validationUtility::IsEmpty(const std::string& datestring)
 
 
 //isFormatInvalid
-int64_t validationUtility::isFormatValid(const std::string& datestring)
+bool validationUtility::isFormatValid(const std::string& datestring)
 {
 	std::string input = datestring;
 
 	if (std::regex_match(input, match, regex_date))
 	{
-		return FailureState::valid;
+		return true;
 	}
 
 	throw std::runtime_error{ "Falsches Format! Bitte nochmal in folgendem Format eingeben: (YYYY-MM-DD)" };
