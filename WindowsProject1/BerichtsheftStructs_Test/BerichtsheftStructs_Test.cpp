@@ -24,22 +24,30 @@ namespace Microsoft {
 			template<> inline std::wstring ToString<Woche>(const Woche& t) { return ToString(t.id) + L" " + ToString(t.beginn) + L" " + ToString(t.ende) + L" " + ToString(t.ausbildungsjahr) + L" " + ToString(t.abteilung_fk); }
 			template<> inline std::wstring ToString<Berichtsheft>(const Berichtsheft& t) { return ToString(t.id) + L" " + ToString(t.minuten) + L" " + ToString(t.woche_fk) + L" " + ToString(t.taetigkeit_fk) + L" " + ToString(t.abteilung_fk) + L" " + ToString(t.azubi_fk); }
 			template<> inline std::wstring ToString<Art>(const Art& t) { return ToString(t.id) + L" " + ToString(t.name); }
+			template<> inline std::wstring ToString<validationUtility::FailureState>(const validationUtility::FailureState& t) { return ToString(static_cast<int>(t)); }
 	}
 }}
 
+
+
 namespace BerichtsheftStructsTest 
 {
-	/*
+	
 	TEST_CLASS(TestValidationUtility)
 	{
 	public:
 
-		
 
+		TEST_METHOD(blah)
+		{
 
+			Assert::AreEqual(validationUtility::FailureState::empty, validationUtility::FailureState(""));
+		}
+
+		/*
 		TEST_METHOD(ISODate_Valid)
 		{
-			Assert::AreEqual()
+			Assert::AreEqual(validationUtility::FailureState::valid, validationUtility::isFormatValid("2022-02-25"));
 		}
 
 		TEST_METHOD(ISODate_InvalidDay_LeapYear)
@@ -61,10 +69,11 @@ namespace BerichtsheftStructsTest
 		{
 
 		}
+		*/
 
 	};
 
-	*/
+	
 
 
 
