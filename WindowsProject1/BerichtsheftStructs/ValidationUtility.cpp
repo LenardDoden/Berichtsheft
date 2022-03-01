@@ -2,6 +2,7 @@
 #include <regex>
 #include <iostream>
 
+
 enum FailureState
 	{
 		empty,
@@ -18,14 +19,63 @@ std::time_t t = std::time(0);
 std::tm* now = std::localtime(&t);
 int datumaktuell = now->tm_year + 1900;
 
-//IsLeapYear
-static bool validationUtility::isLeapYear(const std::string & datestring)
+bool validationUtility::isDayWayToLarge(const std::string & datestring)
 {
-	if (std::stoi(match[1]) % 400 == 0 || std::stoi(match[1]) % 4 == 0 && std::stoi(match[1]) % 100 != 0)
+	std::regex regex_date("(\\d{4})-(\\d{2})-(\\d{2})");
+	std::smatch match;
+
+	std::string input = datestring;
+
+	if (std::regex_match(input, match, regex_date))
 	{
-		return true;
-		std::cout << "Schaltjahr!" << std::endl;
-		
+		if (std::stoi(match[3]) > 31)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	return false;
+}
+
+bool validationUtility::isMonthWayToLarge(const std::string & datestring)
+{
+	std::regex regex_date("(\\d{4})-(\\d{2})-(\\d{2})");
+	std::smatch match;
+
+	std::string input = datestring;
+
+	if (std::regex_match(input, match, regex_date))
+	{
+		if (std::stoi(match[2]) > 12)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	return false;
+}
+
+//IsLeapYear
+bool validationUtility::isLeapYear(const std::string & datestring)
+{
+	std::regex regex_date("(\\d{4})-(\\d{2})-(\\d{2})");
+	std::smatch match;
+
+	std::string input = datestring;
+
+	if (std::regex_match(input, match, regex_date))
+	{
+
+		if (std::stoi(match[1]) % 400 == 0 || std::stoi(match[1]) % 4 == 0 && std::stoi(match[1]) % 100 != 0)
+		{
+			return true;
+			std::cout << "Schaltjahr!" << std::endl;
+		}
+		return false;
 	}
 	return  false;
 }
@@ -45,7 +95,6 @@ FailureState GetFailureState(const std::string & datestring)
 	}
 
 	std::runtime_error{ "Falsches Format! Bitte nochmal in folgendem Format eingeben: (YYYY-MM-DD)" };
-	
 }
 
 
@@ -60,7 +109,7 @@ bool validationUtility::isValid(const std::string & datestring)
 }
 
 //isEmpty
-bool validationUtility::IsEmpty(const std::string& datestring)
+bool validationUtility::isEmpty(const std::string& datestring)
 {
 	if (datestring.length() == 0)
 	{
@@ -80,47 +129,69 @@ bool validationUtility::isFormatValid(const std::string& datestring)
 	{
 		return true;
 	}
-
 	throw std::runtime_error{ "Falsches Format! Bitte nochmal in folgendem Format eingeben: (YYYY-MM-DD)" };
-	
 }
 
 //isOutofrange
-bool validationUtility::isOutofRange(const std::string& datestring)
+bool validationUtility::isInRange(const std::string& datestring)
 {
 	int minimalertag = 28;
 
 	std::string input = datestring;
+
+	std::regex regex_date("(\\d{4})-(\\d{2})-(\\d{2})");
+	std::smatch match;
+	
 	//dict für anzahl tage dazu passende und monate
 
-
+	/*
 	//Schaltjahr
 	if (isLeapYear(datestring) == true)
 	{
 		minimalertag = 29;
 	}
-
-	if (std::stoi(match[2]) > 0 && std::stoi(match[2]) < 13)
+	*/
+	if (std::regex_match(input, match, regex_date))
 	{
-		std::cout << "Monat passt nicht, nicht zwischen 01 und 12" << std::endl;
-		return true;
-	}
+		if (std::stoi(match[2]) > 0 
+		&& std::stoi(match[2]) < 13)
+		{
+			if (std::stoi(match[3]) > 0 &&
+				std::stoi(match[3]) < 32)
+			{
+				if (std::stoi(match[1]) >= 2020
+					&& (std::stoi(match[1]) <= datumaktuell))
+				{
+					return true;
+				}
+				return false;
+			}
+			return false;
+		}
+		return false;
 
-	if (std::stoi(match[3]) > 0 && std::stoi(match[3]) < 32)
-	{
-		std::cout << "Tag passt nicht, nicht zwischen 01 und 31" << std::endl;
-		return true;
 	}
-
-	if (std::stoi(match[1]) >= 2020 && (std::stoi(match[1]) <= datumaktuell))
-	{
-		std::cout << "Jahrezahl passt nicht, nicht zwischen 2020 und " + datumaktuell << std::endl;
-		return true;
-	}
-
 	return false;
+	std::runtime_error{ "Ungültig" };
 }
 
+
+		/*
+		if (std::stoi(match[3]) > 0 &&
+		std::stoi(match[3]) < 32)
+		{
+			std::cout << "Tag passt nicht, nicht zwischen 01 und 31" << std::endl;
+			return true;
+		}
+
+		if (std::stoi(match[1]) >= 2020 
+		&& (std::stoi(match[1]) <= datumaktuell))
+		{
+			std::cout << "Jahrezahl passt nicht, nicht zwischen 2020 und " + datumaktuell << std::endl;
+			return true;
+		}
+		*/
+ 
 
 //bool validationUtility::isValid(const std::string& datestring)
 //{

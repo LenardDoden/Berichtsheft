@@ -24,7 +24,7 @@ namespace Microsoft {
 			template<> inline std::wstring ToString<Woche>(const Woche& t) { return ToString(t.id) + L" " + ToString(t.beginn) + L" " + ToString(t.ende) + L" " + ToString(t.ausbildungsjahr) + L" " + ToString(t.abteilung_fk); }
 			template<> inline std::wstring ToString<Berichtsheft>(const Berichtsheft& t) { return ToString(t.id) + L" " + ToString(t.minuten) + L" " + ToString(t.woche_fk) + L" " + ToString(t.taetigkeit_fk) + L" " + ToString(t.abteilung_fk) + L" " + ToString(t.azubi_fk); }
 			template<> inline std::wstring ToString<Art>(const Art& t) { return ToString(t.id) + L" " + ToString(t.name); }
-			template<> inline std::wstring ToString<validationUtility::FailureState>(const validationUtility::FailureState& t) { return ToString(static_cast<int>(t)); }
+			//template<> inline std::wstring ToString<validationUtility::FailureState>(const validationUtility::FailureState& t) { return ToString(static_cast<int>(t)); }
 	}
 }}
 
@@ -37,37 +37,43 @@ namespace BerichtsheftStructsTest
 	{
 	public:
 
-
-		TEST_METHOD(blah)
+		TEST_METHOD(IDO_Date_Format_Valid)
 		{
+			Assert::AreEqual(true, validationUtility::isFormatValid("2022-02-25"));
+		}
+		
 
-			Assert::AreEqual(validationUtility::FailureState::empty, validationUtility::FailureState(""));
+		TEST_METHOD(ISO_Date_Empty)
+		{
+			Assert::AreEqual(false, validationUtility::isEmpty("2021-02-25"));
 		}
 
-		/*
-		TEST_METHOD(ISODate_Valid)
+		TEST_METHOD(ISODate_In_Range)
 		{
-			Assert::AreEqual(validationUtility::FailureState::valid, validationUtility::isFormatValid("2022-02-25"));
+			Assert::AreEqual(true, validationUtility::isInRange("2022-12-31"));
 		}
 
-		TEST_METHOD(ISODate_InvalidDay_LeapYear)
+		TEST_METHOD(ISODate_LeapYear)
 		{
-			
+			Assert::AreEqual(true, validationUtility::isLeapYear("2016-05-14"));
 		}
 
 		TEST_METHOD(ISODate_InvalidDay_WayToLarge)
 		{
-			
+			Assert::AreEqual(true, validationUtility::isDayWayToLarge("2016-05-34"));
 		}
+
 
 		TEST_METHOD(ISODate_InvalidMonth_WayToLarge)
 		{
-
+			Assert::AreEqual(true, validationUtility::isMonthWayToLarge("2022-15-25"));
 		}
 
+
+
+		/*
 		TEST_METHOD(Random_Invalid)
 		{
-
 		}
 		*/
 
@@ -273,7 +279,6 @@ namespace BerichtsheftStructsTest
 
 			Woche woche;
 			woche.beginn = "2022-02-07";
-			woche.ausbildungsjahr = 1995;
 			Assert::AreEqual(0LL, woche.id);
 
 			woche.id = woche_tabelle.Save(woche);
