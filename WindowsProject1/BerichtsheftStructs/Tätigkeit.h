@@ -14,7 +14,8 @@ struct Taetigkeit {
 
 
 	bool operator==(const Taetigkeit& other) const {
-		return id == other.id && beschreibung == other.beschreibung;
+		return id == other.id 
+		&& beschreibung == other.beschreibung;
 	}
 };
 

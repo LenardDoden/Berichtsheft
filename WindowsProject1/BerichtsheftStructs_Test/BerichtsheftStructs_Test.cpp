@@ -136,6 +136,8 @@ namespace BerichtsheftStructsTest
 			Assert::AreEqual(size_t{ 2 }, liste.size());
 			Assert::AreEqual(abteilungEntwicklung, liste.at(0));
 			Assert::AreEqual(abteilungSupport, liste.at(1));
+
+			Assert::AreEqual(abteilungSupport.name, std::string{ "Support" });
 		}
 	};
 
@@ -281,27 +283,46 @@ namespace BerichtsheftStructsTest
 			woche.beginn = "2022-02-07";
 			Assert::AreEqual(0LL, woche.id);
 
+			
+			woche.ende = "2022-10-05";
+			Assert::AreEqual(0LL, woche.id);
+			
+			woche.ausbildungsjahr = "2022";
+			Assert::AreEqual(0LL, woche.id);
+
+			woche.abteilung_fk = 1;
+			Assert::AreEqual(0LL, woche.id);
+
 			woche.id = woche_tabelle.Save(woche);
 
 			Assert::AreNotEqual(0LL, woche.id);
 			const auto liste = woche_tabelle.List();
 			Assert::AreEqual(size_t{ 1 }, liste.size());
 			Assert::AreEqual(woche, liste.at(0));
+
 		}
 
 		TEST_METHOD(Update)
 		{
 			auto woche_tabelle = Create();
 
+			
 			Woche woche1;
 			woche1.beginn = "2022-02-07";
 			woche1.id = woche_tabelle.Save(woche1);
+			
 
 			Woche woche2;
 			woche2.beginn = "2022-09-09";
+			woche2.ende = "2022-10-05";
+			woche2.ausbildungsjahr = "2022";
+			woche2.abteilung_fk = 1;
 			woche2.id = woche_tabelle.Save(woche2);
 
 			woche2.beginn = "2022-02-07";
+			woche2.ende = "2022-11-05";
+			woche2.ausbildungsjahr = "2021";
+			woche2.abteilung_fk = 2;
 			woche_tabelle.Save(woche2);
 
 			const auto liste = woche_tabelle.List();
@@ -351,11 +372,22 @@ namespace BerichtsheftStructsTest
 
 			Berichtsheft berichtsheft1;
 			berichtsheft1.minuten = 22;
+			berichtsheft1.abteilung_fk = 5;
+			berichtsheft1.azubi_fk = 5;
+			berichtsheft1.taetigkeit_fk = 5;
+			berichtsheft1.woche_fk = 5;
 			berichtsheft1.id = berichtsheft_tabelle.Save(berichtsheft1);
 
 			Berichtsheft berichtsheft2;
 			berichtsheft2.minuten = 9;
 			berichtsheft2.id = berichtsheft_tabelle.Save(berichtsheft2);
+
+			berichtsheft1.minuten = 25;
+			berichtsheft1.abteilung_fk = 4;
+			berichtsheft1.azubi_fk = 4;
+			berichtsheft1.taetigkeit_fk = 4;
+			berichtsheft1.woche_fk = 4;
+			berichtsheft_tabelle.Save(berichtsheft1);
 
 			berichtsheft2.minuten = 2022;
 			berichtsheft_tabelle.Save(berichtsheft2);
@@ -410,6 +442,7 @@ namespace BerichtsheftStructsTest
 			artSchule.id = art_tabelle.Save(artSchule);
 
 			Art artBetrieb;
+
 			artBetrieb.name = "Süppört";
 			artBetrieb.id = art_tabelle.Save(artBetrieb);
 
@@ -420,7 +453,6 @@ namespace BerichtsheftStructsTest
 			Assert::AreEqual(size_t{ 2 }, liste.size());
 			Assert::AreEqual(artSchule, liste.at(0));
 			Assert::AreEqual(artBetrieb, liste.at(1));
-
 		}
 	};
 }

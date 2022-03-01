@@ -18,7 +18,11 @@ struct Woche {
 
 
 	bool operator==(const Woche& other) const {
-		return id == other.id && beginn == other.beginn && ende == other.ende && ausbildungsjahr == other.ausbildungsjahr && abteilung_fk == other.abteilung_fk;
+		return id == other.id 
+		&& beginn == other.beginn 
+		&& ende == other.ende 
+		&& ausbildungsjahr == other.ausbildungsjahr 
+		&& abteilung_fk == other.abteilung_fk;
 	}
 };
 

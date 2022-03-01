@@ -15,7 +15,9 @@ struct Azubi {
 
 
 	bool operator==(const Azubi& other) const {
-		return id == other.id && vorname == other.vorname && nachname == other.nachname;
+		return id == other.id 
+		&& vorname == other.vorname 
+		&& nachname == other.nachname;
 	}
 };
 
