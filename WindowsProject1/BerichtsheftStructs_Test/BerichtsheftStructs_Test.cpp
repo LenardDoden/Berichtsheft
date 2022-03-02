@@ -69,8 +69,6 @@ namespace BerichtsheftStructsTest
 			Assert::AreEqual(true, validationUtility::isMonthWayToLarge("2022-15-25"));
 		}
 
-
-
 		/*
 		TEST_METHOD(Random_Invalid)
 		{
@@ -78,8 +76,6 @@ namespace BerichtsheftStructsTest
 		*/
 
 	};
-
-	
 
 
 
@@ -357,7 +353,7 @@ namespace BerichtsheftStructsTest
 			berichtsheft.minuten = 22;
 			
 			Assert::AreEqual(0LL, berichtsheft.id);
-
+			
 			berichtsheft.id = berichtsheft_tabelle.Save(berichtsheft);
 
 			Assert::AreNotEqual(0LL, berichtsheft.id);

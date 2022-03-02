@@ -1,5 +1,6 @@
 #include "Berichtsheft.h"
 
+
 int64_t BerichtsheftTabelle::Insert(const Berichtsheft & val)
 {
 	mk::sqlite::execute(m_db, R"(
