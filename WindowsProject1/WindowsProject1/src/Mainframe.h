@@ -16,6 +16,9 @@ class Mainframe : public Mainframebase
 	public:
 		/** Constructor */
 		Mainframe( wxWindow* parent );
+
+
+		wxFileName name;
 	//// end generated class members
 
 };

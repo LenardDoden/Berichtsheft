@@ -12,98 +12,84 @@
 #include "../../BerichtsheftStructs/Woche.h" 
 #include "wx/filepicker.h"
 #include "wx/mimetype.h"
+#include "wx/dir.h"
 
 
-Mainframe::Mainframe( wxWindow* parent )
-:
-Mainframebase( parent )
+Mainframe::Mainframe(wxWindow* parent)
+	:
+	Mainframebase(parent)
 {
-	auto standardpaths = wxStandardPaths::Get();
 
-	auto userdirectory = standardpaths.GetUserDataDir();
-	
-	//TODO: File Extension hinzufügen
-	
+	try {
+		auto standardpaths = wxStandardPaths::Get();
+		auto userdirectory = standardpaths.GetUserDataDir();
 
-	//wxFileName name (userdirectory);
-	//wxFileTypeInfo info (userdirectory);
-	
-	//auto filetype = wxFileTypeInfo(info);
-	//filetype.AddExtension(".db");
+		wxLogMessage("%s", userdirectory);
 
+		bool test = wxFileExists(userdirectory);
+		
 
-	//std::cout << userdirectory;
+		
 
-	wxLogMessage("%s", userdirectory);
+		//name = wxFileName::DirName(userdirectory);
+		//name.SetName("test");
+		//name.SetName("Test");
 
 
-	//m_staticText9->SetLabelText(test);
+		if (test == true)
+		{
+			wxLogMessage("%s", "Datei existiert");
+		}
 
-	bool test = wxDirExists(userdirectory);
-	//TODO: Wenn Datei schon existiert gibts ne exception
 
-	if (test == true)
-	{
-		wxLogMessage("%s", "existiert");
+		if (test == false)
+		{
+			auto userdirectorystdstring = userdirectory.ToStdString();
+
+			wxLogMessage("%s", "Datei existiert nicht");
+			auto db = mk::sqlite::database{ userdirectorystdstring };
+
+			BerichtsheftTabelle berichtsheft_tabelle(db);
+			berichtsheft_tabelle.provision();
+
+			ArtTabelle art_tabelle(db);
+			art_tabelle.provision();
+
+			AzubiTabelle azubi_tabelle(db);
+			azubi_tabelle.provision();
+
+			TaetigkeitTabelle taetigkeit_tabelle(db);
+			taetigkeit_tabelle.provision();
+
+			WocheTabelle woche_tabelle(db);
+			woche_tabelle.provision();
+
+			AbteilungTabelle abteilung_tabelle(db);
+			abteilung_tabelle.provision();
+
+
+			name = wxFileNameFromPath(userdirectory);
+			name.SetName("Test");
+			name.SetExt(".db");
+		}
 	}
 
-	
 
-	if (test == false)
+	catch (std::exception e)
 	{
-		auto userdirectorystdstring = userdirectory.ToStdString();
-
-		wxLogMessage("%s", "existiert nicht");
-		auto db = mk::sqlite::database{ userdirectorystdstring };
-
-		
-
-		BerichtsheftTabelle berichtsheft_tabelle(db);
-		berichtsheft_tabelle.provision();
-
-		ArtTabelle art_tabelle(db);
-		art_tabelle.provision();
-
-		AzubiTabelle azubi_tabelle(db);
-		azubi_tabelle.provision();
-
-		TaetigkeitTabelle taetigkeit_tabelle(db);
-		taetigkeit_tabelle.provision();
-
-		WocheTabelle woche_tabelle(db);
-		woche_tabelle.provision();
-
-		AbteilungTabelle abteilung_tabelle(db);
-		abteilung_tabelle.provision();
-
-		wxString namevompath = wxFileNameFromPath(userdirectory);
-		auto dateiname = wxFileName(namevompath);
-		dateiname.SetName("Test");
-		dateiname.SetExt(".db");
-
-		dateiname.SetFullName("Test.db");
-
-		auto getname = dateiname.GetName();
-		wxLogMessage(getname);
-
-		//wxLogMessage("%s", namevompath);
-
-
-		//auto name = wxFileName(namevompath);
-		/*
-		name.SetExt(".db");
-		//wxLogMessage("%s", namevompath);
-
-		auto fileinfo = wxFileTypeInfo("Berichtsheft");
-		fileinfo.AddExtension(".db");
-		
-		wxFileName name = wxFileName::DirName(userdirectory);
-		name.SetName("Test");
-		name.SetExt(".db");
-
-		*/
-		
-		
-
+		wxLogMessage(e.what());
 	}
+
 }
+
+/*
+wxString namevompath = wxFileNameFromPath(userdirectory);
+			auto dateiname = wxFileName(namevompath);
+			dateiname.SetName("Test");
+			dateiname.SetExt(".db");
+
+			dateiname.SetFullName("Test.db");
+
+			auto getname = dateiname.GetName();
+
+*/
