@@ -22,13 +22,17 @@ Mainframe::Mainframe(wxWindow* parent)
 
 	try {
 		auto standardpaths = wxStandardPaths::Get();
-		auto userdirectory = standardpaths.GetUserDataDir();
+		auto userdirectory = standardpaths.GetUserDataDir() + "\\Berichtsheft.db";
 
 		wxLogMessage("%s", userdirectory);
 
-		bool test = wxFileExists(userdirectory);
+		//wxFileName directory_name_ohne_ordner = userdirectory;
+		
+		//directory_name_ohne_ordner.AppendDir("\\berichtsheft");
 		
 
+
+		bool test = wxFileExists(userdirectory);
 		
 
 		//name = wxFileName::DirName(userdirectory);
@@ -45,8 +49,10 @@ Mainframe::Mainframe(wxWindow* parent)
 		if (test == false)
 		{
 			auto userdirectorystdstring = userdirectory.ToStdString();
+		
+			wxLogMessage( "%s", "Der Pfad ist: " + userdirectorystdstring );
 
-			wxLogMessage("%s", "Datei existiert nicht");
+			//wxLogMessage("%s", "Datei existiert nicht");
 			auto db = mk::sqlite::database{ userdirectorystdstring };
 
 			BerichtsheftTabelle berichtsheft_tabelle(db);
@@ -67,10 +73,6 @@ Mainframe::Mainframe(wxWindow* parent)
 			AbteilungTabelle abteilung_tabelle(db);
 			abteilung_tabelle.provision();
 
-
-			name = wxFileNameFromPath(userdirectory);
-			name.SetName("Test");
-			name.SetExt(".db");
 		}
 	}
 
