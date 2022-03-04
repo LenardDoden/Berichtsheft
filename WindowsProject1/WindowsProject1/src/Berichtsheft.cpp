@@ -12,7 +12,6 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-
 PanelBerichtshefteintrag::PanelBerichtshefteintrag( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name ) : wxPanel( parent, id, pos, size, style, name )
 {
 	wxBoxSizer* bSizer1;
@@ -148,7 +147,7 @@ PanelBerichtshefteintrag::PanelBerichtshefteintrag( wxWindow* parent, wxWindowID
 	m_staticText12->Wrap( -1 );
 	m_staticText12->SetFont( wxFont( 14, wxFONTFAMILY_ROMAN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, wxT("Caladea") ) );
 
-	gSizer2->Add( m_staticText12, 0, wxALL, 5 );
+	gSizer2->Add( m_staticText12, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 
 	bSizer7->Add( gSizer2, 0, wxEXPAND, 5 );
@@ -169,7 +168,7 @@ PanelBerichtshefteintrag::PanelBerichtshefteintrag( wxWindow* parent, wxWindowID
 	m_staticText13->Wrap( -1 );
 	m_staticText13->SetFont( wxFont( 14, wxFONTFAMILY_ROMAN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, wxT("Caladea") ) );
 
-	gSizer3->Add( m_staticText13, 0, wxALL, 5 );
+	gSizer3->Add( m_staticText13, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 
 	bSizer7->Add( gSizer3, 0, wxEXPAND, 5 );
