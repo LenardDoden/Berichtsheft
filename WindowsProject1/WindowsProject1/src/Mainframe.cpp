@@ -22,7 +22,7 @@ Mainframe::Mainframe(wxWindow* parent)
 
 	try {
 		auto standardpaths = wxStandardPaths::Get();
-		auto userdirectory = standardpaths.GetUserDataDir() + "\\Berichtsheft.db";
+		auto userdirectory = standardpaths.GetUserDataDir() + ".db";
 
 		wxLogMessage("%s", userdirectory);
 
