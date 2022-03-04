@@ -15,98 +15,57 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
+#include <wx/textctrl.h>
 #include <wx/sizer.h>
-#include <wx/choice.h>
-#include <wx/bmpbuttn.h>
+#include <wx/button.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/button.h>
-#include <wx/calctrl.h>
-#include <wx/panel.h>
-#include <wx/scrolwin.h>
-#include <wx/tglbtn.h>
-#include <wx/textctrl.h>
 #include <wx/dialog.h>
 #include <wx/combobox.h>
+#include <wx/bmpbuttn.h>
+#include <wx/panel.h>
 #include <wx/listbox.h>
 #include <wx/frame.h>
+#include <wx/choice.h>
+#include <wx/calctrl.h>
+#include <wx/scrolwin.h>
+#include <wx/tglbtn.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class PanelBerichtshefteintrag
+/// Class DialogNameAnlegenbase
 ///////////////////////////////////////////////////////////////////////////////
-class PanelBerichtshefteintrag : public wxPanel
-{
-	private:
-
-	protected:
-		wxScrolledWindow* m_scrolledWindow1;
-		wxStaticText* m_staticText1;
-		wxStaticText* m_staticText3;
-		wxChoice* m_choice1;
-		wxBitmapButton* m_bpButton3;
-		wxStaticText* m_staticText4;
-		wxChoice* m_choice2;
-		wxStaticText* m_staticText2;
-		wxChoice* m_choice3;
-		wxBitmapButton* m_bpButton5;
-		wxStaticText* m_staticText7;
-		wxCalendarCtrl* m_calendar1;
-		wxStaticText* m_staticText8;
-		wxCalendarCtrl* m_calendar2;
-		wxStaticText* m_staticText5;
-		wxStaticText* m_staticText12;
-		wxPanel* m_panel1;
-		wxStaticText* m_staticText6;
-		wxStaticText* m_staticText13;
-		wxPanel* m_panel2;
-		wxToggleButton* btn_speichern;
-		wxToggleButton* btn_drucken;
-
-		// Virtual event handlers, override them in your derived class
-		virtual void Onbtnabteilungaddclicked( wxCommandEvent& event ) { event.Skip(); }
-		virtual void Onbiscalendarchanged( wxCalendarEvent& event ) { event.Skip(); }
-		virtual void Onbuttondruckenclicked( wxCommandEvent& event ) { event.Skip(); }
-
-
-	public:
-
-		PanelBerichtshefteintrag( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 700,750 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
-
-		~PanelBerichtshefteintrag();
-
-};
-
-///////////////////////////////////////////////////////////////////////////////
-/// Class DialogNameAnlegen
-///////////////////////////////////////////////////////////////////////////////
-class DialogNameAnlegen : public wxDialog
+class DialogNameAnlegenbase : public wxDialog
 {
 	private:
 
 	protected:
 		wxStaticText* m_staticText14;
-		wxTextCtrl* eingabe_vorname;
 		wxStaticText* m_staticText15;
-		wxTextCtrl* eingabe_nachname;
-		wxButton* m_button3;
+		wxButton* _btnOK;
 		wxButton* m_button4;
 
+		// Virtual event handlers, override them in your derived class
+		virtual void OnOKClicked( wxCommandEvent& event ) { event.Skip(); }
+
+
 	public:
+		wxTextCtrl* _eingabe_vorname;
+		wxTextCtrl* _eingabe_nachname;
 
-		DialogNameAnlegen( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Name eintragen"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+		DialogNameAnlegenbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Name eintragen"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
 
-		~DialogNameAnlegen();
+		~DialogNameAnlegenbase();
 
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class PanelTaetigkeit
+/// Class PanelTaetigkeitbase
 ///////////////////////////////////////////////////////////////////////////////
-class PanelTaetigkeit : public wxPanel
+class PanelTaetigkeitbase : public wxPanel
 {
 	private:
 
@@ -123,9 +82,9 @@ class PanelTaetigkeit : public wxPanel
 
 	public:
 
-		PanelTaetigkeit( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
+		PanelTaetigkeitbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
 
-		~PanelTaetigkeit();
+		~PanelTaetigkeitbase();
 
 };
 
@@ -160,15 +119,70 @@ class Mainframebase : public wxFrame
 	protected:
 		wxPanel* m_panel3;
 		wxStaticText* m_staticText9;
-		wxListBox* m_listBox1;
-		wxButton* m_button1;
-		wxButton* m_button2;
+		wxListBox* _listBoxWoche;
+		wxButton* _btnNeu;
+		wxButton* _btnOeffnen;
+
+		// Virtual event handlers, override them in your derived class
+		virtual void OnWocheSelectionChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnWocheDoubleClicked( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonNeu( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonOeffnen( wxCommandEvent& event ) { event.Skip(); }
+
 
 	public:
 
 		Mainframebase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~Mainframebase();
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class FrameBerichtshefteintragbase
+///////////////////////////////////////////////////////////////////////////////
+class FrameBerichtshefteintragbase : public wxFrame
+{
+	private:
+
+	protected:
+		wxScrolledWindow* m_scrolledWindow1;
+		wxStaticText* m_staticText1;
+		wxStaticText* m_staticText3;
+		wxChoice* _choiceName;
+		wxBitmapButton* _btnNeuName;
+		wxStaticText* m_staticText4;
+		wxChoice* _choiceAusbildungsjahr;
+		wxStaticText* m_staticText2;
+		wxChoice* _choiceAbteilung;
+		wxBitmapButton* _btnNeuAbteilung;
+		wxStaticText* m_staticText7;
+		wxCalendarCtrl* _calendarVon;
+		wxStaticText* m_staticText8;
+		wxCalendarCtrl* _calendarBis;
+		wxStaticText* m_staticText5;
+		wxStaticText* m_staticText12;
+		wxPanel* _panelBetrieb;
+		wxStaticText* m_staticText6;
+		wxStaticText* m_staticText13;
+		wxPanel* _panelSchule;
+		wxToggleButton* _btnSpeichern;
+		wxToggleButton* _btnDrucken;
+
+		// Virtual event handlers, override them in your derived class
+		virtual void OnButtonNeuName( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonNeuAbteilung( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnCalendarVonChanged( wxCalendarEvent& event ) { event.Skip(); }
+		virtual void OnCalendarBisChanged( wxCalendarEvent& event ) { event.Skip(); }
+		virtual void OnButtonSpeichern( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonDrucken( wxCommandEvent& event ) { event.Skip(); }
+
+
+	public:
+
+		FrameBerichtshefteintragbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Berichtsheft Eintrag"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 522,595 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+
+		~FrameBerichtshefteintragbase();
 
 };
 

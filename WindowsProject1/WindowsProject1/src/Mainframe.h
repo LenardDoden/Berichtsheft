@@ -17,10 +17,22 @@ class Mainframe : public Mainframebase
    std::unique_ptr<mk::sqlite::database> _db;
 
    void NeueDatenbank () ;
+   void ResetWocheListe();
+
+   void OnWocheUpdated(wxCommandEvent & event);
+
+   void OnWocheSelectionChanged( wxCommandEvent& event )override { event.Skip(); }
+	void OnWocheDoubleClicked( wxCommandEvent& event )override { event.Skip(); }
+   void OnButtonNeu(wxCommandEvent& event)override ;
+	void OnButtonOeffnen( wxCommandEvent& event )override { event.Skip(); }
+
+
+
 
 	public:
 		/** Constructor */
 		Mainframe( wxWindow* parent );
+
 
 
 	//// end generated class members
