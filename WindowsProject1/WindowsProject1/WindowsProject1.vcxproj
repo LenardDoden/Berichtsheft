@@ -21,12 +21,14 @@
   <ItemGroup>
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Berichtsheft.cpp" />
+    <ClCompile Include="src\DialogAbteilungAnlegen.cpp" />
     <ClCompile Include="src\DialogNameAnlegen.cpp" />
     <ClCompile Include="src\FrameBerichtshefteintrag.cpp" />
     <ClCompile Include="src\Mainframe.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Berichtsheft.h" />
+    <ClInclude Include="src\DialogAbteilungAnlegen.h" />
     <ClInclude Include="src\DialogNameAnlegen.h" />
     <ClInclude Include="src\FrameBerichtshefteintrag.h" />
   </ItemGroup>

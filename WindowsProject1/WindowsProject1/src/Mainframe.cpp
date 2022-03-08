@@ -79,15 +79,3 @@ void Mainframe::NeueDatenbank ()
    WocheTabelle{*_db}.provision();
    AbteilungTabelle{*_db}.provision();
 }
-
-/*
-wxString namevompath = wxFileNameFromPath(userdirectory);
-         auto dateiname = wxFileName(namevompath);
-         dateiname.SetName("Test");
-         dateiname.SetExt(".db");
-
-         dateiname.SetFullName("Test.db");
-
-         auto getname = dateiname.GetName();
-
-*/

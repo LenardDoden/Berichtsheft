@@ -122,7 +122,7 @@ PanelTaetigkeitbase::~PanelTaetigkeitbase()
 
 }
 
-DialogAbteilungAnlegen::DialogAbteilungAnlegen( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+DialogAbteilungAnlegenBase::DialogAbteilungAnlegenBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -136,8 +136,8 @@ DialogAbteilungAnlegen::DialogAbteilungAnlegen( wxWindow* parent, wxWindowID id,
 	m_staticText16->Wrap( -1 );
 	bSizer35->Add( m_staticText16, 0, wxALL, 5 );
 
-	eingabe_abteilung = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer35->Add( eingabe_abteilung, 0, wxALL, 5 );
+	_eingabe_abteilung = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer35->Add( _eingabe_abteilung, 0, wxALL, 5 );
 
 
 	bSizer34->Add( bSizer35, 1, wxEXPAND, 5 );
@@ -145,8 +145,8 @@ DialogAbteilungAnlegen::DialogAbteilungAnlegen( wxWindow* parent, wxWindowID id,
 	wxBoxSizer* bSizer36;
 	bSizer36 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_button5 = new wxButton( this, wxID_OK, wxT("OK"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer36->Add( m_button5, 0, wxALL, 5 );
+	_btnOk = new wxButton( this, wxID_OK, wxT("OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer36->Add( _btnOk, 0, wxALL, 5 );
 
 	m_button6 = new wxButton( this, wxID_CANCEL, wxT("Abbrechen"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer36->Add( m_button6, 0, wxALL, 5 );
@@ -160,10 +160,16 @@ DialogAbteilungAnlegen::DialogAbteilungAnlegen( wxWindow* parent, wxWindowID id,
 	bSizer34->Fit( this );
 
 	this->Centre( wxBOTH );
+
+	// Connect Events
+	_btnOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DialogAbteilungAnlegenBase::OnOKClicked ), NULL, this );
 }
 
-DialogAbteilungAnlegen::~DialogAbteilungAnlegen()
+DialogAbteilungAnlegenBase::~DialogAbteilungAnlegenBase()
 {
+	// Disconnect Events
+	_btnOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DialogAbteilungAnlegenBase::OnOKClicked ), NULL, this );
+
 }
 
 Mainframebase::Mainframebase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )

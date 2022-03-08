@@ -27,8 +27,6 @@ class Mainframe : public Mainframebase
 	void OnButtonOeffnen( wxCommandEvent& event )override { event.Skip(); }
 
 
-
-
 	public:
 		/** Constructor */
 		Mainframe( wxWindow* parent );

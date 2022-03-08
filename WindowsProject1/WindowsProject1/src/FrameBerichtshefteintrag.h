@@ -20,13 +20,13 @@ class FrameBerichtshefteintrag : public FrameBerichtshefteintragbase
    mk::sqlite::database _db;
 
    void ResetNameChoice();
+   void ResetAbteilungChoice();
    void OnButtonNeuName(wxCommandEvent& event)override;
-   void OnButtonNeuAbteilung( wxCommandEvent& event )override { event.Skip(); }
+   void OnButtonNeuAbteilung( wxCommandEvent& event )override;
    void OnCalendarVonChanged( wxCalendarEvent& event )override { event.Skip(); }
    void OnCalendarBisChanged( wxCalendarEvent& event )override { event.Skip(); }
    void OnButtonSpeichern(wxCommandEvent& event)override;
    void OnButtonDrucken( wxCommandEvent& event )override { event.Skip(); }
-
 
 	public:
 		/** Constructor */

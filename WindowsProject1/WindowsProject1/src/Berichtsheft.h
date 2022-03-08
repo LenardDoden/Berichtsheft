@@ -89,23 +89,27 @@ class PanelTaetigkeitbase : public wxPanel
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class DialogAbteilungAnlegen
+/// Class DialogAbteilungAnlegenBase
 ///////////////////////////////////////////////////////////////////////////////
-class DialogAbteilungAnlegen : public wxDialog
+class DialogAbteilungAnlegenBase : public wxDialog
 {
 	private:
 
 	protected:
 		wxStaticText* m_staticText16;
-		wxTextCtrl* eingabe_abteilung;
-		wxButton* m_button5;
+		wxButton* _btnOk;
 		wxButton* m_button6;
 
+		// Virtual event handlers, override them in your derived class
+		virtual void OnOKClicked( wxCommandEvent& event ) { event.Skip(); }
+
+
 	public:
+		wxTextCtrl* _eingabe_abteilung;
 
-		DialogAbteilungAnlegen( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Abteilung eintragen"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+		DialogAbteilungAnlegenBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Abteilung eintragen"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
 
-		~DialogAbteilungAnlegen();
+		~DialogAbteilungAnlegenBase();
 
 };
 

@@ -1,9 +1,11 @@
 #include "FrameBerichtshefteintrag.h"
 #include "DialogNameAnlegen.h"
+#include "DialogAbteilungAnlegen.h"
 
 #include <sstream>
 
 #include "../../BerichtsheftStructs/Azubi.h"
+#include "../../BerichtsheftStructs/Abteilung.h"
 
 wxDEFINE_EVENT(FrameBerichtshefteintrag_Updated, wxCommandEvent);
 
@@ -15,6 +17,7 @@ FrameBerichtshefteintragbase( parent )
 {
 
    ResetNameChoice();
+   ResetAbteilungChoice();
 }
 
 
@@ -29,8 +32,43 @@ void FrameBerichtshefteintrag::ResetNameChoice ()
       beschreibung << i.vorname << " " << i.nachname;
       _choiceName->Insert(beschreibung.str(), 0);
    }
-
 }
+
+void FrameBerichtshefteintrag::ResetAbteilungChoice()
+{
+	_choiceAbteilung->Clear();
+
+	auto abteilung_tabelle = AbteilungTabelle{ _db };
+
+	for (const auto& i : abteilung_tabelle.List()) {
+		std::stringstream beschreibung_abteilung;
+		beschreibung_abteilung << i.name;
+		_choiceAbteilung->Insert(beschreibung_abteilung.str(), 0);
+	}
+}
+
+void FrameBerichtshefteintrag::OnButtonNeuAbteilung(wxCommandEvent & /*event*/)
+{
+	DialogAbteilungAnlegen dlg(this);
+
+
+	//dlg.Show();
+
+	
+	if (dlg.ShowModal() == wxID_OK) {
+		auto abteilung = Abteilung{};
+		abteilung.name = dlg._eingabe_abteilung->GetValue();
+
+		auto abteilung_tabelle = AbteilungTabelle{ _db };
+		abteilung_tabelle.Save(abteilung);
+
+		ResetAbteilungChoice();
+	}
+	
+}
+
+
+
 
 void FrameBerichtshefteintrag::OnButtonNeuName(wxCommandEvent & /*event*/) 
 {
@@ -47,6 +85,25 @@ void FrameBerichtshefteintrag::OnButtonNeuName(wxCommandEvent & /*event*/)
       ResetNameChoice();
    }
 }
+
+
+	/*
+	DialogAbteilungAnlegen dlg(this);
+	if (dlg.ShowModal() == wxID_OK) {
+
+		//Neue Abteilung anlegen 
+		auto abteilung = Abteilung{};
+		abteilung.name = dlg._eingabe_abteilung->GetValue();
+		
+		auto abteilung_tabelle = AbteilungTabelle{ _db };
+		abteilung_tabelle.Save(abteilung);
+
+		ResetAbteilungChoice();
+	}
+}
+	*/
+
+
 
 void FrameBerichtshefteintrag::OnButtonSpeichern(wxCommandEvent & /*event*/) {
    // TODO: speichern
