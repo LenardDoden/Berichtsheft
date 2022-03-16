@@ -35,9 +35,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Berichtsheft.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\FrameBerichtshefteintrag.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -45,6 +42,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\DialogAbteilungAnlegen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Berichtsheft.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DatabaseID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

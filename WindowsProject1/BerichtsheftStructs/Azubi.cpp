@@ -46,7 +46,7 @@ SELECT vorname, nachname FROM azubi WHERE azubi_id = ?
 std::vector<Azubi> AzubiTabelle::List()
 {
 	auto res = mk::sqlite::result{ m_db, R"(
-SELECT azubi_id FROM azubi ORDER BY nachname
+SELECT azubi_id FROM azubi ORDER BY nachname, vorname, azubi_id
 )" };
 
 	std::vector<Azubi> vec;

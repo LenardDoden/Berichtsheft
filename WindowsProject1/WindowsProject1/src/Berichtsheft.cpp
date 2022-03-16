@@ -14,7 +14,7 @@
 
 DialogNameAnlegenbase::DialogNameAnlegenbase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetSizeHints( wxSize( -1,-1 ), wxDefaultSize );
 
 	wxBoxSizer* bSizer30;
 	bSizer30 = new wxBoxSizer( wxVERTICAL );
@@ -73,12 +73,16 @@ DialogNameAnlegenbase::DialogNameAnlegenbase( wxWindow* parent, wxWindowID id, c
 	this->Centre( wxBOTH );
 
 	// Connect Events
+	_eingabe_vorname->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( DialogNameAnlegenbase::OnTextVornameChanged ), NULL, this );
+	_eingabe_nachname->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( DialogNameAnlegenbase::OnTextNachnameChanged ), NULL, this );
 	_btnOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DialogNameAnlegenbase::OnOKClicked ), NULL, this );
 }
 
 DialogNameAnlegenbase::~DialogNameAnlegenbase()
 {
 	// Disconnect Events
+	_eingabe_vorname->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( DialogNameAnlegenbase::OnTextVornameChanged ), NULL, this );
+	_eingabe_nachname->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( DialogNameAnlegenbase::OnTextNachnameChanged ), NULL, this );
 	_btnOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DialogNameAnlegenbase::OnOKClicked ), NULL, this );
 
 }
@@ -137,6 +141,8 @@ DialogAbteilungAnlegenBase::DialogAbteilungAnlegenBase( wxWindow* parent, wxWind
 	bSizer35->Add( m_staticText16, 0, wxALL, 5 );
 
 	_eingabe_abteilung = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	_eingabe_abteilung->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
+
 	bSizer35->Add( _eingabe_abteilung, 0, wxALL, 5 );
 
 
@@ -162,12 +168,14 @@ DialogAbteilungAnlegenBase::DialogAbteilungAnlegenBase( wxWindow* parent, wxWind
 	this->Centre( wxBOTH );
 
 	// Connect Events
+	_eingabe_abteilung->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( DialogAbteilungAnlegenBase::OnTextAbteilungChanged ), NULL, this );
 	_btnOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DialogAbteilungAnlegenBase::OnOKClicked ), NULL, this );
 }
 
 DialogAbteilungAnlegenBase::~DialogAbteilungAnlegenBase()
 {
 	// Disconnect Events
+	_eingabe_abteilung->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( DialogAbteilungAnlegenBase::OnTextAbteilungChanged ), NULL, this );
 	_btnOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DialogAbteilungAnlegenBase::OnOKClicked ), NULL, this );
 
 }
@@ -280,6 +288,8 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 	wxArrayString _choiceNameChoices;
 	_choiceName = new wxChoice( m_scrolledWindow1, wxID_ANY, wxDefaultPosition, wxDefaultSize, _choiceNameChoices, 0 );
 	_choiceName->SetSelection( 0 );
+	_choiceName->SetMinSize( wxSize( 110,-1 ) );
+
 	fgSizer1->Add( _choiceName, 0, wxALL, 5 );
 
 	_btnNeuName = new wxBitmapButton( m_scrolledWindow1, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW|0 );
@@ -297,6 +307,8 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 	int _choiceAusbildungsjahrNChoices = sizeof( _choiceAusbildungsjahrChoices ) / sizeof( wxString );
 	_choiceAusbildungsjahr = new wxChoice( m_scrolledWindow1, wxID_ANY, wxDefaultPosition, wxDefaultSize, _choiceAusbildungsjahrNChoices, _choiceAusbildungsjahrChoices, 0 );
 	_choiceAusbildungsjahr->SetSelection( 0 );
+	_choiceAusbildungsjahr->SetMinSize( wxSize( 110,-1 ) );
+
 	fgSizer1->Add( _choiceAusbildungsjahr, 0, wxALL|wxEXPAND, 5 );
 
 
@@ -311,6 +323,8 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 	wxArrayString _choiceAbteilungChoices;
 	_choiceAbteilung = new wxChoice( m_scrolledWindow1, wxID_ANY, wxDefaultPosition, wxDefaultSize, _choiceAbteilungChoices, 0 );
 	_choiceAbteilung->SetSelection( 0 );
+	_choiceAbteilung->SetMinSize( wxSize( 110,-1 ) );
+
 	fgSizer1->Add( _choiceAbteilung, 0, wxALL, 5 );
 
 	_btnNeuAbteilung = new wxBitmapButton( m_scrolledWindow1, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW|0 );

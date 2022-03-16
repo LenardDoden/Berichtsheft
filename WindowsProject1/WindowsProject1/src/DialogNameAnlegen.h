@@ -16,6 +16,9 @@ class DialogNameAnlegen : public DialogNameAnlegenbase
 	protected:
 		// Handlers for DialogNameAnlegenbase events.
 		void OnOKClicked( wxCommandEvent& event );
+
+		void OnTextVornameChanged(wxCommandEvent& event);
+		void OnTextNachnameChanged(wxCommandEvent& event);
 	public:
 		/** Constructor */
 		DialogNameAnlegen( wxWindow* parent );

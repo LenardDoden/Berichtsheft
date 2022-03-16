@@ -18,6 +18,8 @@
 #include "../../BerichtsheftStructs/Tätigkeit.h" 
 #include "../../BerichtsheftStructs/Woche.h" 
 
+#include "DatabaseID.h"
+
 Mainframe::Mainframe(wxWindow *parent)
    :
    Mainframebase(parent)
@@ -32,30 +34,33 @@ Mainframe::Mainframe(wxWindow *parent)
       NeueDatenbank();
    }
 
+
    ResetWocheListe();
 }
+
+
 
 void Mainframe::ResetWocheListe () 
 {
    auto woche_tabelle = WocheTabelle{*_db};
    const auto woche_liste = woche_tabelle.List();
 
-   wxArrayString list;
+   _listBoxWoche->Clear();
    for (const auto& i : woche_liste) {
       std::stringstream beschreibung;
       beschreibung << i.beginn << "- " << i.ende <<  ", " << i.ausbildungsjahr;
-      list.Add(beschreibung.str());
-   }
+	  _listBoxWoche->Append(beschreibung.str(), new DatabaseID{ i.id });
 
-   _listBoxWoche->Clear();
-
-   if (!list.empty()) {
-      _listBoxWoche->InsertItems(list, 0);
    }
 }
 
+
+
+
+
 void Mainframe::OnWocheUpdated (wxCommandEvent& /*event*/) 
 {
+
    wxLogDebug(__FUNCTION__ " Bericht wurde aktualisiert");
    ResetWocheListe();
 }
@@ -63,6 +68,7 @@ void Mainframe::OnWocheUpdated (wxCommandEvent& /*event*/)
 void Mainframe::OnButtonNeu(wxCommandEvent & /*event*/) 
 { 
    auto eintrag = new FrameBerichtshefteintrag(this, *_db);
+
    eintrag->Show();
  
    eintrag->Bind(FrameBerichtshefteintrag_Updated, &Mainframe::OnWocheUpdated, this);

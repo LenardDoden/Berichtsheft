@@ -49,6 +49,8 @@ class DialogNameAnlegenbase : public wxDialog
 		wxButton* m_button4;
 
 		// Virtual event handlers, override them in your derived class
+		virtual void OnTextVornameChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnTextNachnameChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnOKClicked( wxCommandEvent& event ) { event.Skip(); }
 
 
@@ -56,7 +58,7 @@ class DialogNameAnlegenbase : public wxDialog
 		wxTextCtrl* _eingabe_vorname;
 		wxTextCtrl* _eingabe_nachname;
 
-		DialogNameAnlegenbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Name eintragen"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+		DialogNameAnlegenbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Name eintragen"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 
 		~DialogNameAnlegenbase();
 
@@ -101,6 +103,7 @@ class DialogAbteilungAnlegenBase : public wxDialog
 		wxButton* m_button6;
 
 		// Virtual event handlers, override them in your derived class
+		virtual void OnTextAbteilungChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnOKClicked( wxCommandEvent& event ) { event.Skip(); }
 
 

@@ -27,6 +27,7 @@
     <ClCompile Include="src\Mainframe.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DatabaseID.h" />
     <ClInclude Include="src\Berichtsheft.h" />
     <ClInclude Include="src\DialogAbteilungAnlegen.h" />
     <ClInclude Include="src\DialogNameAnlegen.h" />

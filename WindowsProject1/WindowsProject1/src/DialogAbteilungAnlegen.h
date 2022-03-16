@@ -16,11 +16,15 @@ class DialogAbteilungAnlegen : public DialogAbteilungAnlegenBase
 	protected:
 		// Handlers for DialogNameAnlegenbase events.
 		void OnOKClicked(wxCommandEvent& event);
+		void OnUebernehmenClicked(wxCommandEvent& event);
+		void OnTextAbteilungChanged(wxCommandEvent& event);
+		
 	public:
 		/** Constructor */
 		DialogAbteilungAnlegen(wxWindow* parent);
 	//// end generated class members
-
+	private:
+	
 };
 
 #endif // __DialogAbteilungAnlegen__
