@@ -184,10 +184,10 @@ class FrameBerichtshefteintragbase : public wxFrame
 
 
 	public:
-		wxGridSizer* _betriebtaetigkeitsizer;
 		wxPanel* _panelBetrieb;
-		wxGridSizer* _schultaetigkeitsizer;
+		wxGridSizer* _betriebtaetigkeitsizer;
 		wxPanel* _panelSchule;
+		wxGridSizer* _schultaetigkeitsizer;
 
 		FrameBerichtshefteintragbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Berichtsheft Eintrag"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 522,595 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 

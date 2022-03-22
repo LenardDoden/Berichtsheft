@@ -394,13 +394,14 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 
 	bSizer7->Add( gSizer2, 0, wxEXPAND, 5 );
 
+	_panelBetrieb = new wxPanel( m_scrolledWindow1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	_betriebtaetigkeitsizer = new wxGridSizer( 0, 1, 0, 0 );
 
-	_panelBetrieb = new wxPanel( m_scrolledWindow1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	_betriebtaetigkeitsizer->Add( _panelBetrieb, 0, wxEXPAND | wxALL, 5 );
 
-
-	bSizer7->Add( _betriebtaetigkeitsizer, 1, wxEXPAND, 5 );
+	_panelBetrieb->SetSizer( _betriebtaetigkeitsizer );
+	_panelBetrieb->Layout();
+	_betriebtaetigkeitsizer->Fit( _panelBetrieb );
+	bSizer7->Add( _panelBetrieb, 0, wxEXPAND | wxALL, 5 );
 
 	wxGridSizer* gSizer3;
 	gSizer3 = new wxGridSizer( 0, 2, 0, 0 );
@@ -420,13 +421,14 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 
 	bSizer7->Add( gSizer3, 0, wxEXPAND, 5 );
 
+	_panelSchule = new wxPanel( m_scrolledWindow1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	_schultaetigkeitsizer = new wxGridSizer( 0, 1, 0, 0 );
 
-	_panelSchule = new wxPanel( m_scrolledWindow1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	_schultaetigkeitsizer->Add( _panelSchule, 0, wxEXPAND|wxALL, 5 );
 
-
-	bSizer7->Add( _schultaetigkeitsizer, 1, wxEXPAND, 5 );
+	_panelSchule->SetSizer( _schultaetigkeitsizer );
+	_panelSchule->Layout();
+	_schultaetigkeitsizer->Fit( _panelSchule );
+	bSizer7->Add( _panelSchule, 0, wxEXPAND|wxALL, 5 );
 
 
 	bSizer9->Add( bSizer7, 1, wxEXPAND|wxTOP, 20 );
