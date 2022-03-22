@@ -17,6 +17,26 @@
 wxDEFINE_EVENT(FrameBerichtshefteintrag_Updated, wxCommandEvent);
 
 
+
+class WrapperPanelTaetigkeit : public wxObject {
+	PanelTaetigkeitbase* _panelTaetigkeit;
+
+public:
+
+	explicit WrapperPanelTaetigkeit(PanelTaetigkeitbase* panelTaetigkeit)
+		: _panelTaetigkeit(panelTaetigkeit)
+
+	{
+
+	}
+
+	PanelTaetigkeitbase* Get() const
+	{
+		return _panelTaetigkeit;
+	}
+};
+
+
 void FrameBerichtshefteintrag::panelbetriebstaetigkeiterstellen()
 	
 {
@@ -25,6 +45,14 @@ void FrameBerichtshefteintrag::panelbetriebstaetigkeiterstellen()
 	//_panelBetrieb
 
 	auto panelbetriebneu = new PanelTaetigkeitbase(_panelBetrieb/*_panelBetrieb*/);
+
+	
+	panelbetriebneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnBetriebTaetigkeitErstellen), NULL, this);
+	panelbetriebneu->btn_delete_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnBetriebTaetigkeitLoeschen), NULL, this);
+
+	//panelbetriebneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnSchuleTaetigkeitErstellen), NULL, this);
+	//panelbetriebneu->btn_delete_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnSchuleTaetigkeitLoeschen), NULL, this);
+
 
 	_betriebtaetigkeitsizer->Add(panelbetriebneu);
 	_betriebtaetigkeitsizer->Fit(panelbetriebneu);
@@ -37,6 +65,9 @@ void FrameBerichtshefteintrag::panelschultaetigkeiterstellen()
 {
 
 	auto panelschuleneu = new PanelTaetigkeitbase(_panelSchule/*_panelSchule*/);
+
+	panelschuleneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnSchuleTaetigkeitErstellen), NULL, this);
+	panelschuleneu->btn_delete_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnSchuleTaetigkeitLoeschen), NULL, this);
 
 	_schultaetigkeitsizer->Add(panelschuleneu);
 	_schultaetigkeitsizer->Fit(panelschuleneu);
