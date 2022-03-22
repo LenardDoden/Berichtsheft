@@ -1,6 +1,8 @@
 #include "FrameBerichtshefteintrag.h"
 #include "DialogNameAnlegen.h"
 #include "DialogAbteilungAnlegen.h"
+#include "Mainframe.h"
+
 
 #include "DatabaseID.h"
 
@@ -15,6 +17,35 @@
 wxDEFINE_EVENT(FrameBerichtshefteintrag_Updated, wxCommandEvent);
 
 
+void FrameBerichtshefteintrag::panelbetriebstaetigkeiterstellen()
+	
+{
+	//_panelBetrieb = new PanelTaetigkeitbase;
+	// this
+	//_panelBetrieb
+
+	auto panelbetriebneu = new PanelTaetigkeitbase(_panelBetrieb/*_panelBetrieb*/);
+
+	_betriebtaetigkeitsizer->Add(panelbetriebneu);
+	_betriebtaetigkeitsizer->Fit(panelbetriebneu);
+	_betriebtaetigkeitsizer->Show(panelbetriebneu);
+
+
+}
+
+void FrameBerichtshefteintrag::panelschultaetigkeiterstellen()
+{
+
+	auto panelschuleneu = new PanelTaetigkeitbase(_panelSchule/*_panelSchule*/);
+
+	_schultaetigkeitsizer->Add(panelschuleneu);
+	_schultaetigkeitsizer->Fit(panelschuleneu);
+	_schultaetigkeitsizer->Show(panelschuleneu);
+	
+	
+	//_schultaetigkeitsizer->Add();
+}
+
 FrameBerichtshefteintrag::FrameBerichtshefteintrag( wxWindow* parent, mk::sqlite::database db )
 :
 FrameBerichtshefteintragbase( parent )
@@ -24,6 +55,18 @@ FrameBerichtshefteintragbase( parent )
 
    ResetNameChoice();
    ResetAbteilungChoice();
+   
+  //TODO: Batrieb und Schultätigkeiten Panele einfügen
+
+   panelbetriebstaetigkeiterstellen();
+   panelschultaetigkeiterstellen();
+   
+   
+  
+  //PanelTaetigkeitbase::panelbetriebstaetigkeiterstellen(wxWindow* parent);
+   //PanelTaetigkeitbase::panelschultaetigkeiterstellen(wxWindow* parent);
+
+  
 }
 
 
@@ -57,6 +100,8 @@ void FrameBerichtshefteintrag::ResetAbteilungChoice()
 
 	}
 }
+
+
 
 void FrameBerichtshefteintrag::OnButtonNeuAbteilung(wxCommandEvent & /*event*/)
 {
@@ -122,6 +167,7 @@ void FrameBerichtshefteintrag::OnCalendarVonChanged(wxCalendarEvent & /*event*/)
 		_calendarBis->SetDate(kalendar_auswahl);
 	}
 
+
 	else {
 
 		wxLogMessage("%s", "Bitte wähle einen Montag aus.");
@@ -178,9 +224,8 @@ void FrameBerichtshefteintrag::OnButtonSpeichern(wxCommandEvent & /*event*/) {
    auto abteilung_Database_ID = static_cast<DatabaseID*>(abteilung_Id)->id;
    
 
-
-   //wxClientData* Datum_Client_Von = _calendarVon->GetClientObject(datum_von);
-
+	   
+	// _calendarVon->GetClientObject(datum_von);
    //wxClientData* Datum_Client_Bis = _calendarBis->
 
    

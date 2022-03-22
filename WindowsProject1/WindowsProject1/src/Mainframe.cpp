@@ -69,8 +69,10 @@ void Mainframe::OnButtonNeu(wxCommandEvent & /*event*/)
 { 
    auto eintrag = new FrameBerichtshefteintrag(this, *_db);
 
+   
+
    eintrag->Show();
- 
+
    eintrag->Bind(FrameBerichtshefteintrag_Updated, &Mainframe::OnWocheUpdated, this);
 }
 

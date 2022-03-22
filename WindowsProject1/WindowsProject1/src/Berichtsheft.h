@@ -72,10 +72,6 @@ class PanelTaetigkeitbase : public wxPanel
 	private:
 
 	protected:
-		wxComboBox* combo_beschreibung_taetigkeit;
-		wxComboBox* combo_stunden;
-		wxBitmapButton* btn_add_taetigkeit;
-		wxBitmapButton* btn_delete_taetigkeit;
 
 		// Virtual event handlers, override them in your derived class
 		virtual void Onbuttonaddclicked( wxCommandEvent& event ) { event.Skip(); }
@@ -83,8 +79,12 @@ class PanelTaetigkeitbase : public wxPanel
 
 
 	public:
+		wxComboBox* combo_beschreibung_taetigkeit;
+		wxComboBox* combo_stunden;
+		wxBitmapButton* btn_add_taetigkeit;
+		wxBitmapButton* btn_delete_taetigkeit;
 
-		PanelTaetigkeitbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
+		PanelTaetigkeitbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 480,-1 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
 
 		~PanelTaetigkeitbase();
 
@@ -169,10 +169,8 @@ class FrameBerichtshefteintragbase : public wxFrame
 		wxCalendarCtrl* _calendarBis;
 		wxStaticText* m_staticText5;
 		wxStaticText* m_staticText12;
-		wxPanel* _panelBetrieb;
 		wxStaticText* m_staticText6;
 		wxStaticText* m_staticText13;
-		wxPanel* _panelSchule;
 		wxToggleButton* _btnSpeichern;
 		wxToggleButton* _btnDrucken;
 
@@ -186,6 +184,10 @@ class FrameBerichtshefteintragbase : public wxFrame
 
 
 	public:
+		wxGridSizer* _betriebtaetigkeitsizer;
+		wxPanel* _panelBetrieb;
+		wxGridSizer* _schultaetigkeitsizer;
+		wxPanel* _panelSchule;
 
 		FrameBerichtshefteintragbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Berichtsheft Eintrag"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 522,595 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 

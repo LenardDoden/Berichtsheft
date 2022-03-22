@@ -15,6 +15,8 @@ void DialogNameAnlegen::OnOKClicked( wxCommandEvent& event )
 
    const auto nachname = _eingabe_nachname->GetValue();
 
+  
+
 
    if (nachname.empty() || nachname.size() > 10) {
       wxLogMessage("%s", "Bitte geben Sie einen gültigen Nachnamen (kleiner 100 Zeichen) ein.");

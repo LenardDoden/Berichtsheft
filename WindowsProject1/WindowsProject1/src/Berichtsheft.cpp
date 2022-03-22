@@ -111,7 +111,6 @@ PanelTaetigkeitbase::PanelTaetigkeitbase( wxWindow* parent, wxWindowID id, const
 
 	this->SetSizer( bSizer16 );
 	this->Layout();
-	bSizer16->Fit( this );
 
 	// Connect Events
 	btn_add_taetigkeit->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PanelTaetigkeitbase::Onbuttonaddclicked ), NULL, this );
@@ -395,8 +394,13 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 
 	bSizer7->Add( gSizer2, 0, wxEXPAND, 5 );
 
+	_betriebtaetigkeitsizer = new wxGridSizer( 0, 1, 0, 0 );
+
 	_panelBetrieb = new wxPanel( m_scrolledWindow1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	bSizer7->Add( _panelBetrieb, 0, wxEXPAND | wxALL, 5 );
+	_betriebtaetigkeitsizer->Add( _panelBetrieb, 0, wxEXPAND | wxALL, 5 );
+
+
+	bSizer7->Add( _betriebtaetigkeitsizer, 1, wxEXPAND, 5 );
 
 	wxGridSizer* gSizer3;
 	gSizer3 = new wxGridSizer( 0, 2, 0, 0 );
@@ -416,8 +420,13 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 
 	bSizer7->Add( gSizer3, 0, wxEXPAND, 5 );
 
+	_schultaetigkeitsizer = new wxGridSizer( 0, 1, 0, 0 );
+
 	_panelSchule = new wxPanel( m_scrolledWindow1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	bSizer7->Add( _panelSchule, 0, wxEXPAND | wxALL, 5 );
+	_schultaetigkeitsizer->Add( _panelSchule, 0, wxEXPAND|wxALL, 5 );
+
+
+	bSizer7->Add( _schultaetigkeitsizer, 1, wxEXPAND, 5 );
 
 
 	bSizer9->Add( bSizer7, 1, wxEXPAND|wxTOP, 20 );
