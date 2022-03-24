@@ -43,8 +43,6 @@ CREATE TABLE woche (
  );
  
  
-
- 
  
  CREATE TABLE art (
     art_id INTEGER PRIMARY KEY AUTOINCREMENT

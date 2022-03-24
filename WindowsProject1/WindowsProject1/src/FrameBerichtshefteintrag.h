@@ -33,58 +33,18 @@ class FrameBerichtshefteintrag : public FrameBerichtshefteintragbase
 	public:
 		/** Constructor */
 
+		void OnTaetigkeitEntfernen(wxCommandEvent & event);
+
 		void panelbetriebstaetigkeiterstellen();
 		void panelschultaetigkeiterstellen();
 
 		FrameBerichtshefteintrag( wxWindow* parent, mk::sqlite::database db);
 	//// end generated class members
 
-		virtual void OnBetriebTaetigkeitErstellen(wxCommandEvent& event) 
-		{
-			auto _paneltaetigkeitbetriebneu = new PanelTaetigkeitbase(_panelBetrieb/*_panelSchule*/);
-			_betriebtaetigkeitsizer->Add(_paneltaetigkeitbetriebneu);
-			bSizer7->Layout();
-			bSizer1->Layout();
-
-
-			//_betriebtaetigkeitsizer->Layout();
-			//_schultaetigkeitsizer->Layout();
-			//wxLogMessage("Hallo test BetriebErstellen");
-		}
-
-		virtual void OnBetriebTaetigkeitLoeschen(wxCommandEvent& event) 
-		{
-			//wxLogMessage("Hallo test BetriebLoeschen");
-
-			//auto count = _betriebtaetigkeitsizer->GetItemCount();
-			_betriebtaetigkeitsizer->Detach(0);
-			_betriebtaetigkeitsizer->Layout();
-			//bSizer7->Layout();
-			bSizer1->Layout();
-
-		}
-
-
-		virtual void OnSchuleTaetigkeitErstellen(wxCommandEvent& event) 
-		{
-			//wxLogMessage("Hallo test SchuleErstellen");
-			auto _paneltaetigkeitschuleneu = new PanelTaetigkeitbase(_panelSchule);
-			_schultaetigkeitsizer->Add(_paneltaetigkeitschuleneu);
-			bSizer7->Layout();
-			bSizer1->Layout();	
-		}
-
-
-		virtual void OnSchuleTaetigkeitLoeschen(wxCommandEvent& event) 
-		{
-			//wxLogMessage("Hallo test schuleLoeschen");
-
-			_schultaetigkeitsizer->Detach(0);
-
-			_schultaetigkeitsizer->Layout();
-			//bSizer7->Layout();
-			bSizer1->Layout();
-		}
+		virtual void OnBetriebTaetigkeitErstellen(wxCommandEvent& event);
+		virtual void OnBetriebTaetigkeitLoeschen(wxCommandEvent& event);
+		virtual void OnSchuleTaetigkeitErstellen(wxCommandEvent& event);
+		virtual void OnSchuleTaetigkeitLoeschen(wxCommandEvent& event);
 
 };
 

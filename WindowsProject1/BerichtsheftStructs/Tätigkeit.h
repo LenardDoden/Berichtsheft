@@ -11,6 +11,7 @@
 struct Taetigkeit {
 	int64_t id{};
 	std::string beschreibung;
+	int64_t art_fk;
 
 
 	bool operator==(const Taetigkeit& other) const {

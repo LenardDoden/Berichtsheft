@@ -4,16 +4,16 @@
 int64_t BerichtsheftTabelle::Insert(const Berichtsheft & val)
 {
 	mk::sqlite::execute(m_db, R"(
- INSERT INTO Berichtsheft (minuten, woche_fk, taetigkeit_fk, abteilung_fk, azubi_fk) VALUES (?, ?, ?, ?, ?)
-)", val.minuten, val.woche_fk, val.taetigkeit_fk, val.abteilung_fk, val.azubi_fk);
+ INSERT INTO Berichtsheft (minuten, woche_fk, taetigkeit_fk, azubi_fk) VALUES (?, ?, ?, ?)
+)", val.minuten, val.woche_fk, val.taetigkeit_fk, val.azubi_fk);
 	return m_db.last_autoincrement();
 }
 
 int64_t BerichtsheftTabelle::Update(const Berichtsheft & val)
 {
 	mk::sqlite::execute(m_db, R"(
- UPDATE Berichtsheft SET (minuten, woche_fk, taetigkeit_fk, abteilung_fk, azubi_fk) = (?, ?, ?, ?, ?) WHERE Berichtsheft_id = ?
-)", val.minuten, val.woche_fk, val.taetigkeit_fk, val.abteilung_fk, val.azubi_fk, val.id);
+ UPDATE Berichtsheft SET (minuten, woche_fk, taetigkeit_fk, azubi_fk) = (?, ?, ?, ?) WHERE Berichtsheft_id = ?
+)", val.minuten, val.woche_fk, val.taetigkeit_fk, val.azubi_fk, val.id);
 	return val.id;
 }
 
@@ -30,7 +30,7 @@ int64_t BerichtsheftTabelle::Save(const Berichtsheft & val)
 Berichtsheft BerichtsheftTabelle::Load(int64_t id)
 {
 	auto res = mk::sqlite::result{ m_db, R"(
-SELECT minuten, woche_fk, taetigkeit_fk, abteilung_fk, azubi_fk FROM Berichtsheft WHERE Berichtsheft_id = ?
+SELECT minuten, woche_fk, taetigkeit_fk, azubi_fk FROM Berichtsheft WHERE Berichtsheft_id = ?
 )", id };
 
 	if (res.has_data()) {
@@ -39,8 +39,7 @@ SELECT minuten, woche_fk, taetigkeit_fk, abteilung_fk, azubi_fk FROM Berichtshef
 		a.minuten = res[0];
 		a.woche_fk = res[1];
 		a.taetigkeit_fk = res[2];
-		a.abteilung_fk = res[3];
-		a.azubi_fk = res[4];
+		a.azubi_fk = res[3];
 		return a;
 	}
 
@@ -69,12 +68,10 @@ void BerichtsheftTabelle::provision()
     , minuten INTEGER
     , woche_fk INTEGER
     , taetigkeit_fk INTEGER
-    , abteilung_fk INTEGER
     , azubi_fk INTEGER
 
 	, FOREIGN KEY(woche_fk) REFERENCES woche(woche_id)
 	, FOREIGN KEY(taetigkeit_fk) REFERENCES taetigkeit(taetigkeit_id)
-	, FOREIGN KEY(abteilung_fk) REFERENCES abteilung(abteilung_id)
 	, FOREIGN KEY(azubi_fk) REFERENCES azubi(azubi_id)
  );
 )");

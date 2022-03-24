@@ -22,7 +22,7 @@ namespace Microsoft {
 			template<> inline std::wstring ToString<Azubi>(const Azubi& t) { return ToString(t.id) + L" " + ToString(t.vorname) + L" " + ToString(t.nachname); }
 			template<> inline std::wstring ToString<Taetigkeit>(const Taetigkeit& t) { return ToString(t.id) + L" " + ToString(t.beschreibung); }
 			template<> inline std::wstring ToString<Woche>(const Woche& t) { return ToString(t.id) + L" " + ToString(t.beginn) + L" " + ToString(t.ende) + L" " + ToString(t.ausbildungsjahr) + L" " + ToString(t.abteilung_fk); }
-			template<> inline std::wstring ToString<Berichtsheft>(const Berichtsheft& t) { return ToString(t.id) + L" " + ToString(t.minuten) + L" " + ToString(t.woche_fk) + L" " + ToString(t.taetigkeit_fk) + L" " + ToString(t.abteilung_fk) + L" " + ToString(t.azubi_fk); }
+			template<> inline std::wstring ToString<Berichtsheft>(const Berichtsheft& t) { return ToString(t.id) + L" " + ToString(t.minuten) + L" " + ToString(t.woche_fk) + L" " + ToString(t.taetigkeit_fk) + L" " + L" " + ToString(t.azubi_fk); }
 			template<> inline std::wstring ToString<Art>(const Art& t) { return ToString(t.id) + L" " + ToString(t.name); }
 			//template<> inline std::wstring ToString<validationUtility::FailureState>(const validationUtility::FailureState& t) { return ToString(static_cast<int>(t)); }
 	}
@@ -177,6 +177,7 @@ namespace BerichtsheftStructsTest
 
 			Taetigkeit taetigkeitEntwicklung;
 			taetigkeitEntwicklung.beschreibung = "BerichtsheftStructs testen";
+			taetigkeitEntwicklung.art_fk = 5;
 			taetigkeitEntwicklung.id = taetigkeit_tabelle.Save(taetigkeitEntwicklung);
 
 			Taetigkeit taetigkeitSupport;
@@ -185,6 +186,9 @@ namespace BerichtsheftStructsTest
 
 			taetigkeitSupport.beschreibung = "Tests schreiben";
 			taetigkeit_tabelle.Save(taetigkeitSupport);
+
+			taetigkeitEntwicklung.art_fk = 6;
+			taetigkeit_tabelle.Save(taetigkeitEntwicklung);
 
 			const auto liste = taetigkeit_tabelle.List();
 			Assert::AreEqual(size_t{ 2 }, liste.size());
@@ -362,13 +366,14 @@ namespace BerichtsheftStructsTest
 			Assert::AreEqual(berichtsheft, liste.at(0));
 		}
 
+
 		TEST_METHOD(Update)
+
 		{
 			auto berichtsheft_tabelle = Create();
 
 			Berichtsheft berichtsheft1;
 			berichtsheft1.minuten = 22;
-			berichtsheft1.abteilung_fk = 5;
 			berichtsheft1.azubi_fk = 5;
 			berichtsheft1.taetigkeit_fk = 5;
 			berichtsheft1.woche_fk = 5;
@@ -379,7 +384,6 @@ namespace BerichtsheftStructsTest
 			berichtsheft2.id = berichtsheft_tabelle.Save(berichtsheft2);
 
 			berichtsheft1.minuten = 25;
-			berichtsheft1.abteilung_fk = 4;
 			berichtsheft1.azubi_fk = 4;
 			berichtsheft1.taetigkeit_fk = 4;
 			berichtsheft1.woche_fk = 4;

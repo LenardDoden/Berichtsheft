@@ -14,14 +14,14 @@ struct Berichtsheft {
 	int64_t minuten{};
 	int64_t woche_fk{};
 	int64_t taetigkeit_fk{};
-	int64_t abteilung_fk{};
 	int64_t azubi_fk{};
 
 
 	bool operator==(const Berichtsheft& other) const {
-		return id == other.id && minuten == other.minuten && woche_fk == other.woche_fk && taetigkeit_fk == other.taetigkeit_fk && abteilung_fk == other.abteilung_fk && azubi_fk == other.azubi_fk;
+		return id == other.id && minuten == other.minuten && woche_fk == other.woche_fk && taetigkeit_fk == other.taetigkeit_fk && azubi_fk == other.azubi_fk;
 	}
 };
+
 
 
 class BerichtsheftTabelle {

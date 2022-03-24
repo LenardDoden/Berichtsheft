@@ -248,7 +248,7 @@ Mainframebase::~Mainframebase()
 
 FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetSizeHints( wxSize( 522,650 ), wxDefaultSize );
 
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 

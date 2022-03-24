@@ -57,7 +57,6 @@ void Mainframe::ResetWocheListe ()
 
 
 
-
 void Mainframe::OnWocheUpdated (wxCommandEvent& /*event*/) 
 {
 
@@ -69,7 +68,6 @@ void Mainframe::OnButtonNeu(wxCommandEvent & /*event*/)
 { 
    auto eintrag = new FrameBerichtshefteintrag(this, *_db);
 
-   
 
    eintrag->Show();
 
