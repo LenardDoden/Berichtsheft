@@ -77,8 +77,10 @@ void DialogAbteilungAnlegen::OnTextAbteilungChanged(wxCommandEvent & event)
 	auto eingabe_abteilung_feld_text = _eingabe_abteilung->GetLineText(0);
 	auto laenge_eingabe_abteilung_feld_text = eingabe_abteilung_feld_text.size();
 
+	_btnOk->SetDefault();
 
-	if (laenge_eingabe_abteilung_feld_text > 10)
+
+	if (laenge_eingabe_abteilung_feld_text < 1 || laenge_eingabe_abteilung_feld_text > 100)
 	{
 		_eingabe_abteilung->SetBackgroundColour(*wxRED);
 

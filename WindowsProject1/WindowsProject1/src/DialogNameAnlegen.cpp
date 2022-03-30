@@ -42,7 +42,7 @@ void DialogNameAnlegen::OnTextVornameChanged(wxCommandEvent & event)
 	auto laenge_eingabe_vorname_feld_text = eingabe_vorname_feld_text.size();
 
 
-	if (laenge_eingabe_vorname_feld_text > 10)
+	if (laenge_eingabe_vorname_feld_text < 1 || laenge_eingabe_vorname_feld_text > 100)
 	{
 		_eingabe_vorname->SetBackgroundColour(*wxRED);
 	}
@@ -52,8 +52,6 @@ void DialogNameAnlegen::OnTextVornameChanged(wxCommandEvent & event)
 		_eingabe_vorname->SetBackgroundColour(*wxWHITE);
 	}
 
-
-	
 }
 
 void DialogNameAnlegen::OnTextNachnameChanged(wxCommandEvent & event)
@@ -62,8 +60,9 @@ void DialogNameAnlegen::OnTextNachnameChanged(wxCommandEvent & event)
 	auto eingabe_nachname_feld_text = _eingabe_nachname->GetLineText(0);
 	auto laenge_eingabe_nachname_feld_text = eingabe_nachname_feld_text.size();
 
+	_btnOK->SetDefault();
 
-	if (laenge_eingabe_nachname_feld_text > 10)
+	if (laenge_eingabe_nachname_feld_text < 1 || laenge_eingabe_nachname_feld_text > 100)
 	{
 		_eingabe_nachname->SetBackgroundColour(*wxRED);
 	}

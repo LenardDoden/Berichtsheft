@@ -113,6 +113,7 @@ PanelTaetigkeitbase::PanelTaetigkeitbase( wxWindow* parent, wxWindowID id, const
 	this->Layout();
 
 	// Connect Events
+	combo_stunden->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PanelTaetigkeitbase::OnTextComboStundenChanged ), NULL, this );
 	btn_add_taetigkeit->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PanelTaetigkeitbase::Onbuttonaddclicked ), NULL, this );
 	btn_delete_taetigkeit->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PanelTaetigkeitbase::Onbuttondeleteclicked ), NULL, this );
 }
@@ -120,6 +121,7 @@ PanelTaetigkeitbase::PanelTaetigkeitbase( wxWindow* parent, wxWindowID id, const
 PanelTaetigkeitbase::~PanelTaetigkeitbase()
 {
 	// Disconnect Events
+	combo_stunden->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PanelTaetigkeitbase::OnTextComboStundenChanged ), NULL, this );
 	btn_add_taetigkeit->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PanelTaetigkeitbase::Onbuttonaddclicked ), NULL, this );
 	btn_delete_taetigkeit->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PanelTaetigkeitbase::Onbuttondeleteclicked ), NULL, this );
 

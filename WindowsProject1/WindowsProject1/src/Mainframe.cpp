@@ -34,9 +34,9 @@ Mainframe::Mainframe(wxWindow *parent)
       NeueDatenbank();
    }
 
-
    ResetWocheListe();
 }
+
 
 
 
@@ -48,12 +48,12 @@ void Mainframe::ResetWocheListe ()
    _listBoxWoche->Clear();
    for (const auto& i : woche_liste) {
       std::stringstream beschreibung;
-      beschreibung << i.beginn << "- " << i.ende <<  ", " << i.ausbildungsjahr;
+      beschreibung << i.beginn << "- " << i.ende <<  ", Ausbildungsjahr: " << i.ausbildungsjahr;
+
 	  _listBoxWoche->Append(beschreibung.str(), new DatabaseID{ i.id });
-
    }
+   
 }
-
 
 
 
@@ -63,6 +63,7 @@ void Mainframe::OnWocheUpdated (wxCommandEvent& /*event*/)
    wxLogDebug(__FUNCTION__ " Bericht wurde aktualisiert");
    ResetWocheListe();
 }
+
 
 void Mainframe::OnButtonNeu(wxCommandEvent & /*event*/) 
 { 

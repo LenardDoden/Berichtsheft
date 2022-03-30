@@ -20,6 +20,8 @@ int64_t WocheTabelle::Update(const Woche & val)
 
 WocheTabelle::WocheTabelle(mk::sqlite::database db) : m_db(db) { }
 
+
+
 int64_t WocheTabelle::Save(const Woche & val)
 {
 	/*
