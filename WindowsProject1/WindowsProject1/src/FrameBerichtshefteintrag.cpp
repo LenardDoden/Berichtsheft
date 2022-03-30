@@ -52,67 +52,36 @@ public:
 
 
 
-class transaction
-
-	//try catch im destructor
-	//fehlermeldung im debugger
-	//datenbank als member
-
-{
+class transaction {
 	mk::sqlite::database _db;
-	
+	bool _active{true};
 
 public:
-
-
-	transaction(mk::sqlite::database db) : _db(std::move(db)) {
-
-		try
-		{
-			mk::sqlite::execute(db, R"(
-BEGIN TRANSACTION
-)");
-		}
-		catch (const std::exception& e)
-		{
-			wxString exceptiontext;
-			exceptiontext = e.what();
-			wxLogMessage("Konstruktor");
-			wxLogMessage(exceptiontext);
-		
-		}
-
+	transaction(mk::sqlite::database db) 
+   : _db(std::move(db)) 
+   {
+      mk::sqlite::execute(db, "BEGIN");
 	}
 
 	~transaction()
 	{
+      if (!_active) {
+         return;
+      }
 
-
-
-		try
-		{
-			mk::sqlite::execute(_db, R"(
-BEGIN TRANSACTION
-)");
-		
+		try {
+         mk::sqlite::execute(_db, "ROLLBACK");
 		}
-
-		catch (const std::exception& u)
-		{
-			wxString exceptiontext1;
-			exceptiontext1 = u.what();
-			wxLogMessage("Destructor");
-			wxLogMessage(exceptiontext1);
-		
+		catch (const std::exception& e) {
+         wxLogDebug(__FUNCTION__ " %s", e.what());
 		}
-	};
-
-	void commit() {
-		mk::sqlite::execute(_db, R"(
-COMMIT
-)");
 	}
 
+	void commit() {
+      assert(_active); // comit wurde mehrmals aufgerufen
+		mk::sqlite::execute(_db, "COMMIT");
+      _active = false;
+	}
 };
 
 
@@ -518,184 +487,147 @@ void FrameBerichtshefteintrag::OnButtonSpeichern(wxCommandEvent & /*event*/) {
    auto datum_bis = _calendarBis->GetDate();
 
 
+
+   if (!(_choiceName->GetSelection() != wxNOT_FOUND
+      && _choiceAusbildungsjahr->GetSelection() != wxNOT_FOUND 
+      && _choiceAbteilung->GetSelection() != wxNOT_FOUND 
+      && _calendarBis->GetDate() != _calendarVon->GetDate())) {
+
+      wxLogError("Nicht alle Felder ausgefüllt oder 2 mal das Gleiche Datum ausgewählt");
+      return;
+   }
+
+
    transaction trans(_db);
-   auto rollbackvariable = false;
-   
-   
 
-   if (_choiceName->GetSelection() != wxNOT_FOUND && _choiceAusbildungsjahr->GetSelection() != wxNOT_FOUND && _choiceAbteilung->GetSelection() != wxNOT_FOUND && _calendarBis->GetDate() != _calendarVon->GetDate())
-   {
-	   Woche woche;
-	   woche.beginn = datum_von.FormatISODate();
-	   woche.ende = datum_bis.FormatISODate();
+	Woche woche;
+	woche.beginn = datum_von.FormatISODate();
+	woche.ende = datum_bis.FormatISODate();
 
-	   woche.ausbildungsjahr = _choiceAusbildungsjahr->GetString(index_Jahr);
-	   wxClientData* abteilung_Id = _choiceAbteilung->GetClientObject(index_Abteilung);
-	   woche.abteilung_fk = static_cast<DatabaseID*>(abteilung_Id)->id;
+	woche.ausbildungsjahr = _choiceAusbildungsjahr->GetString(index_Jahr);
+	wxClientData* abteilung_Id = _choiceAbteilung->GetClientObject(index_Abteilung);
+	woche.abteilung_fk = static_cast<DatabaseID*>(abteilung_Id)->id;
 
-	   WocheTabelle woche_tabelle(_db);
+	WocheTabelle woche_tabelle(_db);
 
 
 	   
 
-	   //woche.id = woche_tabelle.Save(woche);
+	//woche.id = woche_tabelle.Save(woche);
 	   
 
 
-	   Berichtsheft berichtsheft;
-	   berichtsheft.woche_fk = woche.id;
-	   wxClientData* name_Id = _choiceName->GetClientObject(index_Name);
-	   berichtsheft.azubi_fk = static_cast<DatabaseID*>(name_Id)->id;
+	Berichtsheft berichtsheft;
+	berichtsheft.woche_fk = woche.id;
+	wxClientData* name_Id = _choiceName->GetClientObject(index_Name);
+	berichtsheft.azubi_fk = static_cast<DatabaseID*>(name_Id)->id;
 
 
-	   BerichtsheftTabelle berichtsheft_tabelle(_db);
+	BerichtsheftTabelle berichtsheft_tabelle(_db);
 
 
-	   //Anzahl Children 
+	//Anzahl Children 
 	   
-	   /*
-	   int anzahl_childrenbetrieb = _panelBetrieb->GetChildren().GetCount();
-	   int anzahl_childrenschule = _panelSchule->GetChildren().GetCount();
+	/*
+	int anzahl_childrenbetrieb = _panelBetrieb->GetChildren().GetCount();
+	int anzahl_childrenschule = _panelSchule->GetChildren().GetCount();
 
-	   wxString childrenWxBetrieb;
-	   wxString childrenWxSchule;
+	wxString childrenWxBetrieb;
+	wxString childrenWxSchule;
 
-	   childrenWxBetrieb << anzahl_childrenbetrieb;
-	   childrenWxSchule << anzahl_childrenschule;
+	childrenWxBetrieb << anzahl_childrenbetrieb;
+	childrenWxSchule << anzahl_childrenschule;
 
-	   wxLogMessage(childrenWxBetrieb + childrenWxSchule);
-	   */
+	wxLogMessage(childrenWxBetrieb + childrenWxSchule);
+	*/
 	
 
-
-
-	   for (auto& valuesbetrieb : _panelBetrieb->GetChildren())
-	   {
-		   const auto panel = static_cast<PanelTaetigkeitbase*>(valuesbetrieb);
-		   const auto beschreibung = panel->combo_beschreibung_taetigkeit->GetValue();
+	for (const auto& valuesbetrieb : _panelBetrieb->GetChildren()) {
+		const auto panel = static_cast<const PanelTaetigkeitbase*>(valuesbetrieb);
+		const auto beschreibung = panel->combo_beschreibung_taetigkeit->GetValue();
 
 
 
-		   auto stundentext = panel->combo_stunden->GetValue();
-		   std::string stundentextstdstring = stundentext.ToStdString();
-		   std::string kommastring = ",";
+		auto stundentext = panel->combo_stunden->GetValue();
+		std::string stundentextstdstring = stundentext.ToStdString();
+		std::string kommastring = ",";
 
-		   double stunden{};
+		double stunden{};
 
-		   if (stundentext.find(kommastring) != std::string::npos)
+		if (stundentext.find(kommastring) != std::string::npos) {
+			wxLogError("Die Stunden des Betriebes konnten nicht in eine Fließkommazahl umgewandelt werden. Bitte nutze statt des Kommas einen Punkt als Dezimaltrennzeichen der Stundenanzahl");
+         return;
+		}
+		else if (!panel->combo_stunden->GetValue().ToDouble(&stunden)) {
+			wxLogError("Die Stunden des Betriebes konnten nicht in eine Fließkommazahl umgewandelt werden.");
+         return;
+		}
+		else {
+         Taetigkeit taetigkeit;
+         taetigkeit.beschreibung = beschreibung;
+         taetigkeit.art_fk = 1;
+            
+         TaetigkeitTabelle taetigkeit_tabelle(_db);
+         taetigkeit.id = taetigkeit_tabelle.Save(taetigkeit);
 
-		   {
-			   wxLogError("Die Stunden des Betriebes konnten nicht in eine Fließkommazahl umgewandelt werden. Bitte nutze statt des Kommas einen Punkt als Dezimaltrennzeichen der Stundenanzahl");
-			   //Rollback
-			   rollbackvariable = TRUE;
-			   break;
-		   }
-
-		   else if (!panel->combo_stunden->GetValue().ToDouble(&stunden))
-		   {
-			   wxLogError("Die Stunden des Betriebes konnten nicht in eine Fließkommazahl umgewandelt werden.");
-			   //Rollback
-			   rollbackvariable = TRUE;
-			   break;
-		   }
-
-		   else {
-
-
-		   Taetigkeit taetigkeit;
-		   taetigkeit.beschreibung = beschreibung;
-		   taetigkeit.art_fk = 1;
-		   
-		   TaetigkeitTabelle taetigkeit_tabelle(_db);
-		   taetigkeit.id = taetigkeit_tabelle.Save(taetigkeit);
-
-		   berichtsheft.taetigkeit_fk = taetigkeit.id;
+         berichtsheft.taetigkeit_fk = taetigkeit.id;
 
 
-		   Art art;
-		   art.name = "Betrieb";
+         Art art;
+         art.name = "Betrieb";
 
-		   auto art_tabelle = ArtTabelle(_db);
-		 
+         auto art_tabelle = ArtTabelle(_db);
+          
 
-		   art.id = art_tabelle.Save(art);
+         art.id = art_tabelle.Save(art);
 
-		   berichtsheft.minuten = stunden * 60;
-		   berichtsheft_tabelle.Save(berichtsheft);
-		   }
-	   }
+         berichtsheft.minuten = stunden * 60;
+         berichtsheft_tabelle.Save(berichtsheft);
+		}
+	}
 
-
-
-	   for (auto& valuesschule : _panelSchule->GetChildren())
-	   {
-		   const auto panel = static_cast<PanelTaetigkeitbase*>(valuesschule);
-		   const auto beschreibung = panel->combo_beschreibung_taetigkeit->GetValue();
+	for (const auto& valuesschule : _panelSchule->GetChildren()) {
+		const auto panel = static_cast<const PanelTaetigkeitbase*>(valuesschule);
+		const auto beschreibung = panel->combo_beschreibung_taetigkeit->GetValue();
 
 
-		   //wenn combo_stunden ein Komma enthält, Fehlermeldung und Hinweis auf Punkt als Dezimaltrennzeichen
+		//wenn combo_stunden ein Komma enthält, Fehlermeldung und Hinweis auf Punkt als Dezimaltrennzeichen
 
-		   auto stundentext = panel->combo_stunden->GetValue();
-		   std::string stundentextstdstring = stundentext.ToStdString();
-		   std::string kommastring = ",";
+		auto stundentext = panel->combo_stunden->GetValue();
+		std::string stundentextstdstring = stundentext.ToStdString();
+		std::string kommastring = ",";
 
-		   double stunden{};
+		double stunden{};
 
-		   if (stundentext.find(kommastring) != std::string::npos)
+		if (stundentext.find(kommastring) != std::string::npos) {
+			wxLogError("Die Stunden der Schule konnten nicht in eine Fließkommazahl umgewandelt werden. Bitte nutze statt des Kommas einen Punkt als Dezimaltrennzeichen der Stundenanzahl");
+			return;
+		}
+		else if (!panel->combo_stunden->GetValue().ToDouble(&stunden)) {
+			wxLogError("Die Stunden der Schule konnten nicht in eine Fließkommazahl umgewandelt werden");
+			return;
+		}
+		else {
+         Taetigkeit taetigkeit;
+         taetigkeit.beschreibung = beschreibung;
+         taetigkeit.art_fk = 2;
 
-		   {
-			   wxLogError("Die Stunden der Schule konnten nicht in eine Fließkommazahl umgewandelt werden. Bitte nutze statt des Kommas einen Punkt als Dezimaltrennzeichen der Stundenanzahl");
-			   //Rollback
-			   rollbackvariable = TRUE;
-			   break;
-		   }
+         TaetigkeitTabelle taetigkeit_tabelle(_db);
+         taetigkeit.id = taetigkeit_tabelle.Save(taetigkeit);
 
+         berichtsheft.taetigkeit_fk = taetigkeit.id;
+          
+         Art art;
+         art.name = "Schule";
 
-		   else if (!panel->combo_stunden->GetValue().ToDouble(&stunden))
-		   {
-			   wxLogError("Die Stunden der Schule konnten nicht in eine Fließkommazahl umgewandelt werden");
-			   //Rollback
-			   rollbackvariable = TRUE;
-			   break;
-		   }
-
-		   else {
-
-
-		   Taetigkeit taetigkeit;
-		   taetigkeit.beschreibung = beschreibung;
-		   taetigkeit.art_fk = 2;
-
-		   TaetigkeitTabelle taetigkeit_tabelle(_db);
-		   taetigkeit.id = taetigkeit_tabelle.Save(taetigkeit);
-
-		   berichtsheft.taetigkeit_fk = taetigkeit.id;
-		 
-		   Art art;
-		   art.name = "Schule";
-
-		   ArtTabelle art_tabelle(_db);
-		   art.id = art_tabelle.Save(art);
+         ArtTabelle art_tabelle(_db);
+         art.id = art_tabelle.Save(art);
 
 
-		   berichtsheft.minuten = stunden * 60;
-		   berichtsheft_tabelle.Save(berichtsheft);
-		   }
+         berichtsheft.minuten = stunden * 60;
+         berichtsheft_tabelle.Save(berichtsheft);
+		}
+	}
 
-		   if (rollbackvariable == TRUE)
-		   {
-			   trans.~transaction();
-		   }
-
-		   else
-		   {
-			   trans.commit();
-		   }
-	   }
-   }
-   
-
-   else {
-	   wxLogError("Nicht alle Felder ausgefüllt oder 2 mal das Gleiche Datum ausgewählt");
-   }
+   trans.commit();
 }
