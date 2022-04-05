@@ -1060,6 +1060,7 @@ SELECT name FROM art
 			 art.id = art_tabelle.Save(art);
 		 }
 
+    
 
          berichtsheft.minuten = stunden * 60;
          berichtsheft_tabelle.Save(berichtsheft);
@@ -1104,6 +1105,7 @@ SELECT name FROM art
 			 wxLogMessage("Schule bereits in Art vorhanden");
 		 }
 
+
 		 else
 		 {
 			 wxLogMessage("Schule noch nicht in Art vorhanden");
@@ -1112,6 +1114,8 @@ SELECT name FROM art
 			 auto art_tabelle = ArtTabelle(_db);
 			 art.id = art_tabelle.Save(art);
 		 }
+
+
 
          berichtsheft.minuten = stunden * 60;
          berichtsheft_tabelle.Save(berichtsheft);

@@ -64,9 +64,10 @@ void DialogAbteilungAnlegen::OnUebernehmenClicked(wxCommandEvent & event)
 
 		uebernehmenevent.Skip();
 	}
-	
 }
 	*/
+
+
 
 void DialogAbteilungAnlegen::OnTextAbteilungChanged(wxCommandEvent & event)
 {

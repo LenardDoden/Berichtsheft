@@ -33,6 +33,9 @@
     <ClCompile Include="src\DialogAbteilungAnlegen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Drucken.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\FrameBerichtshefteintrag.h">

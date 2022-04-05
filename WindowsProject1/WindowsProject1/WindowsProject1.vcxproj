@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Drucken.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Berichtsheft.cpp" />
     <ClCompile Include="src\DialogAbteilungAnlegen.cpp" />

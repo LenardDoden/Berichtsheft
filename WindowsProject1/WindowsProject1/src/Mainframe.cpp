@@ -39,7 +39,6 @@ Mainframe::Mainframe(wxWindow *parent)
 
 
 
-
 void Mainframe::ResetWocheListe () 
 {
    auto woche_tabelle = WocheTabelle{*_db};
@@ -52,17 +51,17 @@ void Mainframe::ResetWocheListe ()
 
 	  _listBoxWoche->Append(beschreibung.str(), new DatabaseID{ i.id });
    }
-   
 }
+
 
 
 
 void Mainframe::OnWocheUpdated (wxCommandEvent& /*event*/) 
 {
-
    wxLogDebug(__FUNCTION__ " Bericht wurde aktualisiert");
    ResetWocheListe();
 }
+
 
 
 void Mainframe::OnButtonNeu(wxCommandEvent & /*event*/) 
@@ -74,6 +73,7 @@ void Mainframe::OnButtonNeu(wxCommandEvent & /*event*/)
 
    eintrag->Bind(FrameBerichtshefteintrag_Updated, &Mainframe::OnWocheUpdated, this);
 }
+
 
 void Mainframe::NeueDatenbank () 
 {
