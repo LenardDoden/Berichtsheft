@@ -41,7 +41,6 @@ class FrameBerichtshefteintrag : public FrameBerichtshefteintragbase
 		void panelbetriebstaetigkeiterstellen();
 		void panelschultaetigkeiterstellen();
 
-
 		FrameBerichtshefteintrag( wxWindow* parent, mk::sqlite::database db);
 		
 	//// end generated class members

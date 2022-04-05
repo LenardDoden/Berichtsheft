@@ -3,15 +3,12 @@
 #include "DialogAbteilungAnlegen.h"
 #include "Mainframe.h"
 
-
 #include "DatabaseID.h"
-
 
 #include <sstream>
 #include <vector>
 #include <string>
 #include <regex>
-
 
 #include "../../BerichtsheftStructs/Azubi.h"
 #include "../../BerichtsheftStructs/Abteilung.h"
@@ -22,6 +19,7 @@
 
 #include "../wx/log.h"
 #include "wx/print.h"
+
 
 
 wxDEFINE_EVENT(FrameBerichtshefteintrag_Updated, wxCommandEvent);
@@ -42,7 +40,7 @@ struct Data {
 	std::vector<BeschreibungStunde> bspeintragschule;
 	std::string bspeintragbetriebstunden;
 	std::string bspeintragschulestunden;
-
+	std::string jahr;
 };
 
 
@@ -52,41 +50,16 @@ wxString VornameWxString;
 wxString NachnameWxString;
 
 
-
 class PrinterImpl : public wxPrintout {
-
-private:
-	std::shared_ptr<Data> m_data;
-
-	struct PPMM {
-		float x;
-		float y;
-	} m_ppmm{ 0.0, 0.0 };
-	int m_maxPage{};
-
-	int MMToPixelX(int mm) const
-	{
-		return static_cast<int>(mm * m_ppmm.x);
-	}
-
-	int MMToPixelY(int mm) const
-	{
-		return static_cast<int>(mm * m_ppmm.y);
-	}
-
-	wxPoint cursor{};
-
-
 public:
-
 	PrinterImpl(std::shared_ptr<Data> data)
 		: wxPrintout("Ausdruck")
 		, m_data(data)
 	{
-
 	}
 
-	void GetPageInfo(int* minPage, int* maxPage, int * pageFrom, int* pageTo) override
+
+	void GetPageInfo(int* minPage, int* maxPage, int* pageFrom, int* pageTo) override
 	{
 		*minPage = 1;
 		*maxPage = m_maxPage;
@@ -96,31 +69,30 @@ public:
 
 	bool HasPage(int pageNum) override
 	{
-		return pageNum < 0 && pageNum <= m_maxPage;
+		return pageNum > 0 && pageNum <= m_maxPage;
 	}
 
 	void OnPreparePrinting() override
-
 	{
-
 		wxPrintout::OnPreparePrinting();
+
 		m_maxPage = 1;
 
 		wxSize dpi;
 		GetPPIScreen(&dpi.x, &dpi.y);
 
-		constexpr auto ppi_to_ppm = 1.0 / 25.4;
-		m_ppmm.x = dpi.x * ppi_to_ppm;
-		m_ppmm.y = dpi.y * ppi_to_ppm;
+		constexpr auto ppi_to_ppmm = 1.0 / 25.4;
+		m_ppmm.x = dpi.x * ppi_to_ppmm;
+		m_ppmm.y = dpi.y * ppi_to_ppmm;
 	}
 
-	const wxFont& Fontdefault()
+	const wxFont& FontDefault()
 	{
 		static auto font = wxFont{ 12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Liberation Serif" };
 		return font;
 	}
 
-	const  wxFont& Fontklausel()
+	const wxFont& FontKlausel()
 	{
 		static auto font = wxFont{ 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Liberation Serif" };
 		return font;
@@ -144,14 +116,14 @@ public:
 		return font;
 	}
 
+
 	void NewPage()
-
 	{
-		cursor = wxPoint{ 0,0 };
+		cursor = wxPoint{ 0, 0 };
 
-		auto dc = GetDC();
+		auto dc = GetDC(); // https://docs.wxwidgets.org/3.0/classwx_d_c.html
 		dc->SetPen(*wxBLACK_PEN);
-		dc->SetBrush(*wxGREY_BRUSH);
+		dc->SetBrush(*wxGREY_BRUSH); // wxTRANSPARENT_BRUSH
 
 		DrawHeader();
 
@@ -160,29 +132,30 @@ public:
 
 	void DrawHeader()
 	{
-		auto dc = GetDC();
+		auto dc = GetDC(); // https://docs.wxwidgets.org/3.0/classwx_d_c.html
 
 		cursor.y = MMToPixelY(15);
 		const auto leftMargin = MMToPixelX(15);
 
 		dc->SetFont(FontTitle());
 
-		DrawTextcenter("Ausbildungsnachweis (Woche " + m_data->ausbildungWoche + ")", leftMargin, cursor.y, MMToPixelX(190) - leftMargin);
+
+		DrawTextcenter("Ausbildungsnachweis (Woche " + m_data->ausbildungWoche + " - " + m_data->jahr + ")", leftMargin, cursor.y, MMToPixelX(190) - leftMargin);
 
 		cursor.y += dc->GetCharHeight();
 
-		auto laengeunterstrich = dc->GetTextExtent("Ausbildungsnachweis (Woche " + m_data->ausbildungWoche + ")");
+		auto laengeunterstrich = dc->GetTextExtent("Ausbildungsnachweis (Woche " + m_data->ausbildungWoche + " - " + m_data->jahr + ")");
 		auto laengeunterstrichint = laengeunterstrich.GetWidth();
 
 		dc->DrawLine(cursor.x, cursor.y, cursor.x + laengeunterstrichint, cursor.y);
 
-		const int spalten[] = {
-			leftMargin,
-			leftMargin + MMToPixelX(50),
-			leftMargin + MMToPixelX(95),
-			leftMargin + MMToPixelX(145),
-			leftMargin + MMToPixelX(175)
 
+		const int spalten[] = {
+		   leftMargin,
+		   leftMargin + MMToPixelX(50),
+		   leftMargin + MMToPixelX(95),
+		   leftMargin + MMToPixelX(145),
+		   leftMargin + MMToPixelX(175)
 		};
 
 		cursor.y += dc->GetCharHeight() * 2;
@@ -199,29 +172,34 @@ public:
 		dc->DrawLine(spalten[3], cursor.y, spalten[3], cursor.y + dc->GetCharHeight() * 3);
 		dc->DrawLine(spalten[4], cursor.y, spalten[4], cursor.y + dc->GetCharHeight() * 3);
 
+
+
 		dc->SetFont(FontBold());
 		dc->DrawText("Name Auszubildende/r:", spalten[0] + 5, cursor.y);
-		dc->SetFont(Fontdefault());
+		dc->SetFont(FontDefault());
 		dc->DrawText(m_data->azubiName, spalten[1] + 5, cursor.y);
 		cursor.y += dc->GetCharHeight() + 5;
+
 
 		dc->SetFont(FontBold());
 		dc->DrawText("Ausbildungsjahr:", spalten[0] + 5, cursor.y);
 		dc->DrawText("Ausbildende Abteilung:", spalten[2] + 5, cursor.y);
-		dc->SetFont(Fontdefault());
-		dc->DrawText(m_data->ausbildungsjahr, spalten[3] + 5, cursor.y);
+		dc->SetFont(FontDefault());
+		dc->DrawText(m_data->ausbildungsjahr, spalten[1] + 5, cursor.y);
 		dc->DrawText(m_data->abteilung, spalten[3] + 5, cursor.y);
 		cursor.y += dc->GetCharHeight() + 5;
 
 		dc->SetFont(FontBold());
 		dc->DrawText("Ausbildungswoche vom:", spalten[0] + 5, cursor.y);
-		dc->DrawText("bis:", spalten[3] + 5, cursor.y);
+		dc->DrawText("bis:", spalten[2] + 5, cursor.y);
+		dc->SetFont(FontDefault());
+		dc->DrawText(m_data->ausbildungswocheVom, spalten[1] + 5, cursor.y);
+		dc->DrawText(m_data->ausbildungswocheBis, spalten[3] + 5, cursor.y);
 		cursor.y += dc->GetCharHeight();
 	}
 
 	void DrawTextcenter(std::string text, int x, int y, int w)
 	{
-
 		auto dc = GetDC();
 		wxCoord outw;
 		wxCoord outh;
@@ -254,11 +232,11 @@ public:
 
 		cursor.y += dc->GetCharHeight();
 
-		dc->SetFont(Fontdefault());
+		dc->SetFont(FontDefault());
 
 		for (auto zeile : daten)
 		{
-			dc->DrawLine(leftMargin, cursor.y, pos3, cursor.x);
+			dc->DrawLine(leftMargin, cursor.y, pos3, cursor.y);
 
 			auto textlaenge = dc->GetTextExtent(zeile.beschreibung);
 
@@ -267,74 +245,87 @@ public:
 			int splitmaßwidth = 520;
 			int splitmaßchar = 80;
 
-			if (textlaenge.GetWidth() > splitmaßwidth)
 
+
+			if (textlaenge.GetWidth() > splitmaßwidth)
 			{
+
 				auto anzahlzeilen = textlaenge.GetWidth() / splitmaßwidth;
 
 				DrawTextcenter(zeile.stunde, pos2 + 3, cursor.y + dc->GetCharHeight() / 2, pos3 - pos2);
 
 				std::vector<std::string> splitstringvector;
 
-				for (auto i = 0; i < anzahlzeilen + 1; ++i)
 
+				for (auto i = 0; i < anzahlzeilen + 1; ++i)
 				{
 					splitstringvector.push_back(zeile.beschreibung.substr(i*splitmaßchar, splitmaßchar));
-
 				}
+
 
 				std::string austausch;
 				std::vector<std::string> austauschvector;
-				std::vector<size_t> letzteleerzeilevector;
+				std::vector<size_t> letzteleerzeilevektor;
 
-
-				for (auto i = 0; i < anzahlzeilen; ++i)
+				for (auto i = 0; i < anzahlzeilen + 1; ++i)
 				{
-					splitstringvector[i].erase(letzteleerzeilevector[i], splitstringvector[i].length());
+					auto letzteleerzeile = splitstringvector[i].rfind(" ");
+					austausch = splitstringvector[i].substr(letzteleerzeile + 1, splitstringvector[i].length());
+
+					letzteleerzeilevektor.push_back(letzteleerzeile);
+					austauschvector.push_back(austausch);
 				}
 
+				//letzte zeile löschen
+				for (auto i = 0; i < anzahlzeilen; ++i)
+				{
+					splitstringvector[i].erase(letzteleerzeilevektor[i], splitstringvector[i].length());
+				}
+
+
+				//Austauschvektor in den splitstringvektor
 				for (auto u = 0; u < anzahlzeilen; ++u)
 				{
 					splitstringvector[1].insert(0, austauschvector[u]);
-
 				}
 
+
+				//vektorinhalt zeichnen
 				for (auto x : splitstringvector)
 				{
-					dc->DrawText(x, leftMargin + 3, cursor.y + dc->GetCharHeight()*1.5);
+					//draw vectoritems
+					dc->DrawText(x, leftMargin + 3, cursor.y + dc->GetCharHeight() / 2);
 
 					dc->DrawLine(leftMargin, cursor.y, leftMargin, cursor.y + dc->GetCharHeight()*1.5);
 					dc->DrawLine(pos2, cursor.y, pos2, cursor.y + dc->GetCharHeight()*1.5);
 					dc->DrawLine(pos3, cursor.y, pos3, cursor.y + dc->GetCharHeight()*1.5);
 
+
 					cursor.y += dc->GetCharHeight()*1.5;
 
 					if (cursor.y > 950)
 					{
+
 						dc->DrawText("Cursor.Y ist größer als 2", leftMargin + 3, cursor.y + dc->GetCharHeight() / 2);
+
 					}
 				}
 			}
-
-
 
 			else
 			{
 				dc->DrawText(zeile.beschreibung, leftMargin + 3, cursor.y + dc->GetCharHeight() / 2);
 
 				dc->DrawLine(leftMargin, cursor.y, leftMargin, cursor.y + dc->GetCharHeight()*1.5);
-				dc->DrawLine(pos2, cursor.y, pos2, cursor.y + dc->GetCharHeight()* 1.5);
+				dc->DrawLine(pos2, cursor.y, pos2, cursor.y + dc->GetCharHeight()*1.5);
 				dc->DrawLine(pos3, cursor.y, pos3, cursor.y + dc->GetCharHeight()*1.5);
 
 				DrawTextcenter(zeile.stunde, pos2 + 3, cursor.y + dc->GetCharHeight() / 2, pos3 - pos2);
 				cursor.y += dc->GetCharHeight()*1.5;
-
 			}
-
 		}
 
 		dc->DrawLine(leftMargin, cursor.y, pos3, cursor.y);
-
 	}
 
 	void gettextlaenge(wxString string)
@@ -345,7 +336,6 @@ public:
 	}
 
 	void DrawBody()
-
 	{
 		auto dc = GetDC();
 		cursor.y = MMToPixelX(50);
@@ -358,14 +348,12 @@ public:
 
 	void DrawFooter()
 	{
-
-
 		auto dc = GetDC();
 		const auto leftMargin = MMToPixelX(15);
 
-		cursor.y = MMToPixelX(260);
+		cursor.y = MMToPixelY(260);
 
-		dc->SetFont(Fontklausel());
+		dc->SetFont(FontKlausel());
 
 		auto pos2 = leftMargin + MMToPixelX(140);
 
@@ -375,14 +363,15 @@ public:
 		dc->DrawLine(leftMargin, cursor.y, leftMargin + MMToPixelX(64), cursor.y);
 		dc->DrawLine(pos2 - 90, cursor.y, pos2 + MMToPixelX(36), cursor.y);
 
-		dc->SetFont(Fontdefault());
+
+		dc->SetFont(FontDefault());
 		dc->DrawText("Datum, Unterschrift Auszubildende/r", leftMargin, cursor.y);
-		dc->DrawText("Datum, Unterschrift Ausbilder", leftMargin, cursor.y);
+		dc->DrawText("Datum, Unterschrift Ausbildende/r", pos2 - 90, cursor.y);
 	}
 
 	bool OnPrintPage(int pageNum) override
 	{
-		MapScreenSizeToDevice();
+		MapScreenSizeToPaper();
 
 		if (HasPage(pageNum)) {
 			NewPage();
@@ -392,8 +381,28 @@ public:
 		}
 
 		return false;
-
 	}
+
+private:
+	std::shared_ptr<Data> m_data;
+
+	struct PPMM {
+		float x;
+		float y;
+	} m_ppmm{ 0.0, 0.0 };
+	int m_maxPage{};
+
+	int MMToPixelX(int mm) const
+	{
+		return static_cast<int>(mm * m_ppmm.x);
+	}
+
+	int MMToPixelY(int mm) const
+	{
+		return static_cast<int>(mm * m_ppmm.y);
+	}
+
+	wxPoint cursor{};
 };
 
 
@@ -416,6 +425,7 @@ public:
 		return _panelTaetigkeit;
 	}
 };
+
 
 
 
@@ -860,7 +870,10 @@ void FrameBerichtshefteintrag::OnButtonDrucken(wxCommandEvent & /*event*/) {
 	auto jahrbisdruck = _calendarBis->GetDate();
 	auto jahrbisdruckstring = jahrbisdruck.FormatISODate();
 
-	
+	auto jahr = jahrvomdruck.GetYear();
+	wxString jahrstring;
+	jahrstring << jahr;
+
 
 	//xLogMessage("Drucken geklickt");
 	//Druckimpl
@@ -876,8 +889,8 @@ void FrameBerichtshefteintrag::OnButtonDrucken(wxCommandEvent & /*event*/) {
 		const auto beschreibung = panel->combo_beschreibung_taetigkeit->GetValue();
 		const auto stundentext = panel->combo_stunden->GetValue();
 
-		wxLogMessage(beschreibung);
-		wxLogMessage(stundentext);
+		/*wxLogMessage(beschreibung);
+		wxLogMessage(stundentext);*/
 
 		Betriebbeschreibungstunde.beschreibung = beschreibung;
 		Betriebbeschreibungstunde.stunde = stundentext;
@@ -894,8 +907,8 @@ void FrameBerichtshefteintrag::OnButtonDrucken(wxCommandEvent & /*event*/) {
 		const auto beschreibung = panel->combo_beschreibung_taetigkeit->GetValue();
 		const auto stundentext = panel->combo_stunden->GetValue();
 
-		wxLogMessage(beschreibung);
-		wxLogMessage(stundentext);
+		/*wxLogMessage(beschreibung);
+		wxLogMessage(stundentext);*/
 
 		Schulbeschreibungstunde.beschreibung = beschreibung;
 		Schulbeschreibungstunde.stunde = stundentext;
@@ -910,28 +923,28 @@ void FrameBerichtshefteintrag::OnButtonDrucken(wxCommandEvent & /*event*/) {
 	data->ausbildungswocheVom = jahrvomdruckstring;
 	data->ausbildungswocheBis = jahrbisdruckstring;
 	data->ausbildungWoche = wochevomjahrstring;
+	data->jahr = jahrstring;
 	
 
-	wxLogMessage(wxString(data->azubiName));
+	/*wxLogMessage(wxString(data->azubiName));
 	wxLogMessage(wxString(data->ausbildungsjahr));
 	wxLogMessage(wxString(data->abteilung));
 	wxLogMessage(wxString(data->ausbildungswocheVom));
 	wxLogMessage(wxString(data->ausbildungswocheBis));
 	wxLogMessage(wxString(wochevomjahrstring));
-
+*/
 	
-	
-
-
 	auto printData = new wxPrintData{};
 	printData->SetPaperId(wxPAPER_A4);
 	printData->SetOrientation(wxPORTRAIT);
 
-	auto preview = new wxPrintPreview{ new PrinterImpl{data}, new PrinterImpl{data}, printData };
+	auto preview = new wxPrintPreview{ new PrinterImpl{data}, new PrinterImpl{data}, printData};
+
 	auto frame = new wxPreviewFrame{ preview, this, "Vorschau", wxDefaultPosition, wxSize{800, 600} };
 	frame->Center(wxBOTH);
 	frame->InitializeWithModality(wxPreviewFrame_WindowModal);
 	frame->Show(true);
+
 }
 
 
@@ -1048,17 +1061,18 @@ SELECT name FROM art
 		
 		 if (std::find(retArt.begin(), retArt.end(), "Betrieb") != retArt.end())
 		 {
-			 wxLogMessage("Betrieb bereits in Art vorhanden");
+			 //wxLogMessage("Betrieb bereits in Art vorhanden");
 		 }
 
 
 		 else
 		 {
-			 wxLogMessage("Betrieb noch nicht in Art vorhanden");
+			 //wxLogMessage("Betrieb noch nicht in Art vorhanden");
 			 art.name = "Betrieb";
 			 auto art_tabelle = ArtTabelle(_db);
 			 art.id = art_tabelle.Save(art);
 		 }
+
 
 
          berichtsheft.minuten = stunden * 60;
@@ -1095,18 +1109,20 @@ SELECT name FROM art
          TaetigkeitTabelle taetigkeit_tabelle(_db);
          taetigkeit.id = taetigkeit_tabelle.Save(taetigkeit);
 
+		 
+
          berichtsheft.taetigkeit_fk = taetigkeit.id;
           
          Art art;
 
 		 if (std::find(retArt.begin(), retArt.end(), "Betrieb") != retArt.end())
 		 {
-			 wxLogMessage("Schule bereits in Art vorhanden");
+			 //wxLogMessage("Schule bereits in Art vorhanden");
 		 }
 
 		 else
 		 {
-			 wxLogMessage("Schule noch nicht in Art vorhanden");
+			 //wxLogMessage("Schule noch nicht in Art vorhanden");
 			 art.name = "Schule";
 
 			 auto art_tabelle = ArtTabelle(_db);

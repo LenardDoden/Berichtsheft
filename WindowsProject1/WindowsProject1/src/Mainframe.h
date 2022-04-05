@@ -24,7 +24,7 @@ class Mainframe : public Mainframebase
    void OnWocheSelectionChanged( wxCommandEvent& event )override { event.Skip(); }
 	void OnWocheDoubleClicked( wxCommandEvent& event )override { event.Skip(); }
    void OnButtonNeu(wxCommandEvent& event)override ;
-	void OnButtonOeffnen( wxCommandEvent& event )override { event.Skip(); }
+	void OnButtonOeffnen( wxCommandEvent& event )override;
 
 
 	public:

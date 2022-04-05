@@ -94,13 +94,14 @@ SELECT Woche_id FROM Woche ORDER BY beginn
 
 
 
+
 void WocheTabelle::provision()
 {
 	mk::sqlite::execute(m_db, R"(
 CREATE TABLE woche (
     woche_id INTEGER PRIMARY KEY AUTOINCREMENT
     , beginn DATE
-    , ende DATE
+    , ende DATE 
     , ausbildungsjahr INTEGER
     , abteilung_fk INTEGER, FOREIGN KEY(abteilung_fk) REFERENCES abteilung(abteilung_fk)
  );
