@@ -76,6 +76,7 @@ SELECT beginn, ende, ausbildungsjahr, abteilung_fk FROM Woche WHERE Woche_id = ?
 	}
 
 	throw std::runtime_error{ "Datensatz wurde nicht gefunden" };
+	
 }
 
 std::vector<Woche> WocheTabelle::List()

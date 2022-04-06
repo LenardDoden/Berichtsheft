@@ -775,6 +775,8 @@ void PanelTaetigkeitbase::OnTextComboStundenChanged(wxCommandEvent & event)
 
 	auto pattern = "\\d+\\.*\\d*";
 
+	
+
 	if (std::regex_match(regexstring, std::regex(pattern)))
 	{
 		combo_stunden->SetBackgroundColour(*wxWHITE);
