@@ -512,6 +512,7 @@ void FrameBerichtshefteintrag::panelschultaetigkeiterstellen()
 }
 
 
+
 FrameBerichtshefteintrag::FrameBerichtshefteintrag( wxWindow* parent, mk::sqlite::database db )
 :
 FrameBerichtshefteintragbase( parent )
@@ -532,36 +533,37 @@ FrameBerichtshefteintragbase( parent )
 
 
 
-
-
-
 void FrameBerichtshefteintrag::ResetNameChoice () 
 {
-   _choiceName->Clear();
+   _choiceName->Clear();//choice_name im Frameberichtshefteintrag wird geleert
 
+   auto azubi_tabelle = AzubiTabelle{_db}; //neue Azubitabelle mit Werten aus _db wird erstellt
+  
+ 
 
-   auto azubi_tabelle = AzubiTabelle{_db};
+   for (const auto& i : azubi_tabelle.List()) {//für alle azubi_ids in azubi_tabelle werden
+	   std::stringstream beschreibung;
+	   beschreibung << i.vorname << " " << i.nachname; //eine beschreibung aus vor und nachname erstellt
 
-   for (const auto& i : azubi_tabelle.List()) {
-      std::stringstream beschreibung;
-      beschreibung << i.vorname << " " << i.nachname;
-	  
-	  _choiceName->Append(beschreibung.str(), new DatabaseID{ i.id });
+	   _choiceName->Append(beschreibung.str(), new DatabaseID{ i.id }); //und an die _choicename Choicebox angehängt, sowie die id als Clientdata 
+	   
 
-	  auto auswahlzahlname = _choiceName->FindString(VornameWxString + " " + NachnameWxString);
-	  _choiceName->SetSelection(auswahlzahlname);
+	   auto auswahlzahlname = _choiceName->FindString(VornameWxString + " " + NachnameWxString);//der ausgewählte Name wird
+	   _choiceName->SetSelection(auswahlzahlname);											   //direkt in der Box selber vorausgewählt
 
+		
    }
+
+
+   
 }
  
+
 void FrameBerichtshefteintrag::ResetAbteilungChoice()
 {
 	_choiceAbteilung->Clear();
 
 	auto abteilung_tabelle = AbteilungTabelle{ _db };
-
-	
-	
 
 	for (const auto& i : abteilung_tabelle.List()) {
 		std::stringstream beschreibung_abteilung;
@@ -569,10 +571,16 @@ void FrameBerichtshefteintrag::ResetAbteilungChoice()
 		
 		_choiceAbteilung->Append(beschreibung_abteilung.str(), new DatabaseID{ i.id });
 
+
 		auto auswahlzahlabteilung = _choiceAbteilung->FindString(AbteilungWxString);
 		_choiceAbteilung->SetSelection(auswahlzahlabteilung);
 	}
 }
+
+
+
+
+
 
 void FrameBerichtshefteintrag::ResetTaetigkeitBetriebChoice()
 {
@@ -944,9 +952,7 @@ void FrameBerichtshefteintrag::OnButtonDrucken(wxCommandEvent & /*event*/) {
 	frame->Center(wxBOTH);
 	frame->InitializeWithModality(wxPreviewFrame_WindowModal);
 	frame->Show(true);
-
 }
-
 
 
 
@@ -987,12 +993,11 @@ void FrameBerichtshefteintrag::OnButtonSpeichern(wxCommandEvent & /*event*/) {
 
 	WocheTabelle woche_tabelle(_db);
 
-
 	woche.id = woche_tabelle.Save(woche);
-
 
 	Berichtsheft berichtsheft;
 	berichtsheft.woche_fk = woche.id;
+
 	wxClientData* name_Id = _choiceName->GetClientObject(index_Name);
 	berichtsheft.azubi_fk = static_cast<DatabaseID*>(name_Id)->id;
 
