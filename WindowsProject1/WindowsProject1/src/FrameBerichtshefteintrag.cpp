@@ -49,14 +49,16 @@ wxString AbteilungWxString;
 wxString VornameWxString;
 wxString NachnameWxString;
 
-
 class PrinterImpl : public wxPrintout {
 public:
 	PrinterImpl(std::shared_ptr<Data> data)
 		: wxPrintout("Ausdruck")
 		, m_data(data)
 	{
+
 	}
+
+	
 
 
 	void GetPageInfo(int* minPage, int* maxPage, int* pageFrom, int* pageTo) override
@@ -428,7 +430,6 @@ public:
 
 
 
-
 class transaction {
 	mk::sqlite::database _db;
 	bool _active{true};
@@ -512,7 +513,6 @@ void FrameBerichtshefteintrag::panelschultaetigkeiterstellen()
 }
 
 
-
 FrameBerichtshefteintrag::FrameBerichtshefteintrag( wxWindow* parent, mk::sqlite::database db )
 :
 FrameBerichtshefteintragbase( parent )
@@ -551,13 +551,13 @@ void FrameBerichtshefteintrag::ResetNameChoice ()
 	   auto auswahlzahlname = _choiceName->FindString(VornameWxString + " " + NachnameWxString);//der ausgewählte Name wird
 	   _choiceName->SetSelection(auswahlzahlname);											   //direkt in der Box selber vorausgewählt
 
-		
-   }
-
-
-   
+   } 
 }
- 
+
+
+
+
+
 
 void FrameBerichtshefteintrag::ResetAbteilungChoice()
 {
@@ -718,7 +718,7 @@ void FrameBerichtshefteintrag::OnBetriebTaetigkeitErstellen(wxCommandEvent& even
 	_betriebtaetigkeitsizer->Add(_paneltaetigkeitbetriebneu,0, wxEXPAND);
 	bSizer1->Layout();
 
-	
+
 	//auto taetigkeitenbetrieb = TaetigkeitTabelle{ _db };
 	_paneltaetigkeitbetriebneu->combo_beschreibung_taetigkeit->Clear();
 
@@ -1054,7 +1054,8 @@ SELECT name FROM art
          Taetigkeit taetigkeit;
          taetigkeit.beschreibung = beschreibung;
          taetigkeit.art_fk = 1;
-            
+        
+
          TaetigkeitTabelle taetigkeit_tabelle(_db);
          taetigkeit.id = taetigkeit_tabelle.Save(taetigkeit);
 

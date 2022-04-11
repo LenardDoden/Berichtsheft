@@ -256,10 +256,8 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 
 	m_scrolledWindow1 = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
 	m_scrolledWindow1->SetScrollRate( 5, 5 );
-	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 
-	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 
 	m_staticText1 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Ausbildungsnachweis Nr:"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
@@ -271,10 +269,8 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 
 	bSizer9->Add( bSizer2, 0, wxEXPAND, 5 );
 
-	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
 
-	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 0, 3, 0, 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -338,10 +334,8 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 
 	bSizer9->Add( bSizer5, 0, wxEXPAND|wxTOP, 20 );
 
-	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxHORIZONTAL );
 
-	wxBoxSizer* bSizer10;
 	bSizer10 = new wxBoxSizer( wxVERTICAL );
 
 	m_staticText7 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Vom:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -356,7 +350,6 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 
 	bSizer6->Add( bSizer10, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* bSizer11;
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
 
 	m_staticText8 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Bis:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -376,7 +369,6 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 
-	wxGridSizer* gSizer2;
 	gSizer2 = new wxGridSizer( 0, 2, 0, 0 );
 
 	m_staticText5 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Betriebliche Tätigkeiten:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -403,7 +395,6 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 	_betriebtaetigkeitsizer->Fit( _panelBetrieb );
 	bSizer7->Add( _panelBetrieb, 0, wxEXPAND | wxALL, 5 );
 
-	wxGridSizer* gSizer3;
 	gSizer3 = new wxGridSizer( 0, 2, 0, 0 );
 
 	m_staticText6 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Schulische Tätigkeiten"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -439,7 +430,6 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 	bSizer9->Fit( m_scrolledWindow1 );
 	bSizer1->Add( m_scrolledWindow1, 1, wxEXPAND | wxALL, 5 );
 
-	wxBoxSizer* bSizer25;
 	bSizer25 = new wxBoxSizer( wxHORIZONTAL );
 
 	_btnSpeichern = new wxToggleButton( this, wxID_ANY, wxT("Speichern"), wxDefaultPosition, wxDefaultSize, 0 );

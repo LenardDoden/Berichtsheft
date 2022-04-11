@@ -155,7 +155,6 @@ class FrameBerichtshefteintragbase : public wxFrame
 
 	protected:
 		wxScrolledWindow* m_scrolledWindow1;
-		wxStaticText* m_staticText1;
 		wxStaticText* m_staticText3;
 		wxChoice* _choiceName;
 		wxBitmapButton* _btnNeuName;
@@ -186,11 +185,22 @@ class FrameBerichtshefteintragbase : public wxFrame
 
 	public:
 		wxBoxSizer* bSizer1;
+		wxBoxSizer* bSizer9;
+		wxBoxSizer* bSizer2;
+		wxStaticText* m_staticText1;
+		wxBoxSizer* bSizer5;
+		wxFlexGridSizer* fgSizer1;
+		wxBoxSizer* bSizer6;
+		wxBoxSizer* bSizer10;
+		wxBoxSizer* bSizer11;
 		wxBoxSizer* bSizer7;
+		wxGridSizer* gSizer2;
 		wxPanel* _panelBetrieb;
 		wxGridSizer* _betriebtaetigkeitsizer;
+		wxGridSizer* gSizer3;
 		wxPanel* _panelSchule;
 		wxGridSizer* _schultaetigkeitsizer;
+		wxBoxSizer* bSizer25;
 
 		FrameBerichtshefteintragbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Berichtsheft Eintrag"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 522,650 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 

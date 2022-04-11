@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include "FrameBerichtshefteintrag.h"
+#include "Berichtsheft.h"
 
 #include "../../BerichtsheftStructs/Abteilung.h" 
 #include "../../BerichtsheftStructs/Art.h" 
@@ -19,6 +20,7 @@
 #include "../../BerichtsheftStructs/Woche.h" 
 
 #include "DatabaseID.h"
+#include "../../mk_sqlite/result.h"
 
 Mainframe::Mainframe(wxWindow *parent)
    :
@@ -44,18 +46,51 @@ void Mainframe::ResetWocheListe ()
    auto woche_tabelle = WocheTabelle{*_db};
    const auto woche_liste = woche_tabelle.List();//Vorher Sicherheitupdate machen
    
+   auto berichtsheft_tabelle = BerichtsheftTabelle{ *_db };
+   const auto berichtsheft_liste = berichtsheft_tabelle.List();
+
+   //std::vector<mk::sqlite::result>test;
 
    _listBoxWoche->Clear();
-   for (const auto& i : woche_liste) {// mehrere Loops hintereinander
+
+
+   for (const auto& i : woche_liste ) {// mehrere Loops hintereinander
       std::stringstream beschreibung;
       beschreibung << i.beginn << "- " << i.ende <<  ", Ausbildungsjahr: " << i.ausbildungsjahr;
-	  
-	  _listBoxWoche->Append(beschreibung.str(), new DatabaseID{ i.id }); //hier die weiteren were anfügen 
 
+
+
+	  _listBoxWoche->Append(beschreibung.str(), new DatabaseID{ i.id }); //hier die weiteren werte anfügen 
+   }
+   
+
+   
+
+   /*
+   std::vector<int64_t> test;
+
+   for (const auto& i : berichtsheft_liste)
+   {
+
+
+	   test.push_back(i.id);
+
+	   auto test2 = test;
 
    }
-}
+   */
 
+
+   /*
+   for (const auto& i : berichtsheft_liste) {
+	   std::stringstream beschreibung;
+	   beschreibung << i.id << i.woche_fk;
+
+	   _listBoxWoche->Append(beschreibung.str(), new DatabaseID{ i.id });
+   }
+   */
+   
+}
 
 
 
@@ -79,12 +114,15 @@ void Mainframe::OnButtonNeu(wxCommandEvent & /*event*/)
 
 
 
+
+
+
+
 void Mainframe::OnButtonOeffnen(wxCommandEvent & /*event*/)
 {
 
 	auto index = _listBoxWoche->GetSelection();
 	auto selectionstring = _listBoxWoche->GetString(index);
-
 
 	wxClientData* woche_id = _listBoxWoche->GetClientObject(_listBoxWoche->GetSelection());
 
@@ -107,22 +145,118 @@ void Mainframe::OnButtonOeffnen(wxCommandEvent & /*event*/)
 	auto abteilungwerte = abteilung_tabelle.Load(abteilung_fk_wert);
 
 	auto abteilungnamewert = abteilungwerte.name;
+
+
+	auto anzahlitems = _listBoxWoche->GetCount();
+
+	 //nach Berichtsheft_id fragen anhand der Wochen_Id
+	  
 	
 
-	//Berichtsheft anhand der Id aus Clientdata
+
+	std::vector<int64_t> retBerichtsheftID = {};
+
+	auto resberichtsheftID = mk::sqlite::result{ *_db, R"(
+SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
+)", wochenwerte.id };
+
+	while (resberichtsheftID)
+	{
+		int ii = 0;
+		retBerichtsheftID.push_back(resberichtsheftID[ii]);
+		++resberichtsheftID;
+	}
+
+	int berichtsheftIDAnzahl = retBerichtsheftID.size();
+
 	auto berichtsheft_tabelle = BerichtsheftTabelle{ *_db };
-	//auto berichtsheftwerte = berichtsheft_tabelle.Load(static_cast<DatabaseID*>(woche_))
+
+
+
+	std::vector<int> auswahlberichtsheftidvector;
+	std::vector<int> auswahlberichtsheftminutenvector;
+	std::vector<int> auswahlberichtshefttaetigkeitfkvector;
+	std::vector<int> auswahlberichtsheftazubifkvector;
+
+
+	for (int i = 0; i < berichtsheftIDAnzahl; i++)
+	{
+		auto berichtsheftwerte = berichtsheft_tabelle.Load(retBerichtsheftID[i]);
+
+		auswahlberichtsheftidvector.push_back(berichtsheftwerte.id);
+		auswahlberichtsheftminutenvector.push_back(berichtsheftwerte.minuten);
+		auswahlberichtshefttaetigkeitfkvector.push_back(berichtsheftwerte.taetigkeit_fk);
+		auswahlberichtsheftazubifkvector.push_back(berichtsheftwerte.azubi_fk);
+	}
+
+	//Gesammelte Daten
+	//Woche: ID, Beginn, Ende, Ausbildungsjahr, Abteilung_fk
+	//Abteilung: Id, Name
+	//Berichtsheft: Id, Minuten, Taetigkeit_fk, Azubi_fk
+	//Azubi: Name
+	//Taetigkeit: Beschreibung, Art
+
+	auto azubi_tabelle = AzubiTabelle{ *_db };
+	auto azubiwerte = azubi_tabelle.Load(auswahlberichtsheftazubifkvector[0]);
+	
+	auto taetigkeit_tabelle = TaetigkeitTabelle{ *_db };
+	
+	std::vector<std::string> auswahltaetigkeitbeschreibungvector;
+	std::vector<int> auswahltaetigkeitartvector;
+	int anzahltaetigkeiten = auswahlberichtshefttaetigkeitfkvector.size();
+
+	for (int i = 0; i < anzahltaetigkeiten; i++)
+	{
+		auto taetigkeitswerte = taetigkeit_tabelle.Load(auswahlberichtshefttaetigkeitfkvector[i]);
+
+		auswahltaetigkeitbeschreibungvector.push_back(taetigkeitswerte.beschreibung);
+		auswahltaetigkeitartvector.push_back(taetigkeitswerte.art_fk);
+	}
+
+	
+
+
+	//std::vector<std::string> taetigkeitwertebeschreibung;
+	//std::vector<int> taetigkeitwerteart_fk;
+
+	//auto taetigkeitwerte = taetigkeit_tabelle.Load
+
+	//auto wochenwerte = woche_tabelle.Load(static_cast<DatabaseID*>(woche_id)->id);
+	
+	//Berichtsheft anhand der Ids passend zur woche_fk
 
 
 	auto eintrag = new FrameBerichtshefteintrag(this, *_db);
+
+	
+
+	/*
+	for (auto& values : eintrag->bSizer1->GetChildren())
+
+		values.
+	*/
+
+	/*
+	auto betrieboeffnen = eintrag->_panelBetrieb->GetChildren();
+	auto schuleoeffnen = eintrag->_panelSchule->GetChildren();
+	*/
+
+	
+	//auto ueberschrift = eintrag->GetChildren();
+
+	//ueberschrift.get
+
+	eintrag->m_staticText1->SetLabelText("Test");
+
 	eintrag->Show();
+
+	
 }
 
 
 void Mainframe::NeueDatenbank () 
 {
    wxLogDebug(__FUNCTION__ " erzeuge neue Datenbank");
-
 
    BerichtsheftTabelle{*_db}.provision();
    ArtTabelle{*_db}.provision();
