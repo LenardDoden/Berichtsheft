@@ -57,6 +57,7 @@ int64_t WocheTabelle::Save(const Woche & val)
 	}
 	*/
 	
+
 }
 
 Woche WocheTabelle::Load(int64_t id)

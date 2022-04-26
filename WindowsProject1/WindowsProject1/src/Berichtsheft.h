@@ -156,23 +156,19 @@ class FrameBerichtshefteintragbase : public wxFrame
 	protected:
 		wxScrolledWindow* m_scrolledWindow1;
 		wxStaticText* m_staticText3;
-		wxChoice* _choiceName;
 		wxBitmapButton* _btnNeuName;
 		wxStaticText* m_staticText4;
-		wxChoice* _choiceAusbildungsjahr;
 		wxStaticText* m_staticText2;
-		wxChoice* _choiceAbteilung;
 		wxBitmapButton* _btnNeuAbteilung;
 		wxStaticText* m_staticText7;
-		wxCalendarCtrl* _calendarVon;
 		wxStaticText* m_staticText8;
-		wxCalendarCtrl* _calendarBis;
 		wxStaticText* m_staticText5;
 		wxStaticText* m_staticText12;
 		wxStaticText* m_staticText6;
 		wxStaticText* m_staticText13;
 		wxToggleButton* _btnSpeichern;
 		wxToggleButton* _btnDrucken;
+		wxToggleButton* _btnLoeschen;
 
 		// Virtual event handlers, override them in your derived class
 		virtual void OnButtonNeuName( wxCommandEvent& event ) { event.Skip(); }
@@ -181,28 +177,25 @@ class FrameBerichtshefteintragbase : public wxFrame
 		virtual void OnCalendarBisChanged( wxCalendarEvent& event ) { event.Skip(); }
 		virtual void OnButtonSpeichern( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonDrucken( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonLoeschen( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:
 		wxBoxSizer* bSizer1;
-		wxBoxSizer* bSizer9;
-		wxBoxSizer* bSizer2;
 		wxStaticText* m_staticText1;
-		wxBoxSizer* bSizer5;
-		wxFlexGridSizer* fgSizer1;
-		wxBoxSizer* bSizer6;
-		wxBoxSizer* bSizer10;
-		wxBoxSizer* bSizer11;
+		wxChoice* _choiceName;
+		wxChoice* _choiceAusbildungsjahr;
+		wxChoice* _choiceAbteilung;
+		wxCalendarCtrl* _calendarVon;
+		wxCalendarCtrl* _calendarBis;
 		wxBoxSizer* bSizer7;
-		wxGridSizer* gSizer2;
 		wxPanel* _panelBetrieb;
 		wxGridSizer* _betriebtaetigkeitsizer;
 		wxGridSizer* gSizer3;
 		wxPanel* _panelSchule;
 		wxGridSizer* _schultaetigkeitsizer;
-		wxBoxSizer* bSizer25;
 
-		FrameBerichtshefteintragbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Berichtsheft Eintrag"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 522,650 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		FrameBerichtshefteintragbase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Berichtsheft Eintrag"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 542,650 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~FrameBerichtshefteintragbase();
 

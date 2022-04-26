@@ -32,9 +32,12 @@ class FrameBerichtshefteintrag : public FrameBerichtshefteintragbase
    void OnCalendarBisChanged(wxCalendarEvent& event)override;
    void OnButtonSpeichern(wxCommandEvent& event)override;
    void OnButtonDrucken( wxCommandEvent& event )override;
+   void OnButtonLoeschen(wxCommandEvent & event) override;
+
 
 	public:
 		/** Constructor */
+		void LoadDataForFrameOeffnen(int64_t id_woche);
 
 		void OnTaetigkeitEntfernen(wxCommandEvent & event);
 
@@ -50,6 +53,7 @@ class FrameBerichtshefteintrag : public FrameBerichtshefteintragbase
 		virtual void OnBetriebTaetigkeitLoeschen(wxCommandEvent& event);
 		virtual void OnSchuleTaetigkeitErstellen(wxCommandEvent& event);
 		virtual void OnSchuleTaetigkeitLoeschen(wxCommandEvent& event);
+
 
 };
 

@@ -250,17 +250,19 @@ Mainframebase::~Mainframebase()
 
 FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxSize( 522,650 ), wxDefaultSize );
+	this->SetSizeHints( wxSize( 542,650 ), wxDefaultSize );
 
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 
 	m_scrolledWindow1 = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
 	m_scrolledWindow1->SetScrollRate( 5, 5 );
+	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 
+	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 
-	m_staticText1 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Ausbildungsnachweis Nr:"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+	m_staticText1 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Ausbildungsnachweis Woche"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
 	m_staticText1->Wrap( -1 );
 	m_staticText1->SetFont( wxFont( 18, wxFONTFAMILY_ROMAN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, wxT("Caladea") ) );
 
@@ -269,8 +271,10 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 
 	bSizer9->Add( bSizer2, 0, wxEXPAND, 5 );
 
+	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
 
+	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 0, 3, 0, 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -334,8 +338,10 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 
 	bSizer9->Add( bSizer5, 0, wxEXPAND|wxTOP, 20 );
 
+	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxHORIZONTAL );
 
+	wxBoxSizer* bSizer10;
 	bSizer10 = new wxBoxSizer( wxVERTICAL );
 
 	m_staticText7 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Vom:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -350,6 +356,7 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 
 	bSizer6->Add( bSizer10, 1, wxEXPAND, 5 );
 
+	wxBoxSizer* bSizer11;
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
 
 	m_staticText8 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Bis:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -369,6 +376,7 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 
+	wxGridSizer* gSizer2;
 	gSizer2 = new wxGridSizer( 0, 2, 0, 0 );
 
 	m_staticText5 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Betriebliche Tätigkeiten:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -430,13 +438,17 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 	bSizer9->Fit( m_scrolledWindow1 );
 	bSizer1->Add( m_scrolledWindow1, 1, wxEXPAND | wxALL, 5 );
 
+	wxBoxSizer* bSizer25;
 	bSizer25 = new wxBoxSizer( wxHORIZONTAL );
 
-	_btnSpeichern = new wxToggleButton( this, wxID_ANY, wxT("Speichern"), wxDefaultPosition, wxDefaultSize, 0 );
+	_btnSpeichern = new wxToggleButton( this, wxID_ANY, wxT("Eintrag Speichern"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer25->Add( _btnSpeichern, 0, wxALL, 5 );
 
-	_btnDrucken = new wxToggleButton( this, wxID_ANY, wxT("Drucken"), wxDefaultPosition, wxDefaultSize, 0 );
+	_btnDrucken = new wxToggleButton( this, wxID_ANY, wxT("Eintrag Drucken"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer25->Add( _btnDrucken, 0, wxALL, 5 );
+
+	_btnLoeschen = new wxToggleButton( this, wxID_ANY, wxT("Eintrag Löschen"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer25->Add( _btnLoeschen, 0, wxALL, 5 );
 
 
 	bSizer1->Add( bSizer25, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -454,6 +466,7 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 	_calendarBis->Connect( wxEVT_CALENDAR_SEL_CHANGED, wxCalendarEventHandler( FrameBerichtshefteintragbase::OnCalendarBisChanged ), NULL, this );
 	_btnSpeichern->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonSpeichern ), NULL, this );
 	_btnDrucken->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonDrucken ), NULL, this );
+	_btnLoeschen->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonLoeschen ), NULL, this );
 }
 
 FrameBerichtshefteintragbase::~FrameBerichtshefteintragbase()
@@ -465,5 +478,6 @@ FrameBerichtshefteintragbase::~FrameBerichtshefteintragbase()
 	_calendarBis->Disconnect( wxEVT_CALENDAR_SEL_CHANGED, wxCalendarEventHandler( FrameBerichtshefteintragbase::OnCalendarBisChanged ), NULL, this );
 	_btnSpeichern->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonSpeichern ), NULL, this );
 	_btnDrucken->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonDrucken ), NULL, this );
+	_btnLoeschen->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonLoeschen ), NULL, this );
 
 }

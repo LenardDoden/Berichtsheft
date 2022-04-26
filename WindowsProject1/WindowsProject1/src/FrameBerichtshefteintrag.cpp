@@ -18,8 +18,10 @@
 #include "../../BerichtsheftStructs/Woche.h"
 
 #include "../wx/log.h"
-#include "wx/print.h"
+#include "../wx/scrolbar.h"
 
+#include "wx/print.h"
+#include <wx/stdpaths.h>
 
 
 wxDEFINE_EVENT(FrameBerichtshefteintrag_Updated, wxCommandEvent);
@@ -44,7 +46,6 @@ struct Data {
 };
 
 
-
 wxString AbteilungWxString;
 wxString VornameWxString;
 wxString NachnameWxString;
@@ -57,8 +58,6 @@ public:
 	{
 
 	}
-
-	
 
 
 	void GetPageInfo(int* minPage, int* maxPage, int* pageFrom, int* pageTo) override
@@ -141,7 +140,7 @@ public:
 
 		dc->SetFont(FontTitle());
 
-
+		
 		DrawTextcenter("Ausbildungsnachweis (Woche " + m_data->ausbildungWoche + " - " + m_data->jahr + ")", leftMargin, cursor.y, MMToPixelX(190) - leftMargin);
 
 		cursor.y += dc->GetCharHeight();
@@ -337,6 +336,7 @@ public:
 		auto textlaenge = dc->GetTextExtent(string);
 	}
 
+
 	void DrawBody()
 	{
 		auto dc = GetDC();
@@ -494,7 +494,9 @@ void FrameBerichtshefteintrag::panelbetriebstaetigkeiterstellen()
 
 
 	panelbetriebneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnBetriebTaetigkeitErstellen), NULL, this);
+
 	
+
 	_betriebtaetigkeitsizer->Add(panelbetriebneu, 0, wxEXPAND);
 	_betriebtaetigkeitsizer->Fit(panelbetriebneu);
 	_betriebtaetigkeitsizer->Show(panelbetriebneu);
@@ -510,6 +512,7 @@ void FrameBerichtshefteintrag::panelschultaetigkeiterstellen()
 	_schultaetigkeitsizer->Add(panelschuleneu, 0, wxEXPAND);
 	_schultaetigkeitsizer->Fit(panelschuleneu);
 	_schultaetigkeitsizer->Show(panelschuleneu);
+	
 }
 
 
@@ -555,10 +558,6 @@ void FrameBerichtshefteintrag::ResetNameChoice ()
 }
 
 
-
-
-
-
 void FrameBerichtshefteintrag::ResetAbteilungChoice()
 {
 	_choiceAbteilung->Clear();
@@ -600,10 +599,11 @@ void FrameBerichtshefteintrag::ResetTaetigkeitBetriebChoice()
 			return o.art_fk == 1;
 		});
 
+		/*
 		for (const auto& i : vorschlag_tabelle_betrieb) {
-
 			panel->combo_beschreibung_taetigkeit->Append(i.beschreibung);
 		}
+		*/
 	}
 }
 
@@ -627,12 +627,245 @@ void FrameBerichtshefteintrag::ResetTaetigkeitSchuleChoice()
 
 		//auto taetigkeitenschuleanfangspanel = TaetigkeitTabelle{ _db };
 		
+		/*
 		for (const auto& i : vorschlag_tabelle_schule) {
 			panel->combo_beschreibung_taetigkeit->Append(i.beschreibung);
+		}
+		*/
 
-			
+	}
+}
+
+void FrameBerichtshefteintrag::LoadDataForFrameOeffnen(int64_t id_woche)
+{
+	auto woche_tabelle = WocheTabelle{ _db };
+	auto wochenwerte = woche_tabelle.Load(id_woche);
+
+	auto beginnwert = wochenwerte.beginn;
+	auto endewert = wochenwerte.ende;
+	auto jahrwert = wochenwerte.ausbildungsjahr;
+	auto abteilung_fk_wert = wochenwerte.abteilung_fk;
+
+
+	//Abteilung anhand des Foreign Keys aus der Woche Tabelle
+	auto abteilung_tabelle = AbteilungTabelle{ _db };
+	auto abteilungwerte = abteilung_tabelle.Load(abteilung_fk_wert);
+
+	auto abteilungnamewert = abteilungwerte.name;
+
+	
+
+	//nach Berichtsheft_id fragen anhand der Wochen_Id
+
+	std::vector<int64_t> retBerichtsheftID = {};
+
+	auto resberichtsheftID = mk::sqlite::result{ _db, R"(
+SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
+)", wochenwerte.id };
+
+	while (resberichtsheftID)
+	{
+		int ii = 0;
+		retBerichtsheftID.push_back(resberichtsheftID[ii]);
+		++resberichtsheftID;
+	}
+
+	int berichtsheftIDAnzahl = retBerichtsheftID.size();
+
+	auto berichtsheft_tabelle = BerichtsheftTabelle{ _db };
+
+
+
+	std::vector<int> auswahlberichtsheftidvector;
+	std::vector<int> auswahlberichtsheftminutenvector;
+	std::vector<int> auswahlberichtshefttaetigkeitfkvector;
+	std::vector<int> auswahlberichtsheftazubifkvector;
+
+
+	for (int i = 0; i < berichtsheftIDAnzahl; i++)
+	{
+		auto berichtsheftwerte = berichtsheft_tabelle.Load(retBerichtsheftID[i]);
+
+		auswahlberichtsheftidvector.push_back(berichtsheftwerte.id);
+		auswahlberichtsheftminutenvector.push_back(berichtsheftwerte.minuten);
+		auswahlberichtshefttaetigkeitfkvector.push_back(berichtsheftwerte.taetigkeit_fk);
+		auswahlberichtsheftazubifkvector.push_back(berichtsheftwerte.azubi_fk);
+	}
+
+	auto azubi_tabelle = AzubiTabelle{ _db };
+	auto azubiwerte = azubi_tabelle.Load(auswahlberichtsheftazubifkvector[0]);
+
+	auto taetigkeit_tabelle = TaetigkeitTabelle{ _db };
+
+	std::vector<std::string> auswahltaetigkeitbeschreibungvector;
+	std::vector<int> auswahltaetigkeitartvector;
+	int anzahltaetigkeiten = auswahlberichtshefttaetigkeitfkvector.size();
+
+	for (int i = 0; i < anzahltaetigkeiten; i++)
+	{
+		auto taetigkeitswerte = taetigkeit_tabelle.Load(auswahlberichtshefttaetigkeitfkvector[i]);
+
+		auswahltaetigkeitbeschreibungvector.push_back(taetigkeitswerte.beschreibung);
+		auswahltaetigkeitartvector.push_back(taetigkeitswerte.art_fk);
+	}
+
+	//Anzahl Betrieb / Schultätigkeiten
+	int64_t anzahleintraegegesamt = auswahltaetigkeitbeschreibungvector.size();
+	int64_t anzahl_betriebeinträge = std::count(auswahltaetigkeitartvector.begin(), auswahltaetigkeitartvector.end(), 1);
+	int64_t anzahl_schuleinträge = std::count(auswahltaetigkeitartvector.begin(), auswahltaetigkeitartvector.end(), 2);
+
+	std::vector<std::string> taetigkeitvectorbetrieb;
+	std::vector<std::string> taetigkeitvectorschule;
+
+	std::vector<int> taetigkeitminutenvectorbetrieb;
+	std::vector<int> taetigkeitminutenvectorschule;
+
+
+	if (anzahl_betriebeinträge > 0)
+	{
+		for (int i = 0; i < anzahl_betriebeinträge; ++i)
+		{
+		//Tätigkeitsvector in Art und Schule aufteilen
+			taetigkeitvectorbetrieb.push_back(auswahltaetigkeitbeschreibungvector[i]);
+
+			//Mintenvektor in Art und Schule aufteilen
+			taetigkeitminutenvectorbetrieb.push_back(auswahlberichtsheftminutenvector[i]);
 		}
 	}
+
+
+	if (anzahl_schuleinträge > 0)
+	{
+		for (int ii = anzahl_betriebeinträge; ii < anzahleintraegegesamt; ++ii)
+		{
+			//Tätigkeitsvector in Art und Schule aufteilen
+			taetigkeitvectorschule.push_back(auswahltaetigkeitbeschreibungvector[ii]);
+			
+			//Mintenvektor in Art und Schule aufteilen
+			taetigkeitminutenvectorschule.push_back(auswahlberichtsheftminutenvector[ii]);
+		}
+	}
+	
+
+
+	
+
+	//Name
+	auto findazubiname = _choiceName->FindString(azubiwerte.vorname + " " + azubiwerte.nachname);
+	_choiceName->SetSelection(findazubiname);
+
+	//kalender
+	wxDateTime test = _calendarVon->GetDate();
+	test.ParseISODate(beginnwert);
+	_calendarVon->SetDate(test);
+	_calendarVon->Disable();
+
+	test.ParseISODate(endewert);
+	_calendarBis->SetDate(test);
+	_calendarBis->Disable();
+
+	//Jahr 
+	auto findausbildungsjahr = _choiceAusbildungsjahr->FindString(jahrwert);
+	_choiceAusbildungsjahr->SetSelection(findausbildungsjahr);
+
+	//Woche im Jahr für Überschrift
+	auto wocheimjahr = std::to_string(test.GetWeekOfYear());
+	auto jahr = std::to_string(test.GetYear());
+	
+	//Überschrift
+	auto text = m_staticText1->GetLabelText();
+	m_staticText1->SetLabelText(text + wocheimjahr + " - " + jahr);
+
+	//Abteilung
+	auto findabteilungname = _choiceAbteilung->FindString(abteilungnamewert);
+	_choiceAbteilung->SetSelection(findabteilungname);
+	
+
+	//Tätigkeiten Betrieb hinzufügen
+	//1.Tätigkeit Betrieb Werte eintragen	
+
+	
+
+	if (taetigkeitvectorbetrieb.size() > 0)
+	{
+		for (auto& valuesweitergabebetrieb : _panelBetrieb->GetChildren())
+		{
+			const auto panel = static_cast<PanelTaetigkeitbase*>(valuesweitergabebetrieb);
+
+			panel->combo_beschreibung_taetigkeit->SetLabelText(taetigkeitvectorbetrieb[0]);
+
+			//panel->combo_stunden->SetLabelText("Test Betrieb");
+
+			std::stringstream resultminutenbetrieb;
+			resultminutenbetrieb << taetigkeitminutenvectorbetrieb[0];
+			panel->combo_stunden->SetLabelText(resultminutenbetrieb.str());
+		}
+	}
+
+	//1.Tätigkeit Schule Werte eintragen
+	if (taetigkeitvectorschule.size() > 0)
+	{
+		for (auto& valuesweitergabeschule : _panelSchule->GetChildren())
+		{
+			const auto panel = static_cast<PanelTaetigkeitbase*>(valuesweitergabeschule);
+
+			panel->combo_beschreibung_taetigkeit->SetLabelText(taetigkeitvectorschule[0]);
+
+			std::stringstream resultminutenschule;
+			resultminutenschule << taetigkeitminutenvectorschule[0];
+			panel->combo_stunden->SetLabelText(resultminutenschule.str());
+
+			//panel->combo_stunden->SetLabelText("test Schule");
+		}
+	}
+
+
+	//weitere Tätigkeiten Betrieb Werte eintragen
+	if (anzahl_betriebeinträge > 1)
+	{
+		for (int i = 1; i < anzahl_betriebeinträge; ++i)
+		{
+			auto panelbetriebneu = new PanelTaetigkeitbase(_panelBetrieb);
+			panelbetriebneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnBetriebTaetigkeitErstellen), NULL, this);
+
+			//panelbetriebneu->btn_delete_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnBetriebTaetigkeitLoeschen), NULL, this);
+
+			panelbetriebneu->combo_beschreibung_taetigkeit->SetLabelText(taetigkeitvectorbetrieb[i]);
+
+			std::stringstream resultminutenbetrieb;
+			resultminutenbetrieb << taetigkeitminutenvectorbetrieb[i];
+			panelbetriebneu->combo_stunden->SetLabelText(resultminutenbetrieb.str());
+
+			_betriebtaetigkeitsizer->Add(panelbetriebneu, 0, wxEXPAND);
+			_betriebtaetigkeitsizer->Fit(panelbetriebneu);
+			_betriebtaetigkeitsizer->Show(panelbetriebneu);
+		}
+	}
+
+	//weitere Tätigkeiten Schule Werte eintragen
+	if (anzahl_schuleinträge > 1)
+	{
+		for (int i = 1; i < anzahl_schuleinträge; ++i)
+		{
+			auto panelschuleneu = new PanelTaetigkeitbase(_panelSchule);
+			panelschuleneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnSchuleTaetigkeitErstellen), NULL, this);
+
+			//panelschuleneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnSchuleTaetigkeitLoeschen), NULL, this);
+
+			panelschuleneu->combo_beschreibung_taetigkeit->SetLabelText(taetigkeitvectorschule[i]);
+
+			std::stringstream resultminutenschule;
+			resultminutenschule << taetigkeitminutenvectorschule[i];
+			panelschuleneu->combo_stunden->SetLabelText(resultminutenschule.str());
+
+			_schultaetigkeitsizer->Add(panelschuleneu, 0, wxEXPAND);
+			_schultaetigkeitsizer->Fit(panelschuleneu);
+			_schultaetigkeitsizer->Fit(panelschuleneu);
+		}
+	}	
+
+	//wxLogMessage("Test");
+
 }
 
 
@@ -663,8 +896,6 @@ void FrameBerichtshefteintrag::OnButtonNeuName(wxCommandEvent & /*event*/)
       azubi.vorname = dlg._eingabe_vorname->GetValue();
       azubi.nachname = dlg._eingabe_nachname->GetValue();
 
-
-	  //
 	  VornameWxString = azubi.vorname;
 	  NachnameWxString = azubi.nachname;
 
@@ -694,7 +925,6 @@ void FrameBerichtshefteintrag::OnCalendarVonChanged(wxCalendarEvent & /*event*/)
 }
 
 
-
 void FrameBerichtshefteintrag::OnCalendarBisChanged(wxCalendarEvent & /*event*/)
 {
 	auto kalendar_auswahl = _calendarBis->GetDate();
@@ -712,6 +942,7 @@ void FrameBerichtshefteintrag::OnCalendarBisChanged(wxCalendarEvent & /*event*/)
 		wxLogMessage("%s", "Bitte wähle einen Freitag aus.");
 	}
 }
+
 
 void FrameBerichtshefteintrag::OnBetriebTaetigkeitErstellen(wxCommandEvent& event) {
 	auto _paneltaetigkeitbetriebneu = new PanelTaetigkeitbase(_panelBetrieb/*_panelSchule*/);
@@ -748,8 +979,9 @@ void FrameBerichtshefteintrag::OnBetriebTaetigkeitErstellen(wxCommandEvent& even
 	}
 	*/
 
-	/*
 
+
+	/*
 	TaetigkeitTabelle tabelle(_db);
 	auto komplettListe = tabelle.List();
 	decltype(komplettListe) schulliste;
@@ -761,9 +993,15 @@ void FrameBerichtshefteintrag::OnBetriebTaetigkeitErstellen(wxCommandEvent& even
 
 	_paneltaetigkeitbetriebneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnBetriebTaetigkeitErstellen), new
 	WrapperPanelTaetigkeit(_paneltaetigkeitbetriebneu), this);
+
+	auto posi = m_scrolledWindow1->GetPosition();
+	auto size = m_scrolledWindow1->GetSize();
+
+	auto sizeposizumscrollen = posi.y + size.y;
+
+	m_scrolledWindow1->Scroll(0, sizeposizumscrollen);
+
 }
-
-
 
 
 void FrameBerichtshefteintrag::OnBetriebTaetigkeitLoeschen(wxCommandEvent & event)
@@ -783,18 +1021,21 @@ void PanelTaetigkeitbase::OnTextComboStundenChanged(wxCommandEvent & event)
 
 	auto pattern = "\\d+\\.*\\d*";
 
-	if (std::regex_match(regexstring, std::regex(pattern)))
+	if (regexstring.size() > 0)
 	{
-		combo_stunden->SetBackgroundColour(*wxWHITE);
-		//wxLogMessage("passt zum Regex");
-		wxWindow::Refresh();
-	}
+		if (std::regex_match(regexstring, std::regex(pattern)))
+		{
+			combo_stunden->SetBackgroundColour(*wxWHITE);
+			//wxLogMessage("passt zum Regex");
+			wxWindow::Refresh();
+		}
 
-	else
-	{
-		//wxLogMessage("passt nicht zum Regex");
-		combo_stunden->SetBackgroundColour(*wxRED);
-		wxWindow::Refresh();
+		else
+		{
+			//wxLogMessage("passt nicht zum Regex");
+			combo_stunden->SetBackgroundColour(*wxRED);
+			wxWindow::Refresh();
+		}
 	}
 }
 
@@ -818,6 +1059,7 @@ void FrameBerichtshefteintrag::OnSchuleTaetigkeitErstellen(wxCommandEvent & even
 		return o.art_fk == 2;
 	});
 
+
 	for (const auto& i : vorschlag_tabelle_schule) {
 
 		_paneltaetigkeitschuleneu->combo_beschreibung_taetigkeit->Append(i.beschreibung);
@@ -826,24 +1068,23 @@ void FrameBerichtshefteintrag::OnSchuleTaetigkeitErstellen(wxCommandEvent & even
 	_paneltaetigkeitschuleneu->combo_stunden->SetValue("1.5");
 
 
-	/*
-	auto stundenschule = BerichtsheftTabelle{ _db };
-	_paneltaetigkeitschuleneu->combo_stunden->Clear();
-
-	for (const auto& ii : stundenschule.List()) {
-
-		auto stringminutenschule = std::to_string(ii.minuten);
-		_paneltaetigkeitschuleneu->combo_stunden->Append(stringminutenschule);
-	}
-	*/
-
-	
-
 	_paneltaetigkeitschuleneu->btn_delete_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnTaetigkeitEntfernen/*OnBetriebTaetigkeitLoeschen*/), new
 		WrapperPanelTaetigkeit(_paneltaetigkeitschuleneu), this);
 
 	_paneltaetigkeitschuleneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnSchuleTaetigkeitErstellen), new
 		WrapperPanelTaetigkeit(_paneltaetigkeitschuleneu), this);
+
+
+	auto posi = m_scrolledWindow1->GetPosition();
+	auto size = m_scrolledWindow1->GetSize();
+
+	auto sizeposizumscrollen = posi.y + size.y;
+
+	m_scrolledWindow1->Scroll(0,sizeposizumscrollen);
+
+	//wxLogMessage("test");
+
+
 }
 
 
@@ -853,6 +1094,121 @@ void FrameBerichtshefteintrag::OnSchuleTaetigkeitLoeschen(wxCommandEvent & event
 	_schultaetigkeitsizer->Detach(0);
 	_schultaetigkeitsizer->Layout();
 	bSizer1->Layout();
+}
+
+
+
+void FrameBerichtshefteintrag::OnButtonLoeschen(wxCommandEvent & /*event*/)
+{
+	auto datumvonkal = _calendarVon->GetDate();
+	auto datumbiskal = _calendarBis->GetDate();
+
+	auto datumvonkalstring = datumvonkal.FormatISODate();
+	auto datumbiskalstring = datumbiskal.FormatISODate();
+
+
+
+
+
+	//Die wochen_id des Berichtes anhand der Daten im Kalender herausfinden
+	std::vector<std::string> retDatum = {};
+	auto resDatum = mk::sqlite::result{ _db, R"(
+SELECT woche_id FROM woche WHERE beginn = ? AND ende = ?
+)", datumvonkalstring.ToStdString(), datumbiskalstring.ToStdString()};
+	
+	retDatum.push_back(resDatum[0]);
+	
+
+	//Die TaetigkeitsIDs herausfinden anhand des zugehörigen wochen_fk
+	std::vector<std::string> retTaetigkeiten = {};
+	auto resTaetigkeiten = mk::sqlite::result{ _db, R"(
+SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
+)", retDatum[0] };
+	
+	while (resTaetigkeiten)
+	{
+		int ii = 0;
+		retTaetigkeiten.push_back(resTaetigkeiten[ii]);
+		++resTaetigkeiten;
+	}
+
+
+	// Taetigkeiten, woche, berichtsheft Löschen anhand der ID
+	mk::sqlite::execute(_db, R"(
+ DELETE FROM woche WHERE woche_id = ?
+)", retDatum[0]);
+	
+	mk::sqlite::execute(_db, R"(
+DELETE FROM berichtsheft WHERE woche_fk = ?
+)", retDatum[0]);
+
+	
+	int groesse = retTaetigkeiten.size();
+	
+	for (int i = 0; i < groesse; i++)
+	{
+		mk::sqlite::execute(_db, R"(
+DELETE FROM taetigkeit WHERE taetigkeit_id = ?
+)", retTaetigkeiten[i]);
+	}
+
+
+
+
+	//alle Felder zurücksetzen
+	_choiceName->SetLabelText("");
+	_choiceAusbildungsjahr->SetLabelText("");
+	_choiceAbteilung->SetLabelText("");
+
+	wxDateTime datetime;
+	datetime.SetToCurrent();
+	
+	auto wochentag = datetime.GetWeekDay();
+	
+
+	datetime.SetToWeekDayInSameWeek(wxDateTime::Mon);
+
+	_calendarVon->SetDate(datetime);
+	_calendarVon->Enable();
+	datetime.SetDay(datetime.GetDay() + 4);
+	_calendarBis->SetDate(datetime);
+	_calendarBis->Enable();
+
+
+
+	/*
+	mk::sqlite::execute(_db, R"(
+SELECT woche_id FROM woche WHERE beginn = ?
+)")
+	*/
+
+	for (const auto& valuesbetrieb : _panelBetrieb->GetChildren()) {
+		const auto panel = static_cast<const PanelTaetigkeitbase*>(valuesbetrieb);
+
+		panel->combo_beschreibung_taetigkeit->Clear();
+		panel->combo_stunden->Clear();
+		
+	}
+
+	for (const auto& valuesschule : _panelSchule->GetChildren()) {
+		const auto panel = static_cast<const PanelTaetigkeitbase*>(valuesschule);
+
+		panel->combo_beschreibung_taetigkeit->Clear();
+		panel->combo_stunden->Clear();
+
+	}
+	
+
+
+	/*
+	mk::sqlite::execute(_db, R"(
+ DELETE Woche SET (beginn, ende, ausbildungsjahr, abteilung_fk) = (?, ?, ?, ?) WHERE Woche_id = ?
+)", val.beginn, val.ende, val.ausbildungsjahr, val.abteilung_fk, val.id);
+	*/
+
+	wxLogMessage("TEEEEEEEEEEEEEST");
+
+
 }
 
 
@@ -962,24 +1318,60 @@ void FrameBerichtshefteintrag::OnButtonSpeichern(wxCommandEvent & /*event*/) {
    wxCommandEvent updateEvent(FrameBerichtshefteintrag_Updated);
    wxPostEvent(this, updateEvent);
 
+   
+
 
    auto index_Name = _choiceName->GetSelection();
    auto index_Jahr = _choiceAusbildungsjahr->GetSelection();
    auto index_Abteilung = _choiceAbteilung->GetSelection();
    auto datum_von = _calendarVon->GetDate();
+   
+   auto woche_tabelle1 = WocheTabelle{ _db };
+
+   auto test = woche_tabelle1.List();
+
+
+   wxLogMessage("Das Datum ist");
+
+
    auto datum_bis = _calendarBis->GetDate();
+
+   /*
+   auto resWocheIstExistent = mk::sqlite::result{ _db, R"(
+SELECT beginn FROM woche WHERE beginn = ? 
+)", datum_von };
+
+   while (resArt)
+   {
+	   int ii = 0;
+	   retArt.push_back(resArt[ii]);
+	   ++resArt;
+   }
+   */
 
 
 
    if (!(_choiceName->GetSelection() != wxNOT_FOUND
       && _choiceAusbildungsjahr->GetSelection() != wxNOT_FOUND 
       && _choiceAbteilung->GetSelection() != wxNOT_FOUND 
-      && _calendarBis->GetDate() != _calendarVon->GetDate())) {
+	   )){
+	   
+	   //&& _calendarBis->GetDate() != _calendarVon->GetDate())) {
 
-      wxLogError("Nicht alle Felder ausgefüllt oder 2 mal das Gleiche Datum ausgewählt.");
+      wxLogError("Nicht alle Felder ausgefüllt.");
       return;
+
    }
 
+   
+
+   if (_calendarBis->GetDate() == _calendarVon->GetDate())
+   {
+	   wxLogError("Zwei mal das gleiche Datum ausgewählt.");
+	   return;
+   }
+
+   
 
    transaction trans(_db);
 
@@ -1080,7 +1472,6 @@ SELECT name FROM art
 		 }
 
 
-
          berichtsheft.minuten = stunden * 60;
          berichtsheft_tabelle.Save(berichtsheft);
 		}
@@ -1115,11 +1506,12 @@ SELECT name FROM art
          TaetigkeitTabelle taetigkeit_tabelle(_db);
          taetigkeit.id = taetigkeit_tabelle.Save(taetigkeit);
 
-		 
 
          berichtsheft.taetigkeit_fk = taetigkeit.id;
           
          Art art;
+
+		 
 
 		 if (std::find(retArt.begin(), retArt.end(), "Betrieb") != retArt.end())
 		 {
@@ -1142,4 +1534,5 @@ SELECT name FROM art
 	}
 
    trans.commit();
+
 }
