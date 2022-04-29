@@ -12,6 +12,49 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
+DialogVorhandenenEintragOeffnenBase::DialogVorhandenenEintragOeffnenBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+
+	wxBoxSizer* bSizer22;
+	bSizer22 = new wxBoxSizer( wxVERTICAL );
+
+	m_staticText15 = new wxStaticText( this, wxID_ANY, wxT("Möchtest du den vorhandenen Bericht öffnen?"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText15->Wrap( -1 );
+	bSizer22->Add( m_staticText15, 1, wxALL, 5 );
+
+	wxBoxSizer* bSizer23;
+	bSizer23 = new wxBoxSizer( wxHORIZONTAL );
+
+	buttonJaVorhandenenBerichtOeffnen = new wxButton( this, wxID_ANY, wxT("Ja"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer23->Add( buttonJaVorhandenenBerichtOeffnen, 1, wxALL, 5 );
+
+	buttonNeinVorhandenenBerichtNichtOeffnen = new wxButton( this, wxID_ANY, wxT("Nein"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer23->Add( buttonNeinVorhandenenBerichtNichtOeffnen, 1, wxALL, 5 );
+
+
+	bSizer22->Add( bSizer23, 1, wxEXPAND, 5 );
+
+
+	this->SetSizer( bSizer22 );
+	this->Layout();
+	bSizer22->Fit( this );
+
+	this->Centre( wxBOTH );
+
+	// Connect Events
+	buttonJaVorhandenenBerichtOeffnen->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DialogVorhandenenEintragOeffnenBase::OnButtonJaVorhandenenBerichtOeffnen ), NULL, this );
+	buttonNeinVorhandenenBerichtNichtOeffnen->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DialogVorhandenenEintragOeffnenBase::OnButtonNeinVorhandenenBErichtNichtOeffnen ), NULL, this );
+}
+
+DialogVorhandenenEintragOeffnenBase::~DialogVorhandenenEintragOeffnenBase()
+{
+	// Disconnect Events
+	buttonJaVorhandenenBerichtOeffnen->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DialogVorhandenenEintragOeffnenBase::OnButtonJaVorhandenenBerichtOeffnen ), NULL, this );
+	buttonNeinVorhandenenBerichtNichtOeffnen->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DialogVorhandenenEintragOeffnenBase::OnButtonNeinVorhandenenBErichtNichtOeffnen ), NULL, this );
+
+}
+
 DialogNameAnlegenbase::DialogNameAnlegenbase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxSize( -1,-1 ), wxDefaultSize );

@@ -36,6 +36,9 @@
     <ClCompile Include="Drucken.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\DialogVorhandenenEintragOeffnen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\FrameBerichtshefteintrag.h">
@@ -51,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DatabaseID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DialogVorhandenenEintragOeffnen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

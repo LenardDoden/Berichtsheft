@@ -15,13 +15,13 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/textctrl.h>
-#include <wx/sizer.h>
 #include <wx/button.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
+#include <wx/sizer.h>
 #include <wx/dialog.h>
+#include <wx/textctrl.h>
 #include <wx/combobox.h>
 #include <wx/bmpbuttn.h>
 #include <wx/panel.h>
@@ -34,6 +34,31 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class DialogVorhandenenEintragOeffnenBase
+///////////////////////////////////////////////////////////////////////////////
+class DialogVorhandenenEintragOeffnenBase : public wxDialog
+{
+	private:
+
+	protected:
+		wxStaticText* m_staticText15;
+		wxButton* buttonJaVorhandenenBerichtOeffnen;
+		wxButton* buttonNeinVorhandenenBerichtNichtOeffnen;
+
+		// Virtual event handlers, override them in your derived class
+		virtual void OnButtonJaVorhandenenBerichtOeffnen( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonNeinVorhandenenBErichtNichtOeffnen( wxCommandEvent& event ) { event.Skip(); }
+
+
+	public:
+
+		DialogVorhandenenEintragOeffnenBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+
+		~DialogVorhandenenEintragOeffnenBase();
+
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class DialogNameAnlegenbase

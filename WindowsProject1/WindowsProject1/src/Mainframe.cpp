@@ -55,11 +55,14 @@ void Mainframe::ResetWocheListe ()
 
    for (const auto& i : woche_liste ) {// mehrere Loops hintereinander
       std::stringstream beschreibung;
-      beschreibung << i.beginn << "- " << i.ende <<  ", Ausbildungsjahr: " << i.ausbildungsjahr;
+	  wxDateTime test;
+	  test.ParseISODate(i.beginn);
+	  
+      beschreibung << i.beginn << "- " << i.ende <<  ", Ausbildungsjahr: " << i.ausbildungsjahr << ", Woche: " << test.GetWeekOfYear();
 
 	  _listBoxWoche->Append(beschreibung.str(), new DatabaseID{ i.id }); //hier die weiteren werte 
    }
-      
+   
 }
 
 void Mainframe::OnWocheUpdated (wxCommandEvent& /*event*/) 
@@ -89,7 +92,6 @@ void Mainframe::OnButtonOeffnen(wxCommandEvent & /*event*/)
 	if (_listBoxWoche->GetCount() > 0)
 
 	{
-
 		auto selection = _listBoxWoche->GetSelection();
 		
 		if (selection != wxNOT_FOUND)

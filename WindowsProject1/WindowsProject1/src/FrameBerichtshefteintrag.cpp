@@ -2,6 +2,7 @@
 #include "DialogNameAnlegen.h"
 #include "DialogAbteilungAnlegen.h"
 #include "Mainframe.h"
+#include "DialogVorhandenenEintragOeffnen.h"
 
 #include "DatabaseID.h"
 
@@ -869,6 +870,8 @@ SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
 }
 
 
+
+
 void FrameBerichtshefteintrag::OnButtonNeuAbteilung(wxCommandEvent & /*event*/)
 {
 	DialogAbteilungAnlegen dlg(this);
@@ -1311,30 +1314,82 @@ void FrameBerichtshefteintrag::OnButtonDrucken(wxCommandEvent & /*event*/) {
 }
 
 
-
 void FrameBerichtshefteintrag::OnButtonSpeichern(wxCommandEvent & /*event*/) {
 	
+
 
    wxCommandEvent updateEvent(FrameBerichtshefteintrag_Updated);
    wxPostEvent(this, updateEvent);
 
-   
-
-
+  
    auto index_Name = _choiceName->GetSelection();
    auto index_Jahr = _choiceAusbildungsjahr->GetSelection();
    auto index_Abteilung = _choiceAbteilung->GetSelection();
    auto datum_von = _calendarVon->GetDate();
-   
-   auto woche_tabelle1 = WocheTabelle{ _db };
-
-   auto test = woche_tabelle1.List();
-
-
-   wxLogMessage("Das Datum ist");
-
-
    auto datum_bis = _calendarBis->GetDate();
+
+   auto datumVonIso = datum_von.FormatISODate();
+   auto datumBisIso = datum_bis.FormatISODate();
+	
+
+   auto woche_tabelle = WocheTabelle{ _db };
+   auto testvector = woche_tabelle.List();
+   
+   std::vector<std::string> stringbeginn;
+
+   auto res = mk::sqlite::result{ _db, R"(
+SELECT woche_id FROM Woche WHERE beginn = ?
+)", datumVonIso.ToStdString() };
+   while (res)
+   {
+	   int ii = 0;
+	   stringbeginn.push_back(res[ii]);
+	   ++res;
+   }
+
+   if (stringbeginn.size() >= 1)
+   {
+	   //wxLogMessage("Für diese Woche existiert schon ein Eintrag (" + datumVonIso + " bis " + datumBisIso + ")");
+
+	   DialogVorhandenenEintragOeffnen *dlg = new DialogVorhandenenEintragOeffnen(this);
+
+	   dlg->ShowModal();
+
+	   
+   }
+
+   else
+   {
+	   wxLogMessage("Für diese Woche existiert noch kein Eintrag");
+
+
+   /*
+   if (res.has_data()) {
+	   
+		wxLogMessage("Der Vector enhält das Beginndatum " + datumVonIso);
+   }
+
+   throw std::runtime_error{ "Datensatz wurde nicht gefunden" };
+   */
+
+
+   //std::vector<std::string> stringvectorbeginndatum = testvector.
+
+   /*
+   Woche wochentest;
+   wochentest.beginn = datumVonIso;
+
+   if (std::find(testvector.begin(), testvector.end(), wochentest) != testvector.end())
+   {
+   }
+
+   else {
+	   wxLogMessage("Der Vevtor enthält das Beginndatum " + datumVonIso + " nicht");
+   }
+   */
+
+
+   wxLogMessage("test");
 
    /*
    auto resWocheIstExistent = mk::sqlite::result{ _db, R"(
@@ -1383,7 +1438,7 @@ SELECT beginn FROM woche WHERE beginn = ?
 	wxClientData* abteilung_Id = _choiceAbteilung->GetClientObject(index_Abteilung);
 	woche.abteilung_fk = static_cast<DatabaseID*>(abteilung_Id)->id;
 
-	WocheTabelle woche_tabelle(_db);
+	//WocheTabelle woche_tabelle(_db);
 
 	woche.id = woche_tabelle.Save(woche);
 
@@ -1534,5 +1589,6 @@ SELECT name FROM art
 	}
 
    trans.commit();
+   }
 
 }
