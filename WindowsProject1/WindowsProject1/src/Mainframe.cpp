@@ -101,8 +101,7 @@ void Mainframe::OnButtonOeffnen(wxCommandEvent & /*event*/)
 
 			wxClientData* woche_id = _listBoxWoche->GetClientObject(_listBoxWoche->GetSelection());
 
-			//Id anhand der Id aus Clientdata
-	
+			//Id anhand der Id 
 			auto woche_tabelle = WocheTabelle{ *_db };
 			auto wochenwerte = woche_tabelle.Load(static_cast<DatabaseID*>(woche_id)->id);
 

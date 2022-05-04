@@ -19,7 +19,7 @@ DialogVorhandenenEintragOeffnenBase::DialogVorhandenenEintragOeffnenBase( wxWind
 	wxBoxSizer* bSizer22;
 	bSizer22 = new wxBoxSizer( wxVERTICAL );
 
-	m_staticText15 = new wxStaticText( this, wxID_ANY, wxT("Möchtest du den vorhandenen Bericht öffnen?"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText15 = new wxStaticText( this, wxID_ANY, wxT("Für die ausgewählte Woche existiert bereits ein Bericht.\n       Möchtest du den vorhandenen Bericht öffnen?"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText15->Wrap( -1 );
 	bSizer22->Add( m_staticText15, 1, wxALL, 5 );
 

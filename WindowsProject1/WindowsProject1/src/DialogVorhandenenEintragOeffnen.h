@@ -15,11 +15,15 @@ class DialogVorhandenenEintragOeffnen : public DialogVorhandenenEintragOeffnenBa
 {
 	protected:
 		// Handlers for DialogVorhandenenEintragOeffnenBase events.
-		void OnButtonJaVorhandenenBerichtOeffnen( wxCommandEvent& event );
+		void OnButtonJaVorhandenenBerichtOeffnen( wxCommandEvent& event);
 		void OnButtonNeinVorhandenenBErichtNichtOeffnen( wxCommandEvent& event );
+
 	public:
 		/** Constructor */
-		DialogVorhandenenEintragOeffnen( wxWindow* parent );
+		DialogVorhandenenEintragOeffnen( wxWindow* parent, int64_t id);
+
+
+
 	//// end generated class members
 
 };

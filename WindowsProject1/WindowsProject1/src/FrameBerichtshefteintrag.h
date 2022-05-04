@@ -26,6 +26,7 @@ class FrameBerichtshefteintrag : public FrameBerichtshefteintragbase
    void ResetTaetigkeitBetriebChoice();
    void ResetTaetigkeitSchuleChoice();
 
+
    void OnButtonNeuName(wxCommandEvent& event)override;
    void OnButtonNeuAbteilung( wxCommandEvent& event )override;
    void OnCalendarVonChanged(wxCalendarEvent& event)override;
@@ -33,7 +34,6 @@ class FrameBerichtshefteintrag : public FrameBerichtshefteintragbase
    void OnButtonSpeichern(wxCommandEvent& event)override;
    void OnButtonDrucken( wxCommandEvent& event )override;
    void OnButtonLoeschen(wxCommandEvent & event) override;
-
 
 	public:
 		/** Constructor */
@@ -43,9 +43,8 @@ class FrameBerichtshefteintrag : public FrameBerichtshefteintragbase
 
 		void panelbetriebstaetigkeiterstellen();
 		void panelschultaetigkeiterstellen();
-
-		FrameBerichtshefteintrag( wxWindow* parent, mk::sqlite::database db);
-
+	
+		FrameBerichtshefteintrag(wxWindow* parent, mk::sqlite::database db);
 		
 	//// end generated class members
 
