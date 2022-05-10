@@ -1327,6 +1327,7 @@ void FrameBerichtshefteintrag::OnButtonSpeichern(wxCommandEvent & /*event*/) {
    
    std::vector<std::string> stringbeginn;
 
+
    auto res = mk::sqlite::result{ _db, R"(
 SELECT woche_id FROM Woche WHERE beginn = ?
 )", datumVonIso.ToStdString() };
@@ -1375,6 +1376,9 @@ SELECT minuten FROM berichtsheft WHERE woche_fk = ?
 			minuten_vec.push_back(resminuten[i]);
 			++resminuten;
 		}
+
+		
+
 
 		//Azubi_ID auslesen
 		std::vector<std::string> azubi_vec;
@@ -1461,6 +1465,55 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 		auto anzahl_betriebstaetigkeiten = betrieblicheTätigkeiten_vec.size();
 		auto anzahl_schulischetaetigkeiten = schulischeTätigkeiten_vec.size();
 
+		
+
+
+		/*
+		const auto id = 1;
+
+		auto berichte = BerichtsheftTabelle{ _db };
+		auto taetigkeiten = TaetigkeitTabelle{ _db };
+		auto arten = ArtTabelle{ _db };
+
+		const auto bericht = berichte.Load(id);
+		const auto taetigkeit = taetigkeiten.Load(bericht.taetigkeit_fk);
+		const auto art = arten.Load(taetigkeit.art_fk);
+
+		if (art.id == 1)
+		{
+			std::cout << taetigkeit.beschreibung << " " << art.name << bericht.minuten << "\n";
+		}
+
+		else if (art.id == 2)
+		{
+			std::cout << taetigkeit.beschreibung << " " << art.name << " " << bericht.minuten << "\n";
+		}
+		*/
+
+
+
+
+
+		
+		//Minutenvektor aufteilen
+		std::vector<std::string> Betrieb_minuten_vec;
+		std::vector<std::string> Schule_minuten_vec;
+
+		//Betriebminuten
+		for (size_t i = 0; i < anzahl_betriebstaetigkeiten; i++)
+		{
+			Betrieb_minuten_vec.push_back(minuten_vec[i]);
+		}
+
+		//Schulminuten
+		for (size_t i = anzahl_betriebstaetigkeiten; i < minuten_vec.size(); i++)
+		{
+			Schule_minuten_vec.push_back(minuten_vec[i]);
+		}
+		
+
+
+
 		auto findazubiname = _choiceName->FindString(azubi_vorname[0] + " " + azubi_nachname[0]);
 		auto findabteilungname = _choiceAbteilung->FindString(abteilung_vec[0]);
 
@@ -1475,6 +1528,9 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 		   "Die bereits ausgefüllten Felder werden dadurch überschrieben."
 		   , "Achtung" , wxYES_NO | wxICON_EXCLAMATION);
 
+	   
+		
+
 	   switch (dialog.ShowModal())
 	   {
 	   case wxID_YES:
@@ -1484,6 +1540,7 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 
 		   /////////////////////
 		   /////////////////////
+
 		   
 		   _choiceName->SetSelection(findazubiname);
 		   _choiceAusbildungsjahr->SetSelection(std::stoi(wochenwerte.ausbildungsjahr) - 1);
@@ -1494,9 +1551,45 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 
 		   _betriebtaetigkeitsizer->Clear();
 		   _schultaetigkeitsizer->Clear();
-			
 
 		   //Leerer Sizer
+
+		   _panelBetrieb->DestroyChildren();
+		   _panelSchule->DestroyChildren();
+		   
+
+		   
+
+		   
+		   //vorhandene Betriebtätigkeiten und Stunden in die Maske einfügen
+		   for (size_t i = 0; i < anzahl_betriebstaetigkeiten; ++i)
+		   {
+			   panelbetriebstaetigkeiterstellen();
+			   auto panel = dynamic_cast<PanelTaetigkeitbase*>(_panelBetrieb->GetChildren().back());
+			   panel->combo_beschreibung_taetigkeit->SetLabel(betrieblicheTätigkeiten_vec[i]);
+			   panel->combo_stunden->SetLabel(Betrieb_minuten_vec[i]);
+		   }
+
+		   if (_panelBetrieb->GetChildren().empty())
+		   {
+			   panelbetriebstaetigkeiterstellen();
+		   }
+
+
+		   //vorhandene Schultätigkeiten und Stunden in die Maske einfügen
+		   for (size_t i = 0; i < anzahl_schulischetaetigkeiten; ++i)
+		   {
+			   panelschultaetigkeiterstellen();
+			   auto panel = dynamic_cast<PanelTaetigkeitbase*>(_panelSchule->GetChildren().back());
+			   panel->combo_beschreibung_taetigkeit->SetLabel(schulischeTätigkeiten_vec[i]);
+			   panel->combo_stunden->SetLabel(Schule_minuten_vec[i]);
+		   }
+
+		   if (_panelSchule->GetChildren().empty())
+		   {
+			   panelschultaetigkeiterstellen();
+		   }
+		   
 
 
 		   //if (anzahl_betriebstaetigkeiten > 0)
@@ -1691,6 +1784,7 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 
 
 		   
+			/*
 		   
 		   if (anzahl_betriebstaetigkeiten > 1)
 		   {
@@ -1712,6 +1806,7 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 			   bSizer1->Layout();
 			   }
 		   }
+			*/
 		   
 		   
 		   
