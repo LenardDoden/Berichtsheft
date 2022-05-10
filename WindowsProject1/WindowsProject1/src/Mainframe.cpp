@@ -107,7 +107,7 @@ void Mainframe::OnButtonOeffnen(wxCommandEvent & /*event*/)
 
 			// ID an Funktion übergeben
 			auto wochen_id_weitergabe = wochenwerte.id;
-
+			
 			//Funktion um Daten einzutragen
 			eintrag->LoadDataForFrameOeffnen(wochen_id_weitergabe);
 
@@ -137,5 +137,3 @@ void Mainframe::NeueDatenbank ()
    WocheTabelle{*_db}.provision();
    AbteilungTabelle{*_db}.provision();
 }
-
-
