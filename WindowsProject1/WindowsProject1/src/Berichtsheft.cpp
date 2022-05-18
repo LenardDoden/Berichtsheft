@@ -487,6 +487,9 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 	_btnSpeichern = new wxToggleButton( this, wxID_ANY, wxT("Eintrag Speichern"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer25->Add( _btnSpeichern, 0, wxALL, 5 );
 
+	_btnUpdaten = new wxToggleButton( this, wxID_ANY, wxT("Eintrag Updaten"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer25->Add( _btnUpdaten, 0, wxALL, 5 );
+
 	_btnDrucken = new wxToggleButton( this, wxID_ANY, wxT("Eintrag Drucken"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer25->Add( _btnDrucken, 0, wxALL, 5 );
 
@@ -508,6 +511,7 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 	_calendarVon->Connect( wxEVT_CALENDAR_SEL_CHANGED, wxCalendarEventHandler( FrameBerichtshefteintragbase::OnCalendarVonChanged ), NULL, this );
 	_calendarBis->Connect( wxEVT_CALENDAR_SEL_CHANGED, wxCalendarEventHandler( FrameBerichtshefteintragbase::OnCalendarBisChanged ), NULL, this );
 	_btnSpeichern->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonSpeichern ), NULL, this );
+	_btnUpdaten->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonUpdaten ), NULL, this );
 	_btnDrucken->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonDrucken ), NULL, this );
 	_btnLoeschen->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonLoeschen ), NULL, this );
 }
@@ -520,6 +524,7 @@ FrameBerichtshefteintragbase::~FrameBerichtshefteintragbase()
 	_calendarVon->Disconnect( wxEVT_CALENDAR_SEL_CHANGED, wxCalendarEventHandler( FrameBerichtshefteintragbase::OnCalendarVonChanged ), NULL, this );
 	_calendarBis->Disconnect( wxEVT_CALENDAR_SEL_CHANGED, wxCalendarEventHandler( FrameBerichtshefteintragbase::OnCalendarBisChanged ), NULL, this );
 	_btnSpeichern->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonSpeichern ), NULL, this );
+	_btnUpdaten->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonUpdaten ), NULL, this );
 	_btnDrucken->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonDrucken ), NULL, this );
 	_btnLoeschen->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( FrameBerichtshefteintragbase::OnButtonLoeschen ), NULL, this );
 

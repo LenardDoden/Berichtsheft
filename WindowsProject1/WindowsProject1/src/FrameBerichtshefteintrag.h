@@ -34,6 +34,7 @@ class FrameBerichtshefteintrag : public FrameBerichtshefteintragbase
    void OnButtonSpeichern(wxCommandEvent& event)override;
    void OnButtonDrucken( wxCommandEvent& event )override;
    void OnButtonLoeschen(wxCommandEvent & event) override;
+   void OnButtonUpdaten(wxCommandEvent & event) override;
 
 	public:
 		/** Constructor */

@@ -192,6 +192,7 @@ class FrameBerichtshefteintragbase : public wxFrame
 		wxStaticText* m_staticText6;
 		wxStaticText* m_staticText13;
 		wxToggleButton* _btnSpeichern;
+		wxToggleButton* _btnUpdaten;
 		wxToggleButton* _btnDrucken;
 		wxToggleButton* _btnLoeschen;
 
@@ -201,6 +202,7 @@ class FrameBerichtshefteintragbase : public wxFrame
 		virtual void OnCalendarVonChanged( wxCalendarEvent& event ) { event.Skip(); }
 		virtual void OnCalendarBisChanged( wxCalendarEvent& event ) { event.Skip(); }
 		virtual void OnButtonSpeichern( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonUpdaten( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonDrucken( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonLoeschen( wxCommandEvent& event ) { event.Skip(); }
 
