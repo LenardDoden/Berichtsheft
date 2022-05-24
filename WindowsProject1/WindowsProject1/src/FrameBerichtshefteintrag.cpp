@@ -658,6 +658,8 @@ void FrameBerichtshefteintrag::LoadDataForFrameOeffnen(int64_t id_woche)
 SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
 )", wochenwerte.id };
 
+	
+
 	while (resberichtsheftID)
 	{
 		int ii = 0;
@@ -672,17 +674,21 @@ SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
 
 
 	std::vector<int> auswahlberichtsheftidvector;
-	std::vector<int> auswahlberichtsheftminutenvector;
+	std::vector<float> auswahlberichtsheftminutenvector;
 	std::vector<int> auswahlberichtshefttaetigkeitfkvector;
 	std::vector<int> auswahlberichtsheftazubifkvector;
 
+	float floatminuten = {};
 
 	for (int i = 0; i < berichtsheftIDAnzahl; i++)
 	{
 		auto berichtsheftwerte = berichtsheft_tabelle.Load(retBerichtsheftID[i]);
 
 		auswahlberichtsheftidvector.push_back(berichtsheftwerte.id);
-		auswahlberichtsheftminutenvector.push_back(berichtsheftwerte.minuten);
+		//////
+		floatminuten = berichtsheftwerte.minuten;
+		auswahlberichtsheftminutenvector.push_back(floatminuten/60);
+		//////
 		auswahlberichtshefttaetigkeitfkvector.push_back(berichtsheftwerte.taetigkeit_fk);
 		auswahlberichtsheftazubifkvector.push_back(berichtsheftwerte.azubi_fk);
 	}
@@ -705,6 +711,7 @@ SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
 	}
 
 
+
 	//Anzahl Betrieb / Schultätigkeiten
 	int64_t anzahleintraegegesamt = auswahltaetigkeitbeschreibungvector.size();
 	int64_t anzahl_betriebeinträge = std::count(auswahltaetigkeitartvector.begin(), auswahltaetigkeitartvector.end(), 1);
@@ -713,25 +720,131 @@ SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
 	std::vector<std::string> taetigkeitvectorbetrieb;
 	std::vector<std::string> taetigkeitvectorschule;
 
-	std::vector<int> taetigkeitminutenvectorbetrieb;
-	std::vector<int> taetigkeitminutenvectorschule;
+	std::vector<std::string> idstaetigkeitenbetrieb;
+	std::vector<std::string> idstaetigkeitenschule;
 
+	std::vector<float> taetigkeitminutenvectorbetrieb;
+	std::vector<float> taetigkeitminutenvectorschule;
+
+	auto max_ID = max_element(std::begin(retBerichtsheftID), std::end(retBerichtsheftID));
+
+	//Anstelle der nächsten beiden If-Blöcke die Betrieb und Schuleinträge schon vorher aufspalten
 
 	if (anzahl_betriebeinträge > 0)
 	{
-		for (int i = 0; i < anzahl_betriebeinträge; ++i)
-		{
-		//Tätigkeitsvector in Art und Schule aufteilen
-			taetigkeitvectorbetrieb.push_back(auswahltaetigkeitbeschreibungvector[i]);
+		//For i in range retBerichtsheftID Select beschreibung where art_fk = 1;
 
-			//Mintenvektor in Art und Schule aufteilen
-			taetigkeitminutenvectorbetrieb.push_back(auswahlberichtsheftminutenvector[i]);
+		//Hier Sql Befehl nach ID mit beschreibung und art
+
+		//Danach in der berichtsheft tabelle noch die Minuten abfragen
+
+		for (size_t i = 0; i < retBerichtsheftID.size(); ++i)
+		{
+			auto resbetriebstätigkeit = mk::sqlite::result{ _db, R"(
+SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
+)", retBerichtsheftID[i], 1 };
+			while (resbetriebstätigkeit)
+			{
+				int ii = 0;
+				taetigkeitvectorbetrieb.push_back(resbetriebstätigkeit[0]);
+				++resbetriebstätigkeit;
+			}
 		}
+
+
+		for (size_t i = 0; i < taetigkeitvectorbetrieb.size(); ++i)
+		{
+			auto residstaetigkeitenbetrieb = mk::sqlite::result{ _db, R"(
+SELECT taetigkeit_id FROM taetigkeit WHERE beschreibung = ?
+)", taetigkeitvectorbetrieb[i] };
+			while (residstaetigkeitenbetrieb)
+			{
+				int ii = 0;
+				idstaetigkeitenbetrieb.push_back(residstaetigkeitenbetrieb[0]);
+				++residstaetigkeitenbetrieb;
+			}
+		}
+
+
+
+		for (size_t i = 0; i < taetigkeitvectorbetrieb.size(); ++i)
+		{
+			auto resminutenbetrieb = mk::sqlite::result{ _db, R"(
+SELECT minuten FROM berichtsheft WHERE berichtsheft_id = ?
+)", idstaetigkeitenbetrieb[i] };
+			while (resminutenbetrieb)
+			{
+				
+				int ii = 0;
+				taetigkeitminutenvectorbetrieb.push_back(std::stof(resminutenbetrieb[0]));
+				++resminutenbetrieb;
+			}
+		}
+
+		//for (int i = 0; i < anzahl_betriebeinträge; ++i)
+		//{
+		////Tätigkeitsvector in Art und Schule aufteilen
+		//	taetigkeitvectorbetrieb.push_back(auswahltaetigkeitbeschreibungvector[i]);
+
+		////Mintenvektor in Art und Schule aufteilen
+		//	taetigkeitminutenvectorbetrieb.push_back(auswahlberichtsheftminutenvector[i]);
+		//}
 	}
+
+	
+
 
 
 	if (anzahl_schuleinträge > 0)
 	{
+
+
+		for (size_t i = 0; i < retBerichtsheftID.size(); ++i)
+		{
+			auto resschultätigkeit = mk::sqlite::result{ _db, R"(
+SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
+)", retBerichtsheftID[i], 2 };
+			while (resschultätigkeit)
+			{
+				int ii = 0;
+				taetigkeitvectorschule.push_back(resschultätigkeit[0]);
+				++resschultätigkeit;
+			}
+		}
+
+
+
+		for (size_t i = 0; i < taetigkeitvectorschule.size(); ++i)
+		{
+			auto residstaetigkeitenschule = mk::sqlite::result{ _db, R"(
+SELECT taetigkeit_id FROM taetigkeit WHERE beschreibung = ?
+)", taetigkeitvectorschule[i] };
+			while (residstaetigkeitenschule)
+			{
+				int ii = 0;
+				idstaetigkeitenschule.push_back(residstaetigkeitenschule[0]);
+				++residstaetigkeitenschule;
+			}
+		}
+
+
+
+		for (size_t i = 0; i < taetigkeitvectorschule.size(); ++i)
+		{
+			auto resminutenschule = mk::sqlite::result{ _db, R"(
+SELECT minuten FROM berichtsheft WHERE berichtsheft_id = ?
+)", idstaetigkeitenschule[i] };
+			while (resminutenschule)
+			{
+
+				int ii = 0;
+				taetigkeitminutenvectorschule.push_back(std::stof(resminutenschule[0]));
+				++resminutenschule;
+			}
+		}
+
+
+		/*
 		for (int ii = anzahl_betriebeinträge; ii < anzahleintraegegesamt; ++ii)
 		{
 			//Tätigkeitsvector in Art und Schule aufteilen
@@ -740,6 +853,7 @@ SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
 			//Mintenvektor in Art und Schule aufteilen
 			taetigkeitminutenvectorschule.push_back(auswahlberichtsheftminutenvector[ii]);
 		}
+		*/
 	}
 	
 
@@ -790,7 +904,7 @@ SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
 			//panel->combo_stunden->SetLabelText("Test Betrieb");
 
 			std::stringstream resultminutenbetrieb;
-			resultminutenbetrieb << taetigkeitminutenvectorbetrieb[0];
+			resultminutenbetrieb << taetigkeitminutenvectorbetrieb[0]/60;
 			panel->combo_stunden->SetLabelText(resultminutenbetrieb.str());
 		}
 	}
@@ -805,7 +919,7 @@ SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
 			panel->combo_beschreibung_taetigkeit->SetLabelText(taetigkeitvectorschule[0]);
 
 			std::stringstream resultminutenschule;
-			resultminutenschule << taetigkeitminutenvectorschule[0];
+			resultminutenschule << taetigkeitminutenvectorschule[0]/60;
 			panel->combo_stunden->SetLabelText(resultminutenschule.str());
 
 			//panel->combo_stunden->SetLabelText("test Schule");
@@ -826,7 +940,7 @@ SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
 			panelbetriebneu->combo_beschreibung_taetigkeit->SetLabelText(taetigkeitvectorbetrieb[i]);
 
 			std::stringstream resultminutenbetrieb;
-			resultminutenbetrieb << taetigkeitminutenvectorbetrieb[i];
+			resultminutenbetrieb << taetigkeitminutenvectorbetrieb[i]/60;
 			panelbetriebneu->combo_stunden->SetLabelText(resultminutenbetrieb.str());
 
 			_betriebtaetigkeitsizer->Add(panelbetriebneu, 0, wxEXPAND);
@@ -848,7 +962,7 @@ SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
 			panelschuleneu->combo_beschreibung_taetigkeit->SetLabelText(taetigkeitvectorschule[i]);
 
 			std::stringstream resultminutenschule;
-			resultminutenschule << taetigkeitminutenvectorschule[i];
+			resultminutenschule << taetigkeitminutenvectorschule[i]/60;
 			panelschuleneu->combo_stunden->SetLabelText(resultminutenschule.str());
 
 			_schultaetigkeitsizer->Add(panelschuleneu, 0, wxEXPAND);
@@ -1225,6 +1339,9 @@ void FrameBerichtshefteintrag::OnButtonUpdaten(wxCommandEvent & event)
 	auto updatenachname = updateganzername.substr(spaceplacename + 1, updateganzername.Len() - spaceplacename).Trim().Trim(false);
 
 	//hier die anderen werte speichern
+	
+	
+
 
 	auto anfangsdatum = _calendarVon->GetDate();
 	auto enddatum = _calendarBis->GetDate();
@@ -1277,6 +1394,61 @@ SELECT taetigkeit_fk FROM berichtsheft WHERE woche_fk = ?
 		++restaetigkeiten;
 	}
 
+	//Die Tätigkeiten auslesen die zu Betrieb und die zu Schule gehören
+
+	std::vector<std::string>retBetriebtaetigkeitenInDatenbank = {};
+	std::vector<std::string>retSchultaetigkeitenInDatenbank = {};
+
+
+	//Die betrieblichen Tätigkeiten die schon in der Datenbank stehen
+	for (size_t i = 0; i < rettaetigkeitenIDs.size(); i++)
+	{
+		auto restaetigkeitbetriebvec = mk::sqlite::result{ _db, R"(
+SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
+)", rettaetigkeitenIDs[i], 1 };
+		while (restaetigkeitbetriebvec)
+		{
+			int ii = 0;
+			retBetriebtaetigkeitenInDatenbank.push_back(restaetigkeitbetriebvec[0]);
+			++restaetigkeitbetriebvec;
+		}
+	}
+
+	//Die schulischen Tätigkeiten die schon in der Datenbank stehen
+
+	for (size_t u = 0; u < rettaetigkeitenIDs.size(); u++)
+	{
+		auto restaetigkeitschulvec = mk::sqlite::result{ _db, R"(
+SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
+)", rettaetigkeitenIDs[u], 2 };
+		while (restaetigkeitschulvec)
+		{
+			int ii = 0;
+			retSchultaetigkeitenInDatenbank.push_back(restaetigkeitschulvec[0]);
+			++restaetigkeitschulvec;
+		}
+	}
+
+	//Die Anzahl aller bereits vorhandenen Tätigkeit_IDs heruasfinden
+
+	int64_t hoechsteTaetigkeitID = 0;
+
+	std::vector<int64_t> alleTaetigkeitIDsVec = {};	
+	auto resAlleTaetigkeitIDsVec = mk::sqlite::result{ _db, R"(
+SELECT taetigkeit_id FROM taetigkeit
+)" };
+	while (resAlleTaetigkeitIDsVec)
+	{
+		int i = 0;
+		alleTaetigkeitIDsVec.push_back(resAlleTaetigkeitIDsVec[i]);
+		++resAlleTaetigkeitIDsVec;
+		if (alleTaetigkeitIDsVec.back() > hoechsteTaetigkeitID)
+		{
+			hoechsteTaetigkeitID = alleTaetigkeitIDsVec.back();
+		}
+	}
+
+
 	//Die AzubiID in der Berichtshefttabelle für jede ausgewählte Tätigkeit ID ändern
 	for (const int64_t& value : rettaetigkeitenIDs)
 	{
@@ -1294,19 +1466,28 @@ SELECT taetigkeit_fk FROM berichtsheft WHERE woche_fk = ?
 	//wenn mehr dann neue hinzufügen 
 	//wenn weniger die letzten löschen 
 
-	//Die Tätigkeiten auslesen
 
 	std::vector<std::string>Betriebstätigkeitenvector = {};
-	std::vector<std::string>Betriebstunden = {};
 
+	
+	std::vector<std::string>Betriebstunden = {};
+	std::vector<int> Betriebstundenint = {};
+
+	float minuten = {};
+	std::string minutenstring = {};
 
 
 	for (auto& valuesbetrieb : _panelBetrieb->GetChildren())
 	{
 		const auto panel = static_cast<PanelTaetigkeitbase*>(valuesbetrieb);
 		Betriebstätigkeitenvector.push_back(panel->combo_beschreibung_taetigkeit->GetValue().ToStdString());
-		Betriebstunden.push_back(panel->combo_stunden->GetValue().ToStdString());
+
+		minuten = std::atof(panel->combo_stunden->GetValue())*60;
+		minutenstring = std::to_string(minuten);
+		Betriebstunden.push_back(minutenstring);
 	}
+
+	
 
 	std::vector<std::string>Schultätigkeitsvector = {};
 	std::vector<std::string>Schulstunden = {};
@@ -1315,87 +1496,125 @@ SELECT taetigkeit_fk FROM berichtsheft WHERE woche_fk = ?
 	{
 		const auto panel = static_cast<PanelTaetigkeitbase*>(valuesschule);
 		Schultätigkeitsvector.push_back(panel->combo_beschreibung_taetigkeit->GetValue().ToStdString());
-		Schulstunden.push_back(panel->combo_stunden->GetValue().ToStdString());
-	}
 
+		minuten = std::atof(panel->combo_stunden->GetValue()) * 60;
+		minutenstring = std::to_string(minuten);
+		Schulstunden.push_back(minutenstring);
+	}
 
 	//Die Ids der Tätigkeiten den Betriebstätigkeiten und Schultätigkeiten zuordnen
 	std::vector<int64_t>TaetigkeitBetriebIDs = {};
 	std::vector<int64_t>TaetigkeitSchuleIDs = {};
 
+	
 
-	for (size_t i = 0; i < Betriebstätigkeitenvector.size(); ++i)
+	//Hier die korrekten Betrieb und SchultätigkeitsIDs auslesen
+
+
+	for (size_t i = 0; i < retBetriebtaetigkeitenInDatenbank.size(); ++i)
+	{
+		auto residstaetigkeitenbetriebindatenbank = mk::sqlite::result{ _db, R"(
+SELECT taetigkeit_id FROM taetigkeit WHERE beschreibung = ?
+)", retBetriebtaetigkeitenInDatenbank[i] };
+		while (residstaetigkeitenbetriebindatenbank)
+		{
+			int ii = 0;
+			TaetigkeitBetriebIDs.push_back(residstaetigkeitenbetriebindatenbank[0]);
+			++residstaetigkeitenbetriebindatenbank;
+		}
+	}
+
+	for (size_t i = 0; i < retSchultaetigkeitenInDatenbank.size(); ++i)
+	{
+		auto residstaetigkeitenschuleindatenbank = mk::sqlite::result{ _db, R"(
+SELECT taetigkeit_id FROM taetigkeit WHERE beschreibung = ?
+)", retSchultaetigkeitenInDatenbank[i] };
+		while (residstaetigkeitenschuleindatenbank)
+		{
+			int ii = 0;
+			TaetigkeitSchuleIDs.push_back(residstaetigkeitenschuleindatenbank[0]);
+			++residstaetigkeitenschuleindatenbank;
+		}
+	}
+
+
+
+
+
+	/*
+	//Anzahl an Betriebstätigkeiten in der Datenbank
+
+	for (size_t i = 0; i < retBetriebtaetigkeitenInDatenbank.size(); ++i)
+	{
+		TaetigkeitBetriebIDs.push_back(rettaetigkeitenIDs[i]);
+	}
+
+	////Anzahl an Schultätigkeiten in der Datenbank
+	for (size_t i = retBetriebtaetigkeitenInDatenbank.size(); i < retBetriebtaetigkeitenInDatenbank.size() + retSchultaetigkeitenInDatenbank.size(); ++i)
+	{
+		TaetigkeitSchuleIDs.push_back(rettaetigkeitenIDs[i]);
+	}
+	*/
+
+
+
+
+
+
+
+
+
+	
+	//zusätzliche Betriebpanele mit in die Datenbank übernehmen
+	if (TaetigkeitBetriebIDs.size() < Betriebstätigkeitenvector.size())
 	{
 
-		/*
-		if (i >= Betriebstätigkeitenvector.size())
+		//wxLogMessage("Es müssen noch weitere Panele mit Betrieblichen Tätigkeiten in die Datenbank übernommen werden");
+		
+		size_t iterator = 0;
+
+		for (size_t i = TaetigkeitBetriebIDs.size(); i < Betriebstätigkeitenvector.size(); ++i)
 		{
-			wxLogMessage("Es wurde ein Betriebspanel hinzugefügt");
-			break;
-		}
-		*/
-
-		if (i < rettaetigkeitenIDs.size())
-		{
-
-			TaetigkeitBetriebIDs.push_back(rettaetigkeitenIDs[i]);
-		}
-
-		else
-		{
-
-			//Auf Daten aus der Maske zugreifen für alle zusätzlichen 
-
-			
-
-			//Hier die weiteren Panele in die Datenbank hinzufügen
-
-			/*
 			mk::sqlite::execute(_db, R"(
 INSERT INTO taetigkeit (beschreibung, art_fk) VALUES (?, ?)
-)", beschreibung, art);
+)", Betriebstätigkeitenvector[TaetigkeitBetriebIDs.size() + iterator], 1);
+
+			
+			mk::sqlite::execute(_db, R"(
+INSERT INTO berichtsheft (minuten, woche_fk, taetigkeit_fk, azubi_fk) VALUES (?, ?, ?, ?)
+)", Betriebstunden[TaetigkeitBetriebIDs.size() + iterator], wochenupdateid, hoechsteTaetigkeitID += 1, nameupdateid);
+
+			iterator += 1;
+		}
+	}
+
+
+	if (TaetigkeitSchuleIDs.size() < Schultätigkeitsvector.size())
+	{
+		//wxLogMessage("Es müssen noch weitere Panele mit Schulischen Tätigkeiten in die Datenbank übernommen werden");
+
+		size_t iterator = 0;
+
+		for (size_t i = TaetigkeitSchuleIDs.size(); i < Schultätigkeitsvector.size(); ++i)
+		{
+			mk::sqlite::execute(_db, R"(
+INSERT INTO taetigkeit (beschreibung, art_fk) VALUES (?, ?)
+)", Schultätigkeitsvector[TaetigkeitSchuleIDs.size() + iterator], 2);
+
 
 			mk::sqlite::execute(_db, R"(
- INSERT INTO Berichtsheft (minuten, woche_fk, taetigkeit_fk, azubi_fk) VALUES (?, ?, ?, ?)
-)", minuten, woche_fk, taetigkeit_fk, azubi_fk);
-			*/
-			
+INSERT INTO berichtsheft (minuten, woche_fk, taetigkeit_fk, azubi_fk) VALUES (?, ?, ?, ?)
+)", Schulstunden[TaetigkeitSchuleIDs.size() + iterator], wochenupdateid, hoechsteTaetigkeitID += 1, nameupdateid);
 
-
-
-			break;
+			iterator += 1;
 		}
-
-		
-
 	}
 
-	//Fehler beim Hinzufügen weiterer Panele
-	for (size_t i = Betriebstätigkeitenvector.size(); i < Betriebstätigkeitenvector.size() + Schultätigkeitsvector.size(); ++i)
-	{
+	
 
-		/*
-		if (i >= rettaetigkeitenIDs.size())
-		{
-			wxLogMessage("Es wurde ein Schulpanel hinzugefügt");
-			break;
-		}
-		*/
 
-		if (i < rettaetigkeitenIDs.size())
-		{
-			TaetigkeitSchuleIDs.push_back(rettaetigkeitenIDs[i]);
-		}
-
-		else
-		{
-			//hier die weiteren Panele in die Datenbank hinzufügen
-
-			break;
-		}
-
-	}
-
+	//Betriebstätigkeitenvector;
+	//Schultätigkeitsvector;
 
 
 	size_t i = 0;
@@ -1415,11 +1634,7 @@ INSERT INTO taetigkeit (beschreibung, art_fk) VALUES (?, ?)
 		berichtsheftwerte.beschreibung = Betriebstätigkeitenvector[i];
 		berichtsheft_tabelle.Save(berichtsheftwerte);
 
-
 		++i;
-
-	
-
 	}
 
 	i = 0;
@@ -1439,15 +1654,16 @@ INSERT INTO taetigkeit (beschreibung, art_fk) VALUES (?, ?)
 		++i;
 	}
 
-	
-
 	wxLogMessage("Geupdated");
+
+
 }
 
 
 void FrameBerichtshefteintrag::OnButtonDrucken(wxCommandEvent & /*event*/) {
 
 	//Daten
+	
 
 	BeschreibungStunde Betriebbeschreibungstunde;
 	BeschreibungStunde Schulbeschreibungstunde;

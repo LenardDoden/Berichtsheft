@@ -113,6 +113,7 @@ namespace BerichtsheftStructsTest
 			Assert::AreEqual(abteilung, liste.at(0));
 		}
 
+
 		TEST_METHOD(Update)
 		{
 			auto abteilung_tabelle = Create();
