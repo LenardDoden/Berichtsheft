@@ -497,6 +497,10 @@ void FrameBerichtshefteintrag::panelbetriebstaetigkeiterstellen()
 
 
 	panelbetriebneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnBetriebTaetigkeitErstellen), NULL, this);
+	//panelbetriebneu->btn_delete_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnBetriebTaetigkeitLoeschen), NULL, this);
+
+
+	
 
 	_betriebtaetigkeitsizer->Add(panelbetriebneu, 0, wxEXPAND);
 	_betriebtaetigkeitsizer->Fit(panelbetriebneu);
@@ -508,12 +512,15 @@ void FrameBerichtshefteintrag::panelschultaetigkeiterstellen()
 	auto panelschuleneu = new PanelTaetigkeitbase(_panelSchule/*_panelSchule*/);
 
 	panelschuleneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnSchuleTaetigkeitErstellen), NULL, this);
+	//panelschuleneu->btn_delete_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnSchuleTaetigkeitLoeschen), NULL, this);
 
 	_schultaetigkeitsizer->Add(panelschuleneu, 0, wxEXPAND);
 	_schultaetigkeitsizer->Fit(panelschuleneu);
 	_schultaetigkeitsizer->Show(panelschuleneu);
 	
 }
+
+
 
 FrameBerichtshefteintrag::FrameBerichtshefteintrag(wxWindow* parent, mk::sqlite::database db)
 	:
@@ -934,8 +941,7 @@ SELECT minuten FROM berichtsheft WHERE berichtsheft_id = ?
 		{
 			auto panelbetriebneu = new PanelTaetigkeitbase(_panelBetrieb);
 			panelbetriebneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnBetriebTaetigkeitErstellen), NULL, this);
-
-			//panelbetriebneu->btn_delete_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnBetriebTaetigkeitLoeschen), NULL, this);
+			panelbetriebneu->btn_delete_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnBetriebTaetigkeitLoeschen), NULL, this);
 
 			panelbetriebneu->combo_beschreibung_taetigkeit->SetLabelText(taetigkeitvectorbetrieb[i]);
 
@@ -948,6 +954,7 @@ SELECT minuten FROM berichtsheft WHERE berichtsheft_id = ?
 			_betriebtaetigkeitsizer->Show(panelbetriebneu);
 		}
 	}
+	
 
 	//weitere Tätigkeiten Schule Werte eintragen
 	if (anzahl_schuleinträge > 1)
@@ -956,8 +963,7 @@ SELECT minuten FROM berichtsheft WHERE berichtsheft_id = ?
 		{
 			auto panelschuleneu = new PanelTaetigkeitbase(_panelSchule);
 			panelschuleneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnSchuleTaetigkeitErstellen), NULL, this);
-
-			//panelschuleneu->btn_add_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnSchuleTaetigkeitLoeschen), NULL, this);
+			panelschuleneu->btn_delete_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnSchuleTaetigkeitLoeschen), NULL, this);
 
 			panelschuleneu->combo_beschreibung_taetigkeit->SetLabelText(taetigkeitvectorschule[i]);
 
@@ -1299,6 +1305,7 @@ SELECT woche_id FROM woche WHERE beginn = ?
 		
 	}
 
+
 	for (const auto& valuesschule : _panelSchule->GetChildren()) {
 		const auto panel = static_cast<const PanelTaetigkeitbase*>(valuesschule);
 
@@ -1323,6 +1330,12 @@ void FrameBerichtshefteintrag::OnButtonUpdaten(wxCommandEvent & event)
 {
 	//Datum auslesen von Kalendervon und Kalenderbis und in ISO-Schreibweise 
 
+	//auto test = _panelBetrieb->GetChildren();
+	//auto test2 = _panelSchule->GetChildren();
+
+	auto anzahlchildrenbetrieb = _betriebtaetigkeitsizer->GetChildren();
+	auto anzahlchildrenschule = _schultaetigkeitsizer->GetChildren();
+	
 
 	//auto nameindex = _choiceName->GetSelection();
 
@@ -1339,7 +1352,6 @@ void FrameBerichtshefteintrag::OnButtonUpdaten(wxCommandEvent & event)
 	auto updatenachname = updateganzername.substr(spaceplacename + 1, updateganzername.Len() - spaceplacename).Trim().Trim(false);
 
 	//hier die anderen werte speichern
-	
 	
 
 
@@ -1537,33 +1549,35 @@ SELECT taetigkeit_id FROM taetigkeit WHERE beschreibung = ?
 		}
 	}
 
+//Hier die Inhalte, der Panele, die gelöscht wurden auch in der Datenbank löschen
 
-
-
-
-	/*
-	//Anzahl an Betriebstätigkeiten in der Datenbank
-
-	for (size_t i = 0; i < retBetriebtaetigkeitenInDatenbank.size(); ++i)
+	if (anzahlchildrenbetrieb.GetCount() < TaetigkeitBetriebIDs.size())
 	{
-		TaetigkeitBetriebIDs.push_back(rettaetigkeitenIDs[i]);
+		
+		/*
+		for (auto& valuesbetrieb : _panelBetrieb->GetChildren())
+		{
+			const auto panel = static_cast<PanelTaetigkeitbase*>(valuesbetrieb);
+			tatsaechhlichvorhandenebetriebstaetigkeiten.push_back(panel->combo_beschreibung_taetigkeit->GetValue().ToStdString());
+			auto stunden = std::atof(panel->combo_stunden->GetValue());
+			minutenstring = std::to_string(stunden);
+			tatsaechlichvorhandendestundenbetrieb.push_back(minutenstring);
+		}
+		*/
+
+		
+
+		wxLogMessage("Es wurde ein Betriebpanel entfernt");
 	}
 
-	////Anzahl an Schultätigkeiten in der Datenbank
-	for (size_t i = retBetriebtaetigkeitenInDatenbank.size(); i < retBetriebtaetigkeitenInDatenbank.size() + retSchultaetigkeitenInDatenbank.size(); ++i)
+	if (anzahlchildrenschule.GetCount() < TaetigkeitSchuleIDs.size())
 	{
-		TaetigkeitSchuleIDs.push_back(rettaetigkeitenIDs[i]);
+		wxLogMessage("Es wurde ein Schulpanel entfernt");
 	}
-	*/
 
 
 
-
-
-
-
-
-
+	
 	
 	//zusätzliche Betriebpanele mit in die Datenbank übernehmen
 	if (TaetigkeitBetriebIDs.size() < Betriebstätigkeitenvector.size())
@@ -2088,7 +2102,7 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 	   return;
    }
 
-   
+
 
    transaction trans(_db);
 

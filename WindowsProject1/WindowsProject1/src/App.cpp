@@ -15,6 +15,7 @@ void App::OnUnhandledException()
 	try
 	{
 		std::rethrow_exception(std::current_exception());
+
 	}
 	catch (const std::exception& e)
 	{
