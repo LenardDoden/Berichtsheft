@@ -42,6 +42,8 @@ class FrameBerichtshefteintrag : public FrameBerichtshefteintragbase
 
 		void OnTaetigkeitEntfernen(wxCommandEvent & event);
 
+		void OnErsteTaetigkeitEntfernen(wxCommandEvent & event);
+
 		void panelbetriebstaetigkeiterstellen();
 		void panelschultaetigkeiterstellen();
 	
@@ -50,11 +52,7 @@ class FrameBerichtshefteintrag : public FrameBerichtshefteintragbase
 	//// end generated class members
 
 		virtual void OnBetriebTaetigkeitErstellen(wxCommandEvent& event);
-		virtual void OnBetriebTaetigkeitLoeschen(wxCommandEvent& event);
 		virtual void OnSchuleTaetigkeitErstellen(wxCommandEvent& event);
-		virtual void OnSchuleTaetigkeitLoeschen(wxCommandEvent& event);
-
-
 };
 
 #endif // __FrameBerichtshefteintrag__

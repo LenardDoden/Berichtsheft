@@ -103,6 +103,10 @@ void Mainframe::OnButtonOeffnen(wxCommandEvent & /*event*/)
 
 			//Id anhand der Id 
 			auto woche_tabelle = WocheTabelle{ *_db };
+
+			try {
+
+
 			auto wochenwerte = woche_tabelle.Load(static_cast<DatabaseID*>(woche_id)->id);
 
 			// ID an Funktion übergeben
@@ -112,6 +116,17 @@ void Mainframe::OnButtonOeffnen(wxCommandEvent & /*event*/)
 			eintrag->LoadDataForFrameOeffnen(wochen_id_weitergabe);
 
 			eintrag->Show();
+			}
+
+			catch (...)
+			{
+				wxLogMessage("Der Bericht existiert nicht mehr");
+
+				auto index = _listBoxWoche->GetSelection();
+				_listBoxWoche->Delete(index);
+
+			}
+
 		}
 		
 		else
