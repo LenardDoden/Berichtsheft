@@ -305,7 +305,7 @@ FrameBerichtshefteintragbase::FrameBerichtshefteintragbase( wxWindow* parent, wx
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 
-	m_staticText1 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Ausbildungsnachweis Woche"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+	m_staticText1 = new wxStaticText( m_scrolledWindow1, wxID_ANY, wxT("Ausbildungsnachweis Woche: "), wxDefaultPosition, wxSize( -1,-1 ), 0 );
 	m_staticText1->Wrap( -1 );
 	m_staticText1->SetFont( wxFont( 18, wxFONTFAMILY_ROMAN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, wxT("Caladea") ) );
 

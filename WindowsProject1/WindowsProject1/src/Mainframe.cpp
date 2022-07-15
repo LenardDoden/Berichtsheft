@@ -52,7 +52,6 @@ void Mainframe::ResetWocheListe ()
 
    _listBoxWoche->Clear();
 
-
    for (const auto& i : woche_liste ) {// mehrere Loops hintereinander
       std::stringstream beschreibung;
 	  wxDateTime test;
@@ -62,13 +61,22 @@ void Mainframe::ResetWocheListe ()
 
 	  _listBoxWoche->Append(beschreibung.str(), new DatabaseID{ i.id }); //hier die weiteren werte 
    }
-   
-}
+
+   if (_listBoxWoche->GetCount() > 0)
+   {
+		_listBoxWoche->Select(0);
+   }
+} 
 
 void Mainframe::OnWocheUpdated (wxCommandEvent& /*event*/) 
 {
    wxLogDebug(__FUNCTION__ " Bericht wurde aktualisiert");
    ResetWocheListe();
+
+   if (_listBoxWoche->GetCount() > 0)
+   {
+		_listBoxWoche->Select(0);
+   }
 }
 
 
@@ -81,6 +89,7 @@ void Mainframe::OnButtonNeu(wxCommandEvent & /*event*/)
 
    eintrag->Bind(FrameBerichtshefteintrag_Updated, &Mainframe::OnWocheUpdated, this);
 }
+
 
 
 void Mainframe::OnButtonOeffnen(wxCommandEvent & /*event*/)
@@ -104,31 +113,41 @@ void Mainframe::OnButtonOeffnen(wxCommandEvent & /*event*/)
 			//Id anhand der Id 
 			auto woche_tabelle = WocheTabelle{ *_db };
 
+			
+
 			try {
 
+			
 
 			auto wochenwerte = woche_tabelle.Load(static_cast<DatabaseID*>(woche_id)->id);
+			
 
 			// ID an Funktion übergeben
-			auto wochen_id_weitergabe = wochenwerte.id;
+			int64_t wochen_id_weitergabe = wochenwerte.id;
 			
 			//Funktion um Daten einzutragen
 			eintrag->LoadDataForFrameOeffnen(wochen_id_weitergabe);
 
 			eintrag->Show();
+			
 			}
+			
 
-			catch (...)
+			
+			catch (const std::runtime_error& p)
 			{
+			
 				wxLogMessage("Der Bericht existiert nicht mehr");
+				wxLogError(p.what());
 
+				/*
 				auto index = _listBoxWoche->GetSelection();
 				_listBoxWoche->Delete(index);
-
+				*/
+				
 			}
-
 		}
-		
+
 		else
 		{
 			wxLogMessage("Kein Bericht ausgewählt");
@@ -138,7 +157,9 @@ void Mainframe::OnButtonOeffnen(wxCommandEvent & /*event*/)
 	else {
 		wxLogMessage("Es wurde noch kein Bericht angelegt");
 	}
+
 }
+
 
 
 void Mainframe::NeueDatenbank () 

@@ -27,6 +27,7 @@
 #include <wx/stdpaths.h>
 
 #include <algorithm>
+#include <cmath> 
 
 
 wxDEFINE_EVENT(FrameBerichtshefteintrag_Updated, wxCommandEvent);
@@ -36,13 +37,12 @@ std::vector <std::string> geloeschteTaetigkeitenBetriebIDs = {};
 std::vector <std::string> geloeschteTaetigkeitenSchule = {};
 std::vector <std::string> geloeschteTaetigkeitenSchuleIDs = {};
 
-
 struct BeschreibungStunde {
 	std::string beschreibung;
 	std::string stunde;
 };
 
-
+wxString wxcount;
 
 struct Data {
 	std::string azubiName;
@@ -63,6 +63,8 @@ wxString AbteilungWxString;
 wxString VornameWxString;
 wxString NachnameWxString;
 
+wxDateTime datumdatetimevon = {};
+wxDateTime datumdatetimebis = {};
 
 
 class PrinterImpl : public wxPrintout {
@@ -548,6 +550,9 @@ FrameBerichtshefteintrag::FrameBerichtshefteintrag(wxWindow* parent, mk::sqlite:
 	, _db(db)
 {
 
+	datumdatetimevon = _calendarVon->GetDate();
+	datumdatetimebis = _calendarBis->GetDate();
+
 	_choiceAusbildungsjahr->SetLabelText("");
 
 	ResetNameChoice();
@@ -558,9 +563,7 @@ FrameBerichtshefteintrag::FrameBerichtshefteintrag(wxWindow* parent, mk::sqlite:
 
 	ResetTaetigkeitBetriebChoice();
 	ResetTaetigkeitSchuleChoice();
-
 }
-
 
 
 
@@ -628,11 +631,6 @@ void FrameBerichtshefteintrag::ResetTaetigkeitBetriebChoice()
 			return o.art_fk == 1;
 		});
 
-		/*
-		for (const auto& i : vorschlag_tabelle_betrieb) {
-			panel->combo_beschreibung_taetigkeit->Append(i.beschreibung);
-		}
-		*/
 	}
 }
 
@@ -653,21 +651,15 @@ void FrameBerichtshefteintrag::ResetTaetigkeitSchuleChoice()
 			return o.art_fk == 2;
 		});
 
-
-		//auto taetigkeitenschuleanfangspanel = TaetigkeitTabelle{ _db };
-		
-		/*
-		for (const auto& i : vorschlag_tabelle_schule) {
-			panel->combo_beschreibung_taetigkeit->Append(i.beschreibung);
-		}
-		*/
-
 	}
 }
 
 
+
+
 void FrameBerichtshefteintrag::LoadDataForFrameOeffnen(int64_t id_woche)
 {
+
 	auto woche_tabelle = WocheTabelle{ _db };
 	auto wochenwerte = woche_tabelle.Load(id_woche);
 
@@ -683,10 +675,7 @@ void FrameBerichtshefteintrag::LoadDataForFrameOeffnen(int64_t id_woche)
 
 	auto abteilungnamewert = abteilungwerte.name;
 
-	
-
 	//nach Berichtsheft_id fragen anhand der Wochen_Id
-
 	std::vector<int64_t> retBerichtsheftID = {};
 
 	auto resberichtsheftID = mk::sqlite::result{ _db, R"(
@@ -724,9 +713,10 @@ SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
 		floatminuten = berichtsheftwerte.minuten;
 		auswahlberichtsheftminutenvector.push_back(floatminuten/60);
 		//////
-		auswahlberichtshefttaetigkeitfkvector.push_back(berichtsheftwerte.taetigkeit_fk);
+		auswahlberichtshefttaetigkeitfkvector.push_back(berichtsheftwerte.taetigkeit_fk);//berichtsheftwerte.id statt taetigkeit_fk
 		auswahlberichtsheftazubifkvector.push_back(berichtsheftwerte.azubi_fk);
 	}
+
 
 	auto azubi_tabelle = AzubiTabelle{ _db };
 	auto azubiwerte = azubi_tabelle.Load(auswahlberichtsheftazubifkvector[0]);
@@ -745,7 +735,7 @@ SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
 		auswahltaetigkeitartvector.push_back(taetigkeitswerte.art_fk);
 	}
 
-
+	
 
 	//Anzahl Betrieb / Schultätigkeiten
 	int64_t anzahleintraegegesamt = auswahltaetigkeitbeschreibungvector.size();
@@ -767,11 +757,6 @@ SELECT berichtsheft_id FROM berichtsheft WHERE woche_fk = ?
 
 	if (anzahl_betriebeinträge > 0)
 	{
-		//For i in range retBerichtsheftID Select beschreibung where art_fk = 1;
-
-		//Hier Sql Befehl nach ID mit beschreibung und art
-
-		//Danach in der berichtsheft tabelle noch die Minuten abfragen
 
 		for (size_t i = 0; i < retBerichtsheftID.size(); ++i)
 		{
@@ -816,14 +801,6 @@ SELECT minuten FROM berichtsheft WHERE berichtsheft_id = ?
 			}
 		}
 
-		//for (int i = 0; i < anzahl_betriebeinträge; ++i)
-		//{
-		////Tätigkeitsvector in Art und Schule aufteilen
-		//	taetigkeitvectorbetrieb.push_back(auswahltaetigkeitbeschreibungvector[i]);
-
-		////Mintenvektor in Art und Schule aufteilen
-		//	taetigkeitminutenvectorbetrieb.push_back(auswahlberichtsheftminutenvector[i]);
-		//}
 	}
 
 	
@@ -878,17 +855,6 @@ SELECT minuten FROM berichtsheft WHERE berichtsheft_id = ?
 			}
 		}
 
-
-		/*
-		for (int ii = anzahl_betriebeinträge; ii < anzahleintraegegesamt; ++ii)
-		{
-			//Tätigkeitsvector in Art und Schule aufteilen
-			taetigkeitvectorschule.push_back(auswahltaetigkeitbeschreibungvector[ii]);
-			
-			//Mintenvektor in Art und Schule aufteilen
-			taetigkeitminutenvectorschule.push_back(auswahlberichtsheftminutenvector[ii]);
-		}
-		*/
 	}
 	
 
@@ -936,8 +902,6 @@ SELECT minuten FROM berichtsheft WHERE berichtsheft_id = ?
 
 			panel->combo_beschreibung_taetigkeit->SetLabelText(taetigkeitvectorbetrieb[0]);
 
-			//panel->combo_stunden->SetLabelText("Test Betrieb");
-
 			std::stringstream resultminutenbetrieb;
 			resultminutenbetrieb << taetigkeitminutenvectorbetrieb[0]/60;
 			panel->combo_stunden->SetLabelText(resultminutenbetrieb.str());
@@ -957,7 +921,6 @@ SELECT minuten FROM berichtsheft WHERE berichtsheft_id = ?
 			resultminutenschule << taetigkeitminutenvectorschule[0]/60;
 			panel->combo_stunden->SetLabelText(resultminutenschule.str());
 
-			//panel->combo_stunden->SetLabelText("test Schule");
 		}
 	}
 
@@ -1013,12 +976,7 @@ SELECT minuten FROM berichtsheft WHERE berichtsheft_id = ?
 			_schultaetigkeitsizer->Fit(panelschuleneu);
 		}
 	}	
-
-	//wxLogMessage("Test");
-
 }
-
-
 
 
 void FrameBerichtshefteintrag::OnButtonNeuAbteilung(wxCommandEvent & /*event*/)
@@ -1027,7 +985,7 @@ void FrameBerichtshefteintrag::OnButtonNeuAbteilung(wxCommandEvent & /*event*/)
 
 	if (dlg.ShowModal() == wxID_OK) {
 		auto abteilung = Abteilung{};
-		abteilung.name = dlg._eingabe_abteilung->GetValue();
+		abteilung.name = dlg._eingabe_abteilung->GetValue().Trim().Trim(false);
 
 		AbteilungWxString = abteilung.name;
 
@@ -1045,8 +1003,8 @@ void FrameBerichtshefteintrag::OnButtonNeuName(wxCommandEvent & /*event*/)
    if (dlg.ShowModal() == wxID_OK) {
       // TODO: Neuen Namen speichern
       auto azubi = Azubi{};
-      azubi.vorname = dlg._eingabe_vorname->GetValue();
-      azubi.nachname = dlg._eingabe_nachname->GetValue();
+      azubi.vorname = dlg._eingabe_vorname->GetValue().Trim().Trim(false);
+      azubi.nachname = dlg._eingabe_nachname->GetValue().Trim().Trim(false);
 
 	  VornameWxString = azubi.vorname;
 	  NachnameWxString = azubi.nachname;
@@ -1059,11 +1017,14 @@ void FrameBerichtshefteintrag::OnButtonNeuName(wxCommandEvent & /*event*/)
 }
 
 void FrameBerichtshefteintrag::OnCalendarVonChanged(wxCalendarEvent & /*event*/)
+	
+
 {
 	auto kalendar_auswahl = _calendarVon->GetDate();
 	auto kalender_auswahl_tag = kalendar_auswahl.GetWeekDay();
 	wxString tag = std::to_string(kalender_auswahl_tag);
 
+	auto kalender_monat_von = kalendar_auswahl.GetMonth();
 
 	if (wxAtoi(tag) == 1)
 	{
@@ -1072,7 +1033,22 @@ void FrameBerichtshefteintrag::OnCalendarVonChanged(wxCalendarEvent & /*event*/)
 	}
 
 	else {
-		wxLogMessage("%s", "Bitte wähle einen Montag aus.");
+		
+		//hier abfragen ob der Monat verändert wurde
+
+		auto kalender_monat_vorher = datumdatetimevon.GetMonth();
+
+		if (kalender_monat_von == kalender_monat_vorher)
+		{
+			wxLogMessage("%s", "Bitte wähle einen Montag aus.");
+			datumdatetimevon = _calendarVon->GetDate();
+		}
+
+		else
+		{
+			//wxLogMessage("Monat gewechselt");
+			datumdatetimevon = _calendarVon->GetDate();
+		}
 	}
 }
 
@@ -1083,6 +1059,8 @@ void FrameBerichtshefteintrag::OnCalendarBisChanged(wxCalendarEvent & /*event*/)
 	auto kalender_auswahl_tag = kalendar_auswahl.GetWeekDay();
 	wxString tag = std::to_string(kalender_auswahl_tag);
 
+	auto kalender_monat_bis = kalendar_auswahl.GetMonth();
+
 	if (wxAtoi(tag) == 5)
 	{
 		kalendar_auswahl.Add(wxDateSpan(0, 0, 0, -4));
@@ -1091,7 +1069,21 @@ void FrameBerichtshefteintrag::OnCalendarBisChanged(wxCalendarEvent & /*event*/)
 
 	else {
 
-		wxLogMessage("%s", "Bitte wähle einen Freitag aus.");
+		//hier abfragen ob der Monat verändert wurde
+
+		auto kalender_monat_vorher = datumdatetimebis.GetMonth();
+
+		if (kalender_monat_bis == kalender_monat_vorher)
+		{
+			wxLogMessage("%s", "Bitte wähle einen Freitag aus.");
+			datumdatetimebis = _calendarBis->GetDate();
+		}
+
+		else
+		{
+			//wxLogMessage("Monat gewechselt");
+			datumdatetimebis = _calendarBis->GetDate();
+		}
 	}
 }
 
@@ -1118,28 +1110,6 @@ void FrameBerichtshefteintrag::OnBetriebTaetigkeitErstellen(wxCommandEvent& even
 		_paneltaetigkeitbetriebneu->combo_beschreibung_taetigkeit->Append(i.beschreibung);
 	}
 
-
-	//StundenBetrieb Vorschaueinträge
-	/*
-	auto stundenbetrieb = BerichtsheftTabelle{ _db };
-	_paneltaetigkeitbetriebneu->combo_stunden->Clear();
-
-	for (const auto& ii : stundenbetrieb.List()) {
-
-		auto stringminutenbetrieb = std::to_string(ii.minuten);
-		_paneltaetigkeitbetriebneu->combo_stunden->Append(stringminutenbetrieb);
-	}
-	*/
-
-	
-
-	/*
-	TaetigkeitTabelle tabelle(_db);
-	auto komplettListe = tabelle.List();
-	decltype(komplettListe) schulliste;
-	std::copy_if(begin(komplettListe), end(komplettListe), std::back_inserter(schulliste), [](const auto& o) {return o.art_fk == 1; });
-	*/
-
 	_paneltaetigkeitbetriebneu->btn_delete_taetigkeit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FrameBerichtshefteintrag::OnTaetigkeitEntfernen), new
 	WrapperPanelTaetigkeit(_paneltaetigkeitbetriebneu), this);
 
@@ -1152,10 +1122,7 @@ void FrameBerichtshefteintrag::OnBetriebTaetigkeitErstellen(wxCommandEvent& even
 	auto sizeposizumscrollen = posi.y + size.y;
 
 	m_scrolledWindow1->Scroll(0, sizeposizumscrollen);
-
 }
-
-
 
 
 void PanelTaetigkeitbase::OnTextComboStundenChanged(wxCommandEvent & event)
@@ -1175,6 +1142,7 @@ void PanelTaetigkeitbase::OnTextComboStundenChanged(wxCommandEvent & event)
 			wxWindow::Refresh();
 		}
 
+
 		else
 		{
 			//wxLogMessage("passt nicht zum Regex");
@@ -1182,6 +1150,19 @@ void PanelTaetigkeitbase::OnTextComboStundenChanged(wxCommandEvent & event)
 			wxWindow::Refresh();
 		}
 	}
+
+	/*
+	if (regexstring.find('.' | ',') != std::string::npos)
+	{
+		wxLogMessage("Keine Dezimalzahlen eingeben");
+		combo_stunden->SetBackgroundColour(*wxRED);
+	}
+
+	else
+	{
+		combo_stunden->SetBackgroundColour(*wxWHITE);
+	}
+	*/
 }
 
 
@@ -1193,7 +1174,6 @@ void FrameBerichtshefteintrag::OnSchuleTaetigkeitErstellen(wxCommandEvent & even
 
 	//bisherige Einträge als Auswahlmöglichkeit
 
-	//auto taetigkeitenschule = TaetigkeitTabelle{ _db };
 	_paneltaetigkeitschuleneu->combo_beschreibung_taetigkeit->Clear();
 
 	TaetigkeitTabelle taetigkeit_tabelle(_db);
@@ -1238,9 +1218,6 @@ void FrameBerichtshefteintrag::OnButtonLoeschen(wxCommandEvent & /*event*/)
 	auto datumbiskalstring = datumbiskal.FormatISODate();
 
 
-
-
-
 	//Die wochen_id des Berichtes anhand der Daten im Kalender herausfinden
 	std::vector<std::string> retDatum = {};
 	auto resDatum = mk::sqlite::result{ _db, R"(
@@ -1283,8 +1260,6 @@ DELETE FROM taetigkeit WHERE taetigkeit_id = ?
 	}
 
 
-
-
 	//alle Felder zurücksetzen
 	_choiceName->SetLabelText("");
 	_choiceAusbildungsjahr->SetLabelText("");
@@ -1323,14 +1298,10 @@ DELETE FROM taetigkeit WHERE taetigkeit_id = ?
 
 	}
 
-	
-
-	
 	wxLogMessage("Gelöscht");
-
 }
 
-void FrameBerichtshefteintrag::OnButtonUpdaten(wxCommandEvent & event)
+void FrameBerichtshefteintrag::OnButtonUpdaten(wxCommandEvent & event)//Auswerten der combo_stunden Panele suchen und abfragen ob ausgefüllt und ggf die weitere Ausführung des Programmes stoppen
 {
 	//Datum auslesen von Kalendervon und Kalenderbis und in ISO-Schreibweise 
 	auto anzahlchildrenbetrieb = _betriebtaetigkeitsizer->GetChildren();
@@ -1397,7 +1368,6 @@ SELECT taetigkeit_fk FROM berichtsheft WHERE woche_fk = ?
 	}
 
 	//Die Tätigkeiten auslesen die zu Betrieb und die zu Schule gehören
-
 	std::vector<std::string>retBetriebtaetigkeitenInDatenbank = {};
 	std::vector<std::string>retSchultaetigkeitenInDatenbank = {};
 
@@ -1417,7 +1387,6 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 	}
 
 	//Die schulischen Tätigkeiten die schon in der Datenbank stehen
-
 	for (size_t u = 0; u < rettaetigkeitenIDs.size(); u++)
 	{
 		auto restaetigkeitschulvec = mk::sqlite::result{ _db, R"(
@@ -1459,37 +1428,67 @@ SELECT taetigkeit_id FROM taetigkeit
 		berichtsheftwerte.azubi_fk = nameupdateid;
 		berichtsheft_tabelle.Save(berichtsheftwerte);
 	}
-	//TODO: Die TätigkeitenIDs nach Betrieb und Schule sortieren
-
-
-
-	//Die Minuten in der Berichtsheft_Tabelle updaten
-	//Von vorne nach hinten an die passenden Tätigkeit IDs übergeben
-	//wenn mehr dann neue hinzufügen 
-	//wenn weniger die letzten löschen 
-
 
 	std::vector<std::string>Betriebstätigkeitenvector = {};
 
-	
 	std::vector<std::string>Betriebstunden = {};
 	std::vector<int> Betriebstundenint = {};
+
 
 	float minuten = {};
 	std::string minutenstring = {};
 
+	auto count = 1;
+	bool isstundevorhanden = true;
 
 	for (auto& valuesbetrieb : _panelBetrieb->GetChildren())
 	{
 		const auto panel = static_cast<PanelTaetigkeitbase*>(valuesbetrieb);
 		Betriebstätigkeitenvector.push_back(panel->combo_beschreibung_taetigkeit->GetValue().ToStdString());
 
+		///////////////
+		///////////////
+		///////////////hier weitermachen und das Programm so beenden dass man wieder etwas eingeben kann und 
+		/////////////// der Dialog mit der Info aufploppt
+		///////////////
+		///////////////
+
 		minuten = std::atof(panel->combo_stunden->GetValue())*60;
+
+		if (minuten == 0)
+		{
+			wxcount << count;
+			isstundevorhanden = false;
+			break;
+		}
+
+
 		minutenstring = std::to_string(minuten);
+
+
+		//hier Minutenstring mit regex überprüfen
+
+
 		Betriebstunden.push_back(minutenstring);
+
+		
+		if (Betriebstätigkeitenvector.size() > Betriebstunden.size())
+		{
+			wxLogError("Bitte bei den Schultätigkeiten überall die Stunden mit angeben.");
+			return;
+		}
+
+		count += 1;
+
 	}
 
-	
+	//Abfrage mit bool
+	if (isstundevorhanden == false)
+	{
+		wxLogMessage(wxT("Die Eingabe der Minuten für die Betriebstätigkeit in Zeile: \n") + wxcount + wxT("\nist ungültig. Bitte eine ganze Zahl eingeben."));
+		wxcount.clear();
+		return;
+	}
 
 	std::vector<std::string>Schultätigkeitsvector = {};
 	std::vector<std::string>Schulstunden = {};
@@ -1508,14 +1507,14 @@ SELECT taetigkeit_id FROM taetigkeit
 	//Die Ids der Tätigkeiten den Betriebstätigkeiten und Schultätigkeiten zuordnen
 	std::vector<int64_t>TaetigkeitBetriebIDs = {};
 	std::vector<int64_t>TaetigkeitSchuleIDs = {};
+    
 
-	
 
 	//Hier die korrekten Betrieb und SchultätigkeitsIDs auslesen
 	for (size_t i = 0; i < retBetriebtaetigkeitenInDatenbank.size(); ++i)
 	{
 		auto residstaetigkeitenbetriebindatenbank = mk::sqlite::result{ _db, R"(
-SELECT taetigkeit_id FROM taetigkeit WHERE beschreibung = ?
+SELECT taetigkeit_id FROM taetigkeit WHERE beschreibung = ? 
 )", retBetriebtaetigkeitenInDatenbank[i] };
 		while (residstaetigkeitenbetriebindatenbank)
 		{
@@ -1524,7 +1523,7 @@ SELECT taetigkeit_id FROM taetigkeit WHERE beschreibung = ?
 			++residstaetigkeitenbetriebindatenbank;
 		}
 	}
-
+	
 	for (size_t i = 0; i < retSchultaetigkeitenInDatenbank.size(); ++i)
 	{
 		auto residstaetigkeitenschuleindatenbank = mk::sqlite::result{ _db, R"(
@@ -1537,10 +1536,6 @@ SELECT taetigkeit_id FROM taetigkeit WHERE beschreibung = ?
 			++residstaetigkeitenschuleindatenbank;
 		}
 	}
-
-	
-
-
 
 //Hier die Inhalte der Panele, die gelöscht wurden auch in der Datenbank löschen
 
@@ -1559,7 +1554,8 @@ SELECT woche_id FROM woche WHERE beginn = ? AND ende = ?
 )", datumvonkalstring.ToStdString(), datumbiskalstring.ToStdString() };
 
 		retDatum.push_back(resDatum[0]);
-		
+
+		geloeschteTaetigkeitenBetriebIDs.clear();
 		
 		auto restaetifkeitfk = mk::sqlite::result{ _db, R"(
 SELECT taetigkeit_fk FROM berichtsheft WHERE woche_fk = ?
@@ -1571,10 +1567,12 @@ SELECT taetigkeit_fk FROM berichtsheft WHERE woche_fk = ?
 			++restaetifkeitfk;
 		}
 
-
-
 		_panelBetrieb->Refresh();
-		
+
+
+		//auto test = _panelBetrieb->GetChildren();
+
+		geloeschteTaetigkeitenBetrieb.clear();
 
 		for (const auto& valuesbetrieb : _panelBetrieb->GetChildren()) {
 			const auto panel = static_cast<const PanelTaetigkeitbase*>(valuesbetrieb);
@@ -1584,8 +1582,6 @@ SELECT taetigkeit_fk FROM berichtsheft WHERE woche_fk = ?
 
 			geloeschteTaetigkeitenBetrieb.push_back(beschreibung.ToStdString());
 		}
-		
-
 
 		//Die IDs der noch vorhandenen Betriebstätigkeiten
 		std::vector<std::string> rettatsaechlichvorhandeneTaetigkeitenBetrieb = {};
@@ -1616,6 +1612,11 @@ SELECT taetigkeit_fk FROM berichtsheft WHERE woche_fk = ?
 			}
 		}
 
+		for (int64_t i : zuloeschendeIDs)
+		{
+			TaetigkeitBetriebIDs.erase(std::remove(TaetigkeitBetriebIDs.begin(), TaetigkeitBetriebIDs.end(), i), TaetigkeitBetriebIDs.end());
+		}
+
 	
 		//alle Taetigkeiten mit ID im Vektor löschen
 
@@ -1630,10 +1631,9 @@ DELETE FROM berichtsheft WHERE taetigkeit_fk = ?
 )", zuloeschendeIDs[i]);
 		}
 
-		wxLogMessage("Es wurde mindestens ein Betriebpanel entfernt");
+		wxLogMessage("Es wurde mindestens ein Betriebspanel entfernt");
 	}
-
-
+	
 
 	if (anzahlchildrenschule.GetCount() < TaetigkeitSchuleIDs.size())
 	{
@@ -1651,6 +1651,7 @@ SELECT woche_id FROM woche WHERE beginn = ? AND ende = ?
 
 		retDatum.push_back(resDatum[0]);
 
+		geloeschteTaetigkeitenSchuleIDs.clear();
 
 		auto restaetifkeitfk = mk::sqlite::result{ _db, R"(
 SELECT taetigkeit_fk FROM berichtsheft WHERE woche_fk = ?
@@ -1664,6 +1665,7 @@ SELECT taetigkeit_fk FROM berichtsheft WHERE woche_fk = ?
 
 		_panelSchule->Refresh();
 
+		geloeschteTaetigkeitenSchule.clear();
 
 		for (const auto& valuesschule : _panelSchule->GetChildren()) {
 			const auto panel = static_cast<const PanelTaetigkeitbase*>(valuesschule);
@@ -1674,7 +1676,7 @@ SELECT taetigkeit_fk FROM berichtsheft WHERE woche_fk = ?
 			geloeschteTaetigkeitenSchule.push_back(beschreibung.ToStdString());
 		}
 
-
+		
 
 		//Die IDs der noch vorhandenen Betriebstätigkeiten
 		std::vector<std::string> rettatsaechlichvorhandeneTaetigkeitenSchule = {};
@@ -1685,6 +1687,8 @@ SELECT taetigkeit_fk FROM berichtsheft WHERE woche_fk = ?
 	SELECT taetigkeit_id FROM taetigkeit WHERE beschreibung = ? AND art_fk = 2
 	)", geloeschteTaetigkeitenSchule[i] };
 
+		
+			
 
 			while (restatsaechlicheIDsSchule)
 			{
@@ -1705,7 +1709,6 @@ SELECT taetigkeit_fk FROM berichtsheft WHERE woche_fk = ?
 			}
 		}
 
-		
 
 		//alle Taetigkeiten mit ID im Vektor löschen
 		for (size_t i = 0; i < zuloeschendeIDs.size(); i++)
@@ -1722,25 +1725,29 @@ DELETE FROM berichtsheft WHERE taetigkeit_fk = ?
 		wxLogMessage("Es wurde mindestens ein Schulpanel entfernt");
 	}
 
+	if (Betriebstunden.size() > TaetigkeitBetriebIDs.size())
+	{
+		wxLogMessage("Bitte überall die Minuten mit angeben");
+	}
 
-		
-	
-	
 	//zusätzliche Betriebpanele mit in die Datenbank übernehmen
 	if (TaetigkeitBetriebIDs.size() < Betriebstätigkeitenvector.size())
 	{
 
 		//wxLogMessage("Es müssen noch weitere Panele mit Betrieblichen Tätigkeiten in die Datenbank übernommen werden");
-		
+
 		size_t iterator = 0;
 
 		for (size_t i = TaetigkeitBetriebIDs.size(); i < Betriebstätigkeitenvector.size(); ++i)
 		{
+			//if (Betriebstunden.s)
+
+
 			mk::sqlite::execute(_db, R"(
 INSERT INTO taetigkeit (beschreibung, art_fk) VALUES (?, ?)
 )", Betriebstätigkeitenvector[TaetigkeitBetriebIDs.size() + iterator], 1);
 
-			
+			//Hier die Exception abfangen bei falschem Datentyp in den Stunden bei Updatefunktion
 			mk::sqlite::execute(_db, R"(
 INSERT INTO berichtsheft (minuten, woche_fk, taetigkeit_fk, azubi_fk) VALUES (?, ?, ?, ?)
 )", Betriebstunden[TaetigkeitBetriebIDs.size() + iterator], wochenupdateid, hoechsteTaetigkeitID += 1, nameupdateid);
@@ -1748,6 +1755,7 @@ INSERT INTO berichtsheft (minuten, woche_fk, taetigkeit_fk, azubi_fk) VALUES (?,
 			iterator += 1;
 		}
 	}
+
 
 
 	if (TaetigkeitSchuleIDs.size() < Schultätigkeitsvector.size())
@@ -1786,15 +1794,29 @@ INSERT INTO berichtsheft (minuten, woche_fk, taetigkeit_fk, azubi_fk) VALUES (?,
 		for (const int64_t& idsBetrieb : TaetigkeitBetriebIDs)
 
 		{
+			/*
 			auto taetigkeits_tabelle = BerichtsheftTabelle{ _db };
 			auto taetigkeitswerte = taetigkeits_tabelle.Load(idsBetrieb);
 			taetigkeitswerte.minuten = std::stoll(Betriebstunden[i]);
 			taetigkeits_tabelle.Save(taetigkeitswerte);
-		
+
 			auto berichtsheft_tabelle = TaetigkeitTabelle{ _db };
 			auto berichtsheftwerte = berichtsheft_tabelle.Load(idsBetrieb);
 			berichtsheftwerte.beschreibung = Betriebstätigkeitenvector[i];
 			berichtsheft_tabelle.Save(berichtsheftwerte);
+			*/
+
+			auto taetigkeits_tabelle = TaetigkeitTabelle{ _db };
+			auto taetigkeitswerte = taetigkeits_tabelle.Load(idsBetrieb);
+			taetigkeitswerte.beschreibung = Betriebstätigkeitenvector[i];
+			taetigkeits_tabelle.Save(taetigkeitswerte);
+
+			auto berichtsheft_tabelle = BerichtsheftTabelle{ _db };
+			auto berichtsheftwerte = berichtsheft_tabelle.Load(idsBetrieb);
+			berichtsheftwerte.minuten = std::stoll(Betriebstunden[i]);
+			//berichtsheftwerte.taetigkeit_fk = TaetigkeitBetriebIDs[i];
+			berichtsheft_tabelle.Save(berichtsheftwerte);
+
 
 			++i;
 		}
@@ -1806,6 +1828,7 @@ INSERT INTO berichtsheft (minuten, woche_fk, taetigkeit_fk, azubi_fk) VALUES (?,
 	{
 		for (const int64_t& idsSchule : TaetigkeitSchuleIDs)
 		{
+			/*
 			auto taetigkeits_tabelle = BerichtsheftTabelle{ _db };
 			auto taetigkeitswerte = taetigkeits_tabelle.Load(idsSchule);
 			taetigkeitswerte.minuten = std::stoll(Schulstunden[i]);
@@ -1815,14 +1838,24 @@ INSERT INTO berichtsheft (minuten, woche_fk, taetigkeit_fk, azubi_fk) VALUES (?,
 			auto berichtsheftwerte = berichtsheft_tabelle.Load(idsSchule);
 			berichtsheftwerte.beschreibung = Schultätigkeitsvector[i];
 			berichtsheft_tabelle.Save(berichtsheftwerte);
+			*/
+
+			auto taetigkeits_tabelle = TaetigkeitTabelle{ _db };
+			auto taetigkeitswerte = taetigkeits_tabelle.Load(idsSchule);
+			taetigkeitswerte.beschreibung = Schultätigkeitsvector[i];
+			taetigkeits_tabelle.Save(taetigkeitswerte);
+
+			auto berichtsheft_tabelle = BerichtsheftTabelle{ _db };
+			auto berichtsheftwerte = berichtsheft_tabelle.Load(idsSchule);
+			berichtsheftwerte.minuten = std::stoll(Schulstunden[i]);
+			//berichtsheftwerte.taetigkeit_fk = TaetigkeitSchuleIDs[i];
+			berichtsheft_tabelle.Save(berichtsheftwerte);
 
 			++i;
 		}
 	}
 
-
 	wxLogMessage("Geupdated");
-
 
 }
 
@@ -1903,15 +1936,6 @@ void FrameBerichtshefteintrag::OnButtonDrucken(wxCommandEvent & /*event*/) {
 	data->ausbildungswocheBis = jahrbisdruckstring;
 	data->ausbildungWoche = wochevomjahrstring;
 	data->jahr = jahrstring;
-	
-
-	/*wxLogMessage(wxString(data->azubiName));
-	wxLogMessage(wxString(data->ausbildungsjahr));
-	wxLogMessage(wxString(data->abteilung));
-	wxLogMessage(wxString(data->ausbildungswocheVom));
-	wxLogMessage(wxString(data->ausbildungswocheBis));
-	wxLogMessage(wxString(wochevomjahrstring));
-*/
 	
 	auto printData = new wxPrintData{};
 	printData->SetPaperId(wxPAPER_A4);
@@ -1996,7 +2020,6 @@ SELECT minuten FROM berichtsheft WHERE woche_fk = ?
 			minuten_vec.push_back(resminuten[i]);
 			++resminuten;
 		}
-
 
 		//Azubi_ID auslesen
 		std::vector<std::string> azubi_vec;
@@ -2083,7 +2106,6 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 		auto anzahl_betriebstaetigkeiten = betrieblicheTätigkeiten_vec.size();
 		auto anzahl_schulischetaetigkeiten = schulischeTätigkeiten_vec.size();
 
-
 		//Minutenvektor aufteilen
 		std::vector<std::string> Betrieb_minuten_vec;
 		std::vector<std::string> Schule_minuten_vec;
@@ -2099,9 +2121,8 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 		{
 			Schule_minuten_vec.push_back(minuten_vec[i]);
 		}
+
 		
-
-
 
 		auto findazubiname = _choiceName->FindString(azubi_vorname[0] + " " + azubi_nachname[0]);
 		auto findabteilungname = _choiceAbteilung->FindString(abteilung_vec[0]);
@@ -2116,10 +2137,7 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 		   "Möchtest du den vorhandenen Bericht öffnen? \n "
 		   "Die bereits ausgefüllten Felder werden dadurch überschrieben."
 		   , "Achtung" , wxYES_NO | wxICON_EXCLAMATION);
-
-		
-
-
+	   
 	   switch (dialog.ShowModal())
 	   {
 	   case wxID_YES:
@@ -2138,10 +2156,17 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 		   _schultaetigkeitsizer->Clear();
 
 		   //Leerer Sizer
+  
 
 		   _panelBetrieb->DestroyChildren();
 		   _panelSchule->DestroyChildren();
-		   
+
+		   std::vector<int> Betrieb_minuten_vec_int;
+
+		   for (size_t i = 0; i < Betrieb_minuten_vec.size(); i++)
+		   {
+			   Betrieb_minuten_vec_int.push_back(std::stoi(Betrieb_minuten_vec[i])/60);
+		   }
  
 		   //vorhandene Betriebtätigkeiten und Stunden in die Maske einfügen
 		   for (size_t i = 0; i < anzahl_betriebstaetigkeiten; ++i)
@@ -2149,7 +2174,9 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 			   panelbetriebstaetigkeiterstellen();
 			   auto panel = dynamic_cast<PanelTaetigkeitbase*>(_panelBetrieb->GetChildren().back());
 			   panel->combo_beschreibung_taetigkeit->SetLabel(betrieblicheTätigkeiten_vec[i]);
-			   panel->combo_stunden->SetLabel(Betrieb_minuten_vec[i]);
+
+			   //Hier den Betrieb_minuten_vec in int und dann durch 60 teilen
+			   panel->combo_stunden->SetLabel(std::to_string(Betrieb_minuten_vec_int[i]));
 		   }
 
 		   if (_panelBetrieb->GetChildren().empty())
@@ -2159,13 +2186,28 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 
 
 
+		   std::vector<float> Schule_minuten_vec_float;
+
+		   for (size_t i = 0; i < Schule_minuten_vec.size(); i++)
+		   {
+			   Schule_minuten_vec_float.push_back(std::stof(Schule_minuten_vec[i]) / 60);
+		   }
+
+
 		   //vorhandene Schultätigkeiten und Stunden in die Maske einfügen
 		   for (size_t i = 0; i < anzahl_schulischetaetigkeiten; ++i)
 		   {
 			   panelschultaetigkeiterstellen();
 			   auto panel = dynamic_cast<PanelTaetigkeitbase*>(_panelSchule->GetChildren().back());
 			   panel->combo_beschreibung_taetigkeit->SetLabel(schulischeTätigkeiten_vec[i]);
-			   panel->combo_stunden->SetLabel(Schule_minuten_vec[i]);
+
+			   //Float kürzen
+			   //finde den Punkt
+			   int lengthfloat = Schule_minuten_vec[i].length();
+			   auto teststring = (std::to_string(Schule_minuten_vec_float[i])).substr(0, lengthfloat + 1);
+
+			   
+			   panel->combo_stunden->SetLabel(teststring);
 		   }
 
 		   if (_panelSchule->GetChildren().empty())
@@ -2178,38 +2220,26 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 
 		   bSizer1->Layout();
 
-		   wxLogMessage("Ja geklickt");
+		   //wxLogMessage("Ja geklickt");
 	   }
 		   break;
 
 	   case wxID_NO:
-		   wxLogMessage("Nein geklickt!");
+		   //wxLogMessage("Nein geklickt!");
 		   break;
 	   }
-
-		
-
-
-	   //DialogVorhandenenEintragOeffnen *dlg1 = new DialogVorhandenenEintragOeffnen(this, id);
-	   //dlg1->ShowModal();
-
-
    }
-   
+
+
    //Noch kein Eintrag vorhanden 
    else
    {
-	   wxLogMessage("Neuer Bericht angelegt");
 	   
 
    if (!(_choiceName->GetSelection() != wxNOT_FOUND
       && _choiceAusbildungsjahr->GetSelection() != wxNOT_FOUND 
       && _choiceAbteilung->GetSelection() != wxNOT_FOUND 
 	   )){
-	   
-	   //&& _calendarBis->GetDate() != _calendarVon->GetDate())) {
-
-
 
       wxLogError("Nicht alle Felder ausgefüllt.");
       return;
@@ -2222,7 +2252,7 @@ SELECT beschreibung FROM taetigkeit WHERE taetigkeit_id = ? AND art_fk = ?
 	   return;
    }
 
-
+   bool trigger = true; 
 
    transaction trans(_db);
 
@@ -2256,11 +2286,16 @@ SELECT name FROM art
 		retArt.push_back(resArt[ii]);
 		++resArt;
 	}
-
+	
 
 	for (const auto& valuesbetrieb : _panelBetrieb->GetChildren()) {
 		const auto panel = static_cast<const PanelTaetigkeitbase*>(valuesbetrieb);
 		const auto beschreibung = panel->combo_beschreibung_taetigkeit->GetValue();
+
+		if (beschreibung == "")
+		{
+			trigger = false;
+		}
 
 		auto stundentext = panel->combo_stunden->GetValue();
 		std::string stundentextstdstring = stundentext.ToStdString();
@@ -2317,7 +2352,10 @@ SELECT name FROM art
 		const auto panel = static_cast<const PanelTaetigkeitbase*>(valuesschule);
 		const auto beschreibung = panel->combo_beschreibung_taetigkeit->GetValue();
 
-
+		if (beschreibung == "")
+		{
+			trigger = false;
+		}
 		//wenn combo_stunden ein Komma enthält, Fehlermeldung und Hinweis auf Punkt als Dezimaltrennzeichen
 
 		auto stundentext = panel->combo_stunden->GetValue();
@@ -2342,12 +2380,9 @@ SELECT name FROM art
          TaetigkeitTabelle taetigkeit_tabelle(_db);
          taetigkeit.id = taetigkeit_tabelle.Save(taetigkeit);
 
-
          berichtsheft.taetigkeit_fk = taetigkeit.id;
           
          Art art;
-
-		 
 
 		 if (std::find(retArt.begin(), retArt.end(), "Betrieb") != retArt.end())
 		 {
@@ -2367,9 +2402,20 @@ SELECT name FROM art
          berichtsheft_tabelle.Save(berichtsheft);
 
 		}
+
 	}
+		if (trigger == false)
+		{
+			wxLogMessage("Alle Tätigkeitsfelder müssen ausgefüllt sein");
+		}
 
-   trans.commit();
+		else
+		{
+			wxLogMessage("Neuer Bericht angelegt");
+			trans.commit();
+		}
+
+		
    }
-
 }
+

@@ -99,7 +99,7 @@ class PanelTaetigkeitbase : public wxPanel
 	protected:
 
 		// Virtual event handlers, override them in your derived class
-		virtual void OnTextComboStundenChanged(wxCommandEvent& event);
+		virtual void OnTextComboStundenChanged( wxCommandEvent& event );
 		virtual void Onbuttonaddclicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void Onbuttondeleteclicked( wxCommandEvent& event ) { event.Skip(); }
 

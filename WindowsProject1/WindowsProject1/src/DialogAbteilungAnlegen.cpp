@@ -18,7 +18,7 @@ void DialogAbteilungAnlegen::OnOKClicked(wxCommandEvent& event)
 
 	bool success = true;
 
-	const auto abteilung_name = _eingabe_abteilung->GetValue();
+	const auto abteilung_name = _eingabe_abteilung->GetValue().Trim().Trim(false);
 
 	if (abteilung_name.empty() || abteilung_name.size() > 100) {
 		wxLogMessage("%s", "Bitte geben Sie einen gültigen Abteilungsnamen (kleiner 100 Zeichen) ein.");
@@ -29,44 +29,6 @@ void DialogAbteilungAnlegen::OnOKClicked(wxCommandEvent& event)
 		event.Skip();
 	}
 }
-
-/*
-void DialogAbteilungAnlegen::OnUebernehmenClicked(wxCommandEvent & event)
-{
-	bool success = true;
-
-	const auto abteilung_name = _eingabe_abteilung->GetValue();
-
-	if (abteilung_name.empty() || abteilung_name.size() > 100) {
-		wxLogMessage("%s", "Bitte geben Sie einen gültigen Abteilungsnamen (kleiner 100 Zeichen) ein.");
-		success = false;
-	}
-
-
-	if (success) {
-		event.Skip();
-	}
-*/
-
-	
-
-	/*
-	bool success = true;
-	const auto abteilung_name = _eingabe_abteilung->GetValue();
-
-	if (abteilung_name.empty() || abteilung_name.size() > 100)
-	{
-		wxLogMessage("%s", "Bitte geben Sie einen gültigen Nachnamen (kleiner 100 Zeichen) ein.");
-		success = false;
-	}
-
-	if (success) {
-
-		uebernehmenevent.Skip();
-	}
-}
-	*/
-
 
 
 void DialogAbteilungAnlegen::OnTextAbteilungChanged(wxCommandEvent & event)

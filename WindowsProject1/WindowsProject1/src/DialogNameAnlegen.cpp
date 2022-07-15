@@ -14,17 +14,43 @@ void DialogNameAnlegen::OnOKClicked( wxCommandEvent& event )
    bool succes = true;
 
    const auto nachname = _eingabe_nachname->GetValue().Trim().Trim(false);
+   const auto vorname = _eingabe_vorname->GetValue().Trim().Trim(false);
+   bool schongeloggt = false;
 
    if (nachname.empty() || nachname.size() > 100) {
-      wxLogMessage("%s", "Bitte geben Sie einen gültigen Nachnamen (kleiner 100 Zeichen) ein.");
-      succes = false;
+	
+
+	   if (nachname.empty() && vorname.empty())
+	   {
+		   wxLogMessage("%s", "Bitte geben Sie einen gültigen Vor- und Nachnamen ein");
+		   succes = false;
+		   schongeloggt = true;
+	   }
+
+	   else
+	   {
+			wxLogMessage("%s", "Bitte geben Sie einen gültigen Nachnamen (kleiner 100 Zeichen) ein.");
+			succes = false;
+	   }
    }
 
-   const auto vorname = _eingabe_vorname->GetValue().Trim().Trim(false);
 
    if (vorname.empty() || vorname.size() > 100) {
-      wxLogMessage("%s", "Bitte geben Sie einen gültigen Vornamen (kleiner 100 Zeichen) ein.");
-      succes = false;
+
+	   if (vorname.empty() && nachname.empty())
+	   {
+		   if (schongeloggt = false)
+		   {
+				wxLogMessage("%s", "Bitte geben Sie einen gültigen Vor- und Nachnamen ein");
+				succes = false;
+		   }
+	   }
+
+	   else
+	   {
+			wxLogMessage("%s", "Bitte geben Sie einen gültigen Vornamen (kleiner 100 Zeichen) ein.");
+			succes = false;
+	   }
    }
 
 
